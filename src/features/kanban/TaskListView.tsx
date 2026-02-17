@@ -38,6 +38,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
 
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus, isDaily: false });
+    const [hideCompleted, setHideCompleted] = useState(false);
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string; isDaily: boolean } | null>(null);
     const [statusDropdownTaskId, setStatusDropdownTaskId] = useState<string | null>(null);
@@ -134,6 +135,8 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
             rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
+            acceptLabel: t("common.delete"),
+            rejectLabel: t("common.cancel"),
             accept: async () => {
                 try {
                     await archiveTask({ taskId: task.id }).unwrap();
@@ -150,7 +153,11 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
     if (isLoading) return null;
 
     const statusPriority: Record<string, number> = { inprogress: 0, todo: 1, done: 2 };
-    const filteredTasks = filterDaily ? tasks.filter(t => t.isDaily) : tasks;
+    const filteredTasks = tasks.filter(t => {
+        if (filterDaily && !t.isDaily) return false;
+        if (hideCompleted && t.status === 'done') return false;
+        return true;
+    });
     const sortedTasks = [...filteredTasks].sort(
         (a, b) => (statusPriority[a.status] ?? 1) - (statusPriority[b.status] ?? 1)
     );
@@ -163,15 +170,27 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                 <div className="flex flex-col gap-0.5">
                     <h3 className="text-base font-semibold text-[#fafafa]">{t("tasks.tasks")}</h3>
                     <p className="text-xs text-[#71717a]">
-                        {filterDaily ? t("tasks.showingDailyOnly") : t("tasks.allTasksSorted")}
                     </p>
                 </div>
-                <Button
-                    label={t("tasks.newTask")}
-                    icon="pi pi-plus"
-                    onClick={() => setShowCreateDialog(true)}
-                    className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
-                />
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            inputId="hide-completed"
+                            checked={hideCompleted}
+                            onChange={(e) => setHideCompleted(e.checked ?? false)}
+                            className="w-4 h-4 border-[#3f3f46] rounded-sm"
+                        />
+                        <label htmlFor="hide-completed" className="text-xs text-[#a1a1aa] cursor-pointer hover:text-[#fafafa] transition-colors select-none">
+                            {t("tasks.hideDoneTasks")}
+                        </label>
+                    </div>
+                    <Button
+                        label={t("tasks.newTask")}
+                        icon="pi pi-plus"
+                        onClick={() => setShowCreateDialog(true)}
+                        className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
+                    />
+                </div>
             </header>
 
             <div className="flex flex-col gap-1.5">
@@ -179,11 +198,10 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                     {sortedTasks.map((task) => (
                         <motion.div
                             key={task.id}
-                            layout
-                            initial={{ opacity: 0, scale: 0.96 }}
+                            initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.96 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            transition={{ duration: 0.2 }}
                         >
                             <div
                                 onClick={() => handleTaskClick(task.id)}
@@ -209,7 +227,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                                 <Tag
                                                     value={getStatusLabel(task.status)}
                                                     severity={getStatusSeverity(task.status)}
-                                                    className="text-[8px] tracking-wide px-2 py-0.5 rounded font-medium border border-current bg-transparent opacity-50 cursor-pointer hover:opacity-100 transition-opacity"
+                                                    className="text-[8px] tracking-wide px-2 py-0.5 rounded font-medium border border-current bg-transparent cursor-pointer transition-opacity opacity-100 hover:opacity-75"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setStatusDropdownTaskId(
@@ -260,7 +278,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
                                             className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#71717a] hover:text-[#fafafa] transition-colors"
@@ -271,7 +289,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleArchiveTask(task); }}
                                             className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#71717a] hover:text-red-400 transition-colors"
-                                            title={t("common.archive")}
+                                            title={t("common.delete")}
                                         >
                                             <i className="pi pi-trash text-xs" />
                                         </button>
@@ -290,13 +308,15 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                 </AnimatePresence>
             </div>
 
-            {sortedTasks.length === 0 && (
-                <div className="text-center py-16 bg-[#18181b] rounded-xl border border-dashed border-[#27272a]">
-                    <p className="text-sm text-[#71717a]">
-                        {filterDaily ? t("tasks.noDailyTasks") : t("tasks.noTasks")}
-                    </p>
-                </div>
-            )}
+            {
+                sortedTasks.length === 0 && (
+                    <div className="text-center py-16 bg-[#18181b] rounded-xl border border-dashed border-[#27272a]">
+                        <p className="text-sm text-[#71717a]">
+                            {filterDaily ? t("tasks.noDailyTasks") : t("tasks.noTasks")}
+                        </p>
+                    </div>
+                )
+            }
 
             <Dialog
                 header={t("tasks.newTask")}
@@ -315,6 +335,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                         <InputText
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                            onKeyDown={(e) => e.key === 'Enter' && handleCreateTask()}
                             className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                         />
                     </div>
@@ -375,6 +396,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                                 className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                             />
                         </div>
@@ -418,7 +440,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                     </div>
                 )}
             </Dialog>
-        </div>
+        </div >
     );
 };
 

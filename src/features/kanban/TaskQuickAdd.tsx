@@ -152,6 +152,7 @@ const TaskQuickAdd = () => {
                         <InputText
                             value={advancedTask.title}
                             onChange={(e) => setAdvancedTask({ ...advancedTask, title: e.target.value })}
+                            onKeyDown={(e) => e.key === 'Enter' && handleAdvancedAdd()}
                             disabled={isLoading}
                             className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1] disabled:opacity-50"
                         />

@@ -9,7 +9,6 @@ mutasyonlarda unwrap kullanılmalı
 
 tasklar kendi columnlarında da sıralanabilir olmalı (en son)
 
-lokalizasyon eklenmeli [TAMAMLANDI]
 
 normal auth test edilecek
 
@@ -17,7 +16,7 @@ UI için yeni bir tema bulmalıyım bu çok sade
 
 şifre güncelleme eklenmeli
 
-
+mobildeki hover işlemleri test edilmeli
 ---------------
 OPTİMİSTİK UI KODUNU OKUMALIYIM
 

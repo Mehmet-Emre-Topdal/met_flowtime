@@ -69,7 +69,7 @@ const SortableTaskCard = ({
                     ${isSelected ? 'border-[#6366f1]' : 'border-[#27272a] hover:border-[#3f3f46]'}`}
                 onClick={onClick}
             >
-                <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
                         className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
@@ -80,7 +80,7 @@ const SortableTaskCard = ({
                     <button
                         onClick={(e) => { e.stopPropagation(); onArchive(); }}
                         className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#a1a1aa] hover:text-red-400 transition-colors"
-                        title={t("common.archive")}
+                        title={t("common.delete")}
                     >
                         <i className="pi pi-trash text-[10px]" />
                     </button>
@@ -163,6 +163,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus, isDaily: false });
+    const [hideCompleted, setHideCompleted] = useState(false);
 
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string; isDaily: boolean } | null>(null);
@@ -174,7 +175,11 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
-    const filteredTasks = filterDaily ? tasks.filter(t => t.isDaily) : tasks;
+    const filteredTasks = tasks.filter(t => {
+        if (filterDaily && !t.isDaily) return false;
+        if (hideCompleted && t.status === 'done') return false;
+        return true;
+    });
 
     const handleCreateTask = async () => {
         if (!user?.uid || !newTask.title) return;
@@ -213,6 +218,8 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
             rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
+            acceptLabel: t("common.delete"),
+            rejectLabel: t("common.cancel"),
             accept: async () => {
                 try {
                     await archiveTask({ taskId: task.id }).unwrap();
@@ -259,7 +266,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
     const columns: { label: string; status: TaskStatus }[] = [
         { label: t("tasks.toDo"), status: 'todo' },
         { label: t("tasks.inProgress"), status: 'inprogress' },
-        { label: t("tasks.done"), status: 'done' },
+        ...(hideCompleted ? [] : [{ label: t("tasks.done"), status: 'done' as TaskStatus }]),
     ];
 
     if (isLoading) {
@@ -280,15 +287,27 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 <div className="flex flex-col gap-0.5">
                     <h3 className="text-base font-semibold text-[#fafafa]">{t("tasks.boardView")}</h3>
                     <p className="text-xs text-[#71717a]">
-                        {filterDaily ? t("tasks.showingDailyOnly") : t("tasks.dragToUpdate")}
                     </p>
                 </div>
-                <Button
-                    label={t("tasks.newTask")}
-                    icon="pi pi-plus"
-                    onClick={() => setShowCreateDialog(true)}
-                    className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
-                />
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            inputId="hide-completed-kanban"
+                            checked={hideCompleted}
+                            onChange={(e) => setHideCompleted(e.checked ?? false)}
+                            className="w-4 h-4 border-[#3f3f46] rounded-sm"
+                        />
+                        <label htmlFor="hide-completed-kanban" className="text-xs text-[#a1a1aa] cursor-pointer hover:text-[#fafafa] transition-colors select-none">
+                            {t("tasks.hideDoneTasks")}
+                        </label>
+                    </div>
+                    <Button
+                        label={t("tasks.newTask")}
+                        icon="pi pi-plus"
+                        onClick={() => setShowCreateDialog(true)}
+                        className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
+                    />
+                </div>
             </header>
 
             <DndContext
@@ -298,7 +317,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToWindowEdges, snapCenterToCursor]}
             >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
+                <div className={`grid grid-cols-1 ${hideCompleted ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4 overflow-hidden`}>
                     {columns.map((col) => {
                         const colTasks = filteredTasks.filter((t) => t.status === col.status);
                         return (
@@ -317,11 +336,10 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                                         {colTasks.map((task) => (
                                             <motion.div
                                                 key={task.id}
-                                                layout
-                                                initial={{ opacity: 0, scale: 0.96 }}
+                                                initial={{ opacity: 0, scale: 0.98 }}
                                                 animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.96 }}
-                                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                                exit={{ opacity: 0, scale: 0.98 }}
+                                                transition={{ duration: 0.2 }}
                                             >
                                                 <SortableTaskCard
                                                     task={task}
@@ -377,6 +395,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                         <InputText
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                            onKeyDown={(e) => e.key === 'Enter' && handleCreateTask()}
                             className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                         />
                     </div>
@@ -437,6 +456,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
                                 className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                             />
                         </div>
@@ -480,7 +500,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                     </div>
                 )}
             </Dialog>
-        </div>
+        </div >
     );
 };
 
