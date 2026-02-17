@@ -193,15 +193,19 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                 </div>
             </header>
 
-            <div className="flex flex-col gap-1.5">
-                <AnimatePresence mode="popLayout">
+            <div className="flex flex-col gap-1.5 max-h-[calc(100vh-150px)] overflow-y-auto pr-2 custom-scrollbar">
+                <AnimatePresence mode="popLayout" initial={false}>
                     {sortedTasks.map((task) => (
                         <motion.div
                             key={task.id}
+                            layout="position"
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.98 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{
+                                opacity: { duration: 0.2 },
+                                layout: { duration: 0.2, ease: "easeInOut" }
+                            }}
                         >
                             <div
                                 onClick={() => handleTaskClick(task.id)}

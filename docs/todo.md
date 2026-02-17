@@ -9,7 +9,6 @@ mutasyonlarda unwrap kullanılmalı
 
 tasklar kendi columnlarında da sıralanabilir olmalı (en son)
 
-
 normal auth test edilecek
 
 UI için yeni bir tema bulmalıyım bu çok sade
