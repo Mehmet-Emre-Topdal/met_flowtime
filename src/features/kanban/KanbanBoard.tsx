@@ -5,6 +5,7 @@ import {
     useCreateTaskMutation,
     useUpdateTaskMutation,
     useArchiveTaskMutation,
+    tasksApi,
 } from './api/tasksApi';
 import { useAppSelector, useAppDispatch } from '@/hooks/storeHooks';
 import { setSelectedTaskId } from './slices/taskSlice';
@@ -35,6 +36,7 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
     useSortable,
+    arrayMove,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToWindowEdges, snapCenterToCursor } from '@dnd-kit/modifiers';
@@ -175,7 +177,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
-    const filteredTasks = tasks.filter(t => {
+    const filteredTasks = tasks.filter((t: TaskDto) => {
         if (filterDaily && !t.isDaily) return false;
         if (hideCompleted && t.status === 'done') return false;
         return true;
@@ -244,21 +246,116 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
         const taskId = active.id as string;
         const overId = over.id as string;
+        const activeTask = tasks.find((t: TaskDto) => t.id === taskId);
+        if (!activeTask) return;
 
+        // Determine destination status
         let newStatus: TaskStatus | null = null;
         if (['todo', 'inprogress', 'done'].includes(overId)) {
             newStatus = overId as TaskStatus;
         } else {
-            const overTask = tasks.find((t) => t.id === overId);
+            const overTask = tasks.find((t: TaskDto) => t.id === overId);
             if (overTask) newStatus = overTask.status;
         }
 
-        const taskToUpdate = tasks.find((t) => t.id === taskId);
-        if (taskToUpdate && newStatus && taskToUpdate.status !== newStatus) {
-            try {
-                await updateTaskStatus({ taskId, status: newStatus }).unwrap();
-            } catch (e) {
-                console.error(t("tasks.statusUpdateFailed"), e);
+        if (!newStatus) return;
+
+        const isSameColumn = activeTask.status === newStatus;
+        const columnTasks = tasks
+            .filter((t: TaskDto) => t.status === newStatus && !t.isArchived)
+            .sort((a: TaskDto, b: TaskDto) => a.order - b.order);
+
+        if (isSameColumn) {
+            if (taskId === overId) return;
+
+            const oldIndex = columnTasks.findIndex(t => t.id === taskId);
+            const newIndex = columnTasks.findIndex(t => t.id === overId);
+
+            if (oldIndex !== -1 && newIndex !== -1) {
+                const movedTasks = arrayMove(columnTasks, oldIndex, newIndex);
+
+                // Calculate new order for the moved task
+                let newOrder: number;
+                if (newIndex === 0) {
+                    newOrder = movedTasks[1].order - 1;
+                } else if (newIndex === movedTasks.length - 1) {
+                    newOrder = movedTasks[movedTasks.length - 2].order + 1;
+                } else {
+                    newOrder = (movedTasks[newIndex - 1].order + movedTasks[newIndex + 1].order) / 2;
+                }
+
+                if (user?.uid) {
+                    const patchResult = dispatch(
+                        tasksApi.util.updateQueryData("getTasks", user.uid, (draft: TaskDto[]) => {
+                            const task = draft.find(t => t.id === taskId);
+                            if (task) {
+                                task.order = newOrder;
+                                draft.sort((a, b) => a.order - b.order);
+                            }
+                        })
+                    );
+
+                    try {
+                        await updateTask({
+                            taskId,
+                            updates: {
+                                ...editingTask, // Use spread if available, but let's be explicit
+                                title: activeTask.title,
+                                description: activeTask.description,
+                                isDaily: activeTask.isDaily,
+                                order: newOrder
+                            } as any
+                        }).unwrap();
+                    } catch (e) {
+                        patchResult.undo();
+                        console.error("Failed to reorder task:", e);
+                    }
+                }
+            }
+        } else {
+            // Moving to a different column
+            const overIndex = ['todo', 'inprogress', 'done'].includes(overId)
+                ? columnTasks.length // dropped on column header/empty space
+                : columnTasks.findIndex((t: TaskDto) => t.id === overId);
+
+            let newOrder: number;
+            if (columnTasks.length === 0) {
+                newOrder = 0;
+            } else if (overIndex === -1 || overIndex >= columnTasks.length) {
+                newOrder = columnTasks[columnTasks.length - 1].order + 1;
+            } else if (overIndex === 0) {
+                newOrder = columnTasks[0].order - 1;
+            } else {
+                newOrder = (columnTasks[overIndex - 1].order + columnTasks[overIndex].order) / 2;
+            }
+
+            if (user?.uid) {
+                const patchResult = dispatch(
+                    tasksApi.util.updateQueryData("getTasks", user.uid, (draft: TaskDto[]) => {
+                        const task = draft.find(t => t.id === taskId);
+                        if (task) {
+                            task.status = newStatus;
+                            task.order = newOrder;
+                            draft.sort((a, b) => a.order - b.order);
+                        }
+                    })
+                );
+
+                try {
+                    await updateTask({
+                        taskId,
+                        updates: {
+                            title: activeTask.title,
+                            description: activeTask.description,
+                            isDaily: activeTask.isDaily,
+                            status: newStatus,
+                            order: newOrder
+                        } as any
+                    }).unwrap();
+                } catch (e) {
+                    patchResult.undo();
+                    console.error("Failed to move task to new column:", e);
+                }
             }
         }
     };
@@ -319,7 +416,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             >
                 <div className={`grid grid-cols-1 ${hideCompleted ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4 overflow-hidden`}>
                     {columns.map((col) => {
-                        const colTasks = filteredTasks.filter((t) => t.status === col.status);
+                        const colTasks = filteredTasks.filter((t: TaskDto) => t.status === col.status);
                         return (
                             <DroppableColumn
                                 key={col.status}
@@ -329,17 +426,21 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             >
                                 <SortableContext
                                     id={col.status}
-                                    items={colTasks.map((t) => t.id)}
+                                    items={colTasks.map((t: TaskDto) => t.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <AnimatePresence mode="popLayout">
+                                    <AnimatePresence mode="popLayout" initial={false}>
                                         {colTasks.map((task) => (
                                             <motion.div
                                                 key={task.id}
+                                                layout="position"
                                                 initial={{ opacity: 0, scale: 0.98 }}
                                                 animate={{ opacity: 1, scale: 1 }}
                                                 exit={{ opacity: 0, scale: 0.98 }}
-                                                transition={{ duration: 0.2 }}
+                                                transition={{
+                                                    opacity: { duration: 0.2 },
+                                                    layout: { duration: 0.2, ease: "easeInOut" }
+                                                }}
                                             >
                                                 <SortableTaskCard
                                                     task={task}

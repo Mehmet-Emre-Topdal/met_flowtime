@@ -16,6 +16,8 @@ UI için yeni bir tema bulmalıyım bu çok sade
 
 şifre güncelleme eklenmeli
 
+TASK LİSTESİNE VİEW MORE EKLENMELİ 
+
 mobildeki hover işlemleri test edilmeli
 ---------------
 OPTİMİSTİK UI KODUNU OKUMALIYIM
