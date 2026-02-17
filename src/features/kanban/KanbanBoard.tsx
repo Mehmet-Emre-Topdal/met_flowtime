@@ -13,7 +13,10 @@ import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Checkbox } from 'primereact/checkbox';
+import { Tooltip } from 'primereact/tooltip';
 import { TaskDto, TaskStatus } from '@/types/task';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     DndContext,
     KeyboardSensor,
@@ -35,7 +38,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { restrictToWindowEdges, snapCenterToCursor } from '@dnd-kit/modifiers';
 
-/* ─── Sortable Card ─── */
 const SortableTaskCard = ({
     task,
     isSelected,
@@ -61,11 +63,10 @@ const SortableTaskCard = ({
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-none">
             <div
-                className={`relative p-3.5 rounded-lg cursor-grab active:cursor-grabbing border bg-[#18181b] group transition-colors
+                className={`relative p-3.5 rounded-lg cursor-grab active:cursor-grabbing border bg-[#18181b] group transition-colors overflow-hidden
                     ${isSelected ? 'border-[#6366f1]' : 'border-[#27272a] hover:border-[#3f3f46]'}`}
                 onClick={onClick}
             >
-                {/* Action Buttons */}
                 <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-20">
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
@@ -83,14 +84,19 @@ const SortableTaskCard = ({
                     </button>
                 </div>
 
-                <h5 className="text-[#fafafa] text-sm leading-tight select-none pr-14 font-medium">
-                    {task.title}
-                </h5>
+                <div className="flex items-center gap-2 mb-1 overflow-hidden">
+                    <h5 className="text-[#fafafa] text-sm leading-tight select-none pr-14 font-medium truncate">
+                        {task.title}
+                    </h5>
+                    {task.isDaily && (
+                        <span className="text-[9px] text-[#818cf8] border border-[#6366f1]/30 bg-[#6366f1]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
+                            Daily
+                        </span>
+                    )}
+                </div>
                 {task.description && (
-                    <p className="text-xs text-[#71717a]/70 mt-1.5 leading-relaxed select-none pr-14">
-                        {task.description.length > 60
-                            ? `${task.description.slice(0, 60)}...`
-                            : task.description}
+                    <p className="text-xs text-[#71717a]/70 mt-1 leading-relaxed select-none overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                        {task.description}
                     </p>
                 )}
                 <div className="flex items-center gap-1.5 text-[10px] text-[#71717a] mt-2">
@@ -102,7 +108,6 @@ const SortableTaskCard = ({
     );
 };
 
-/* ─── Droppable Column ─── */
 const DroppableColumn = ({
     status,
     label,
@@ -136,8 +141,11 @@ const DroppableColumn = ({
     );
 };
 
-/* ─── Main Board ─── */
-const KanbanBoard = () => {
+interface KanbanBoardProps {
+    filterDaily: boolean;
+}
+
+const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const { selectedTaskId } = useAppSelector((state) => state.task);
@@ -151,10 +159,10 @@ const KanbanBoard = () => {
     const [archiveTask] = useArchiveTaskMutation();
 
     const [showCreateDialog, setShowCreateDialog] = useState(false);
-    const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus });
+    const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus, isDaily: false });
 
     const [showEditDialog, setShowEditDialog] = useState(false);
-    const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string } | null>(null);
+    const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string; isDaily: boolean } | null>(null);
 
     const [activeId, setActiveId] = useState<string | null>(null);
 
@@ -163,19 +171,21 @@ const KanbanBoard = () => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
+    const filteredTasks = filterDaily ? tasks.filter(t => t.isDaily) : tasks;
+
     const handleCreateTask = async () => {
         if (!user?.uid || !newTask.title) return;
         try {
             await createTask({ userId: user.uid, task: newTask, order: tasks.length }).unwrap();
             setShowCreateDialog(false);
-            setNewTask({ title: '', description: '', status: 'todo' });
+            setNewTask({ title: '', description: '', status: 'todo', isDaily: false });
         } catch (e) {
             console.error(e);
         }
     };
 
     const handleEditTask = (task: TaskDto) => {
-        setEditingTask({ id: task.id, title: task.title, description: task.description });
+        setEditingTask({ id: task.id, title: task.title, description: task.description, isDaily: task.isDaily });
         setShowEditDialog(true);
     };
 
@@ -184,7 +194,7 @@ const KanbanBoard = () => {
         try {
             await updateTask({
                 taskId: editingTask.id,
-                updates: { title: editingTask.title, description: editingTask.description },
+                updates: { title: editingTask.title, description: editingTask.description, isDaily: editingTask.isDaily },
             }).unwrap();
             setShowEditDialog(false);
             setEditingTask(null);
@@ -257,18 +267,17 @@ const KanbanBoard = () => {
         );
     }
 
-    const activeTask = activeId ? tasks.find((t) => t.id === activeId) : null;
+    const activeTask = activeId ? filteredTasks.find((t) => t.id === activeId) : null;
 
     return (
         <div className="flex flex-col gap-6 w-full overflow-hidden">
             <ConfirmDialog />
 
-            {/* Header */}
             <header className="flex justify-between items-center p-5 rounded-xl border border-[#27272a] bg-[#18181b]">
                 <div className="flex flex-col gap-0.5">
                     <h3 className="text-base font-semibold text-[#fafafa]">Board View</h3>
                     <p className="text-xs text-[#71717a]">
-                        Drag tasks between columns to update status
+                        {filterDaily ? 'Showing daily tasks only' : 'Drag tasks between columns to update status'}
                     </p>
                 </div>
                 <Button
@@ -279,7 +288,6 @@ const KanbanBoard = () => {
                 />
             </header>
 
-            {/* DnD Board */}
             <DndContext
                 sensors={sensors}
                 collisionDetection={rectIntersection}
@@ -289,7 +297,7 @@ const KanbanBoard = () => {
             >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden">
                     {columns.map((col) => {
-                        const colTasks = tasks.filter((t) => t.status === col.status);
+                        const colTasks = filteredTasks.filter((t) => t.status === col.status);
                         return (
                             <DroppableColumn
                                 key={col.status}
@@ -302,22 +310,32 @@ const KanbanBoard = () => {
                                     items={colTasks.map((t) => t.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    {colTasks.map((task) => (
-                                        <SortableTaskCard
-                                            key={task.id}
-                                            task={task}
-                                            isSelected={selectedTaskId === task.id}
-                                            onClick={() =>
-                                                dispatch(
-                                                    setSelectedTaskId(
-                                                        task.id === selectedTaskId ? null : task.id
-                                                    )
-                                                )
-                                            }
-                                            onEdit={() => handleEditTask(task)}
-                                            onArchive={() => handleArchiveTask(task)}
-                                        />
-                                    ))}
+                                    <AnimatePresence mode="popLayout">
+                                        {colTasks.map((task) => (
+                                            <motion.div
+                                                key={task.id}
+                                                layout
+                                                initial={{ opacity: 0, scale: 0.96 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.96 }}
+                                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                            >
+                                                <SortableTaskCard
+                                                    task={task}
+                                                    isSelected={selectedTaskId === task.id}
+                                                    onClick={() =>
+                                                        dispatch(
+                                                            setSelectedTaskId(
+                                                                task.id === selectedTaskId ? null : task.id
+                                                            )
+                                                        )
+                                                    }
+                                                    onEdit={() => handleEditTask(task)}
+                                                    onArchive={() => handleArchiveTask(task)}
+                                                />
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
                                 </SortableContext>
                             </DroppableColumn>
                         );
@@ -339,7 +357,6 @@ const KanbanBoard = () => {
                 </DragOverlay>
             </DndContext>
 
-            {/* ─── Create Dialog ─── */}
             <Dialog
                 header="New Task"
                 visible={showCreateDialog}
@@ -369,6 +386,28 @@ const KanbanBoard = () => {
                             className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                         />
                     </div>
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#09090b]">
+                        <Checkbox
+                            inputId="kanban-daily-toggle"
+                            checked={newTask.isDaily}
+                            onChange={(e) => setNewTask({ ...newTask, isDaily: e.checked ?? false })}
+                            className="daily-checkbox"
+                        />
+                        <label htmlFor="kanban-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
+                            Make this a Daily Task
+                        </label>
+                        <i
+                            className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
+                            id="kanban-daily-tooltip-icon"
+                        />
+                        <Tooltip
+                            target="#kanban-daily-tooltip-icon"
+                            position="top"
+                            pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
+                        >
+                            Bu görev her gece yarısı listenizde tekrar aktif olur.
+                        </Tooltip>
+                    </div>
                     <Button
                         label="Create Task"
                         onClick={handleCreateTask}
@@ -377,7 +416,6 @@ const KanbanBoard = () => {
                 </div>
             </Dialog>
 
-            {/* ─── Edit Dialog ─── */}
             <Dialog
                 header="Edit Task"
                 visible={showEditDialog}
@@ -407,6 +445,28 @@ const KanbanBoard = () => {
                                 rows={3}
                                 className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                             />
+                        </div>
+                        <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#09090b]">
+                            <Checkbox
+                                inputId="kanban-edit-daily-toggle"
+                                checked={editingTask.isDaily}
+                                onChange={(e) => setEditingTask({ ...editingTask, isDaily: e.checked ?? false })}
+                                className="daily-checkbox"
+                            />
+                            <label htmlFor="kanban-edit-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
+                                Make this a Daily Task
+                            </label>
+                            <i
+                                className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
+                                id="kanban-edit-daily-tooltip-icon"
+                            />
+                            <Tooltip
+                                target="#kanban-edit-daily-tooltip-icon"
+                                position="top"
+                                pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
+                            >
+                                Bu görev her gece yarısı listenizde tekrar aktif olur.
+                            </Tooltip>
                         </div>
                         <Button
                             label="Save Changes"

@@ -4,9 +4,11 @@ import { auth } from "@/lib/firebase";
 import { useAppDispatch } from "@/hooks/storeHooks";
 import { setUser, setLoading } from "@/features/auth/slices/authSlice";
 import { UserDto } from "@/types/auth";
+import { useResetDailyTasksMutation } from "@/features/kanban/api/tasksApi";
 
 export const useAuthInit = () => {
     const dispatch = useAppDispatch();
+    const [resetDailyTasks] = useResetDailyTasksMutation();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -18,6 +20,7 @@ export const useAuthInit = () => {
                     photoURL: user.photoURL,
                 };
                 dispatch(setUser(userDto));
+                resetDailyTasks(user.uid);
             } else {
                 dispatch(setUser(null));
             }
@@ -25,5 +28,5 @@ export const useAuthInit = () => {
         });
 
         return () => unsubscribe();
-    }, [dispatch]);
+    }, [dispatch, resetDailyTasks]);
 };

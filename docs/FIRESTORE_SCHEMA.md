@@ -19,6 +19,9 @@
     - `status`: string ("todo" | "inprogress" | "done")
     - `totalFocusedTime`: number (minutes)
     - `order`: number (For drag & drop ranking)
+    - `isArchived`: boolean
+    - `isDaily`: boolean (Marks task as a daily recurring task)
+    - `lastResetDate`: string (YYYY-MM-DD, last date the daily task was reset to "todo")
     - `createdAt`: timestamp
     - `updatedAt`: timestamp
 
