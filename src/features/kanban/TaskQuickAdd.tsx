@@ -25,7 +25,7 @@ const TaskQuickAdd = () => {
     const showSuccess = (msg: string) => {
         toast.current?.show({
             severity: 'success',
-            summary: 'Chronicle Updated',
+            summary: 'Task Created',
             detail: msg,
             life: 3000,
             className: 'custom-toast'
@@ -35,7 +35,7 @@ const TaskQuickAdd = () => {
     const showError = (msg: string) => {
         toast.current?.show({
             severity: 'error',
-            summary: 'Inscription Failed',
+            summary: 'Error',
             detail: msg,
             life: 4000
         });
@@ -43,17 +43,12 @@ const TaskQuickAdd = () => {
 
     const handleQuickAdd = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        console.log('Quick Ekleme tetiklendi', { userId: user?.uid, title: quickTitle });
 
         if (!user?.uid) {
-            console.warn('Ekleme iptal: Kullanıcı kimliği bulunamadı.');
-            showError('User identity not found in the archives.');
+            showError('Authentication required.');
             return;
         }
-        if (!quickTitle.trim()) {
-            console.warn('Ekleme iptal: Başlık boş bırakılamaz.');
-            return;
-        }
+        if (!quickTitle.trim()) return;
 
         try {
             await createTask({
@@ -62,26 +57,19 @@ const TaskQuickAdd = () => {
                 order: tasks.length
             }).unwrap();
 
-            showSuccess('New directive inscribed on the parchment.');
+            showSuccess('Task added successfully.');
             setQuickTitle('');
         } catch (err: any) {
-            console.error("Quick add failed:", err);
-            showError(err.message || 'The library archives are currently unreachable.');
+            showError(err.message || 'Failed to create task.');
         }
     };
 
     const handleAdvancedAdd = async () => {
-        console.log('Advanced Ekleme tetiklendi', { userId: user?.uid, task: advancedTask });
-
         if (!user?.uid) {
-            console.warn('Advanced Ekleme iptal: Kullanıcı kimliği bulunamadı.');
-            showError('User identity not found in the archives.');
+            showError('Authentication required.');
             return;
         }
-        if (!advancedTask.title.trim()) {
-            console.warn('Advanced Ekleme iptal: Başlık boş bırakılamaz.');
-            return;
-        }
+        if (!advancedTask.title.trim()) return;
 
         try {
             await createTask({
@@ -90,91 +78,90 @@ const TaskQuickAdd = () => {
                 order: tasks.length
             }).unwrap();
 
-            showSuccess('Mission blueprint successfully archived.');
+            showSuccess('Task created successfully.');
             setAdvancedTask({ title: '', description: '', status: 'todo' });
             setIsAdvancedOpen(false);
         } catch (err: any) {
-            console.error("Advanced add failed:", err);
-            showError(err.message || 'Failed to archive the mission blueprint.');
+            showError(err.message || 'Failed to create task.');
         }
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col gap-4">
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-3">
             <Toast ref={toast} position="bottom-right" />
 
-            <div className={`flex flex-col md:flex-row items-center gap-3 bg-[#1e1e1e]/60 p-2 rounded-2xl border border-[#d4af3720] backdrop-blur-md shadow-xl transition-all hover:border-[#d4af3740] ${isLoading ? 'opacity-70' : ''}`}>
-                <form onSubmit={handleQuickAdd} className="flex-1 flex items-center gap-3 px-2 w-full">
+            <div className={`flex flex-col md:flex-row items-center gap-2 bg-[#18181b] p-2 rounded-lg border border-[#27272a] transition-colors hover:border-[#3f3f46] ${isLoading ? 'opacity-70' : ''}`}>
+                <form onSubmit={handleQuickAdd} className="flex-1 flex items-center gap-2 px-2 w-full">
                     <InputText
                         value={quickTitle}
                         onChange={(e) => setQuickTitle(e.target.value)}
-                        placeholder="Inscribe a new directive..."
+                        placeholder="Add a new task..."
                         disabled={isLoading}
-                        className="flex-1 bg-transparent border-none text-[#fffdd0] placeholder-[#c5a059]/30 font-serif text-lg focus:ring-0 disabled:opacity-50"
+                        className="flex-1 bg-transparent border-none text-[#fafafa] placeholder-[#71717a] text-sm focus:ring-0 disabled:opacity-50"
                     />
                     <Button
                         icon="pi pi-plus"
                         loading={isLoading}
                         onClick={handleQuickAdd}
                         disabled={!quickTitle.trim() || isLoading}
-                        className="p-button-rounded p-button-text text-[#c5a059] hover:bg-[#c5a059]/10"
-                        tooltip="Quick Inscribe"
+                        className="p-button-rounded p-button-text text-[#6366f1] hover:bg-[#6366f1]/10"
+                        tooltip="Quick add"
                     />
                 </form>
 
-                <div className="h-8 w-px bg-[#d4af3710] hidden md:block"></div>
+                <div className="h-6 w-px bg-[#27272a] hidden md:block"></div>
 
                 <Button
-                    label="Advanced Design"
+                    label="Details"
                     icon="pi pi-external-link"
                     onClick={() => setIsAdvancedOpen(true)}
                     disabled={isLoading}
-                    className="p-button-text p-button-sm text-[#c5a059]/60 hover:text-[#c5a059] font-sans uppercase tracking-[0.2em] text-[9px] px-4"
+                    className="p-button-text p-button-sm text-[#71717a] hover:text-[#a1a1aa] text-xs px-3"
                 />
             </div>
 
             {isError && (
-                <p className="text-red-400 text-[10px] uppercase tracking-widest text-center animate-pulse">
-                    Chronicle Error: {(error as any)?.message || 'Archive Unreachable'}
+                <p className="text-red-400 text-xs text-center">
+                    Error: {(error as any)?.message || 'Something went wrong'}
                 </p>
             )}
 
             <Dialog
-                header="Mission Blueprint"
+                header="Create Task"
                 visible={isAdvancedOpen}
                 onHide={() => !isLoading && setIsAdvancedOpen(false)}
-                className="w-full max-w-lg bg-[#1e1e1e] border border-[#d4af3740] shadow-2xl"
+                className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
                 closable={!isLoading}
                 pt={{
-                    header: { className: 'bg-[#1e1e1e] text-[#fffdd0] font-serif border-b border-[#d4af3710] p-6' },
-                    content: { className: 'p-6 bg-[#1e1e1e]' },
-                    footer: { className: 'p-6 bg-[#1e1e1e] border-t border-[#d4af3710]' }
+                    header: { className: 'bg-[#18181b] text-[#fafafa] border-b border-[#27272a] p-5' },
+                    content: { className: 'p-5 bg-[#18181b]' },
+                    footer: { className: 'p-5 bg-[#18181b] border-t border-[#27272a]' }
                 }}
                 footer={
                     <div className="flex justify-end gap-3">
-                        <Button label="Discard" onClick={() => setIsAdvancedOpen(false)} disabled={isLoading} className="p-button-text text-[#c5a059]/40 hover:text-[#c5a059]" />
-                        <Button label="Inscribe Blueprint" loading={isLoading} onClick={handleAdvancedAdd} disabled={isLoading || !advancedTask.title.trim()} className="bg-[#c5a059] text-[#0f172a] font-serif px-6 rounded-lg" />
+                        <Button label="Cancel" onClick={() => setIsAdvancedOpen(false)} disabled={isLoading} className="p-button-text text-[#71717a] hover:text-[#a1a1aa]" />
+                        <Button label="Create" loading={isLoading} onClick={handleAdvancedAdd} disabled={isLoading || !advancedTask.title.trim()} className="bg-[#6366f1] border-none text-white px-5 rounded-lg hover:bg-[#4f46e5]" />
                     </div>
                 }
             >
-                <div className="flex flex-col gap-6 mt-4">
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[10px] text-[#c5a059] uppercase tracking-[0.3em] font-bold">Directive Title</label>
+                <div className="flex flex-col gap-5 mt-2">
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Title</label>
                         <InputText
                             value={advancedTask.title}
                             onChange={(e) => setAdvancedTask({ ...advancedTask, title: e.target.value })}
                             disabled={isLoading}
-                            className="bg-[#0f172a]/40 border-[#d4af3720] text-[#fffdd0] focus:border-[#d4af37] disabled:opacity-50"
+                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1] disabled:opacity-50"
                         />
                     </div>
-                    <div className="flex flex-col gap-2">
-                        <label className="text-[10px] text-[#c5a059] uppercase tracking-[0.3em] font-bold">Elaboration</label>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Description</label>
                         <InputTextarea
                             value={advancedTask.description}
                             onChange={(e) => setAdvancedTask({ ...advancedTask, description: e.target.value })}
                             rows={4}
                             disabled={isLoading}
-                            className="bg-[#0f172a]/40 border-[#d4af3720] text-[#fffdd0] focus:border-[#d4af37] disabled:opacity-50"
+                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1] disabled:opacity-50"
                         />
                     </div>
                 </div>
@@ -182,15 +169,15 @@ const TaskQuickAdd = () => {
 
             <style jsx global>{`
                 .p-inputtext:focus, .p-inputtextarea:focus {
-                    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.1) !important;
+                    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3) !important;
                 }
                 .custom-toast .p-toast-message {
-                    background: #1e1e1e !important;
-                    border: 1px solid rgba(212, 175, 55, 0.2) !important;
-                    color: #fffdd0 !important;
+                    background: #18181b !important;
+                    border: 1px solid #27272a !important;
+                    color: #fafafa !important;
                 }
                 .custom-toast .p-toast-message-success .p-toast-message-icon {
-                    color: #c5a059 !important;
+                    color: #6366f1 !important;
                 }
             `}</style>
         </div>

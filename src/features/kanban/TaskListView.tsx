@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     useGetTasksQuery,
     useUpdateTaskStatusMutation,
+    useCreateTaskMutation,
     useUpdateTaskMutation,
     useArchiveTaskMutation,
 } from './api/tasksApi';
 import { useAppSelector, useAppDispatch } from '@/hooks/storeHooks';
 import { setSelectedTaskId } from './slices/taskSlice';
-import { TaskDto } from '@/types/task';
+import { TaskDto, TaskStatus } from '@/types/task';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Dialog } from 'primereact/dialog';
@@ -22,15 +23,17 @@ const TaskListView = () => {
     const { data: tasks = [], isLoading } = useGetTasksQuery(user?.uid || '', { skip: !user?.uid });
 
     const [updateTaskStatus] = useUpdateTaskStatusMutation();
+    const [createTask] = useCreateTaskMutation();
     const [updateTask] = useUpdateTaskMutation();
     const [archiveTask] = useArchiveTaskMutation();
 
+    const [showCreateDialog, setShowCreateDialog] = useState(false);
+    const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus });
     const [showEditDialog, setShowEditDialog] = useState(false);
     const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string } | null>(null);
     const [statusDropdownTaskId, setStatusDropdownTaskId] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Dropdown dışı tıklama
     useEffect(() => {
         if (!statusDropdownTaskId) return;
         const handleClick = (e: MouseEvent) => {
@@ -48,9 +51,9 @@ const TaskListView = () => {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'done': return 'pi pi-check-circle text-green-500';
-            case 'inprogress': return 'pi pi-spinner pi-spin text-[#c5a059]';
-            default: return 'pi pi-circle text-[#c5a059]/30';
+            case 'done': return 'pi pi-check-circle text-emerald-500';
+            case 'inprogress': return 'pi pi-spinner pi-spin text-[#6366f1]';
+            default: return 'pi pi-circle text-[#3f3f46]';
         }
     };
 
@@ -71,9 +74,9 @@ const TaskListView = () => {
     };
 
     const statusOptions: { value: string; label: string; icon: string; color: string }[] = [
-        { value: 'todo', label: 'To Do', icon: 'pi pi-circle', color: 'text-[#c5a059]/50' },
-        { value: 'inprogress', label: 'In Progress', icon: 'pi pi-spinner', color: 'text-[#c5a059]' },
-        { value: 'done', label: 'Done', icon: 'pi pi-check-circle', color: 'text-green-500' },
+        { value: 'todo', label: 'To Do', icon: 'pi pi-circle', color: 'text-[#71717a]' },
+        { value: 'inprogress', label: 'In Progress', icon: 'pi pi-spinner', color: 'text-[#6366f1]' },
+        { value: 'done', label: 'Done', icon: 'pi pi-check-circle', color: 'text-emerald-500' },
     ];
 
     const handleStatusSelect = async (taskId: string, newStatus: string) => {
@@ -82,6 +85,17 @@ const TaskListView = () => {
             await updateTaskStatus({ taskId, status: newStatus }).unwrap();
         } catch (err) {
             console.error('Status update failed:', err);
+        }
+    };
+
+    const handleCreateTask = async () => {
+        if (!user?.uid || !newTask.title) return;
+        try {
+            await createTask({ userId: user.uid, task: newTask, order: tasks.length }).unwrap();
+            setShowCreateDialog(false);
+            setNewTask({ title: '', description: '', status: 'todo' });
+        } catch (e) {
+            console.error(e);
         }
     };
 
@@ -106,11 +120,11 @@ const TaskListView = () => {
 
     const handleArchiveTask = (task: TaskDto) => {
         confirmDialog({
-            message: `"${task.title}" arşivlenecek. Focus verileri korunacak. Devam edilsin mi?`,
-            header: 'Görevi Arşivle',
+            message: `"${task.title}" will be archived. Focus data will be preserved.`,
+            header: 'Archive Task',
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
-            rejectClassName: 'border border-[#c5a059]/30 text-[#c5a059] px-4 py-2 rounded-lg',
+            rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
             accept: async () => {
                 try {
                     await archiveTask({ taskId: task.id }).unwrap();
@@ -126,44 +140,51 @@ const TaskListView = () => {
 
     if (isLoading) return null;
 
-    // Sıralama: In Progress → Todo → Done
     const statusPriority: Record<string, number> = { inprogress: 0, todo: 1, done: 2 };
     const sortedTasks = [...tasks].sort(
         (a, b) => (statusPriority[a.status] ?? 1) - (statusPriority[b.status] ?? 1)
     );
 
     return (
-        <div className="flex flex-col gap-4 w-full max-w-4xl mx-auto py-8">
+        <div className="flex flex-col gap-4 w-full max-w-4xl mx-auto py-6">
             <ConfirmDialog />
 
-            <div className="flex flex-col gap-1 mb-4 border-b border-[#c5a059]/10 pb-4">
-                <h3 className="font-serif text-xl text-[#fffdd0]">Task Transcript</h3>
-                <p className="text-[10px] text-[#c5a059]/50 uppercase tracking-[0.2em]">Chronicle of your ongoing directives</p>
-            </div>
+            <header className="flex justify-between items-center p-5 rounded-xl border border-[#27272a] bg-[#18181b]">
+                <div className="flex flex-col gap-0.5">
+                    <h3 className="text-base font-semibold text-[#fafafa]">Tasks</h3>
+                    <p className="text-xs text-[#71717a]">All your tasks, sorted by status</p>
+                </div>
+                <Button
+                    label="New Task"
+                    icon="pi pi-plus"
+                    onClick={() => setShowCreateDialog(true)}
+                    className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
+                />
+            </header>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
                 {sortedTasks.map((task) => (
                     <div
                         key={task.id}
                         onClick={() => handleTaskClick(task.id)}
-                        className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 cursor-pointer group
+                        className={`flex items-center justify-between p-3.5 rounded-lg border transition-all duration-200 cursor-pointer group
                             ${selectedTaskId === task.id
-                                ? 'bg-[#c5a059]/10 border-[#c5a059] shadow-lg shadow-[#c5a059]/5'
-                                : 'bg-[#1e1e1e]/40 border-[#c5a059]/10 hover:border-[#c5a059]/30'}`}
+                                ? 'bg-[#6366f1]/5 border-[#6366f1]/30'
+                                : 'bg-[#18181b] border-[#27272a] hover:border-[#3f3f46]'}`}
                     >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3.5">
                             <i className={getStatusIcon(task.status)}></i>
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-3">
-                                    <span className={`font-serif text-lg transition-colors
-                                        ${selectedTaskId === task.id ? 'text-[#fffdd0]' : 'text-[#fffdd0]/70 group-hover:text-[#fffdd0]'}`}>
+                                <div className="flex items-center gap-2.5">
+                                    <span className={`text-sm font-medium transition-colors
+                                        ${selectedTaskId === task.id ? 'text-[#fafafa]' : 'text-[#a1a1aa] group-hover:text-[#fafafa]'}`}>
                                         {task.title}
                                     </span>
                                     <div className="relative">
                                         <Tag
                                             value={getStatusLabel(task.status)}
                                             severity={getStatusSeverity(task.status)}
-                                            className="text-[8px] tracking-[0.1em] px-2 py-0.5 rounded-full font-sans border border-current bg-transparent opacity-60 cursor-pointer hover:opacity-100 transition-opacity"
+                                            className="text-[8px] tracking-wide px-2 py-0.5 rounded font-medium border border-current bg-transparent opacity-50 cursor-pointer hover:opacity-100 transition-opacity"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setStatusDropdownTaskId(
@@ -174,7 +195,7 @@ const TaskListView = () => {
                                         {statusDropdownTaskId === task.id && (
                                             <div
                                                 ref={dropdownRef}
-                                                className="absolute left-0 top-full mt-1 z-50 bg-[#1e1e1e] border border-[#c5a059]/20 rounded-xl shadow-xl shadow-black/40 overflow-hidden min-w-[140px] animate-dropdown-in"
+                                                className="absolute left-0 top-full mt-1 z-50 bg-[#18181b] border border-[#27272a] rounded-lg overflow-hidden min-w-[140px] animate-dropdown-in"
                                             >
                                                 {statusOptions.map((opt) => (
                                                     <button
@@ -185,14 +206,14 @@ const TaskListView = () => {
                                                         }}
                                                         className={`w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors
                                                             ${task.status === opt.value
-                                                                ? 'bg-[#c5a059]/15 text-[#fffdd0]'
-                                                                : 'text-[#fffdd0]/60 hover:bg-[#c5a059]/10 hover:text-[#fffdd0]'
+                                                                ? 'bg-[#27272a] text-[#fafafa]'
+                                                                : 'text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa]'
                                                             }`}
                                                     >
                                                         <i className={`${opt.icon} text-[10px] ${opt.color}`} />
                                                         <span>{opt.label}</span>
                                                         {task.status === opt.value && (
-                                                            <i className="pi pi-check text-[8px] text-[#c5a059] ml-auto" />
+                                                            <i className="pi pi-check text-[8px] text-[#6366f1] ml-auto" />
                                                         )}
                                                     </button>
                                                 ))}
@@ -200,9 +221,16 @@ const TaskListView = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-3 mt-1">
-                                    <span className="text-[10px] text-[#c5a059]/40 uppercase tracking-widest">{task.totalFocusedTime} mins focused</span>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="text-[10px] text-[#71717a]">{task.totalFocusedTime}m focused</span>
                                 </div>
+                                {task.description && (
+                                    <p className="text-xs text-[#71717a]/70 mt-1 leading-relaxed">
+                                        {task.description.length > 80
+                                            ? `${task.description.slice(0, 80)}...`
+                                            : task.description}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -210,14 +238,14 @@ const TaskListView = () => {
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button
                                     onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-[#c5a059]/10 hover:bg-[#c5a059]/30 text-[#c5a059] transition-colors"
+                                    className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#71717a] hover:text-[#fafafa] transition-colors"
                                     title="Edit"
                                 >
                                     <i className="pi pi-pencil text-xs" />
                                 </button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); handleArchiveTask(task); }}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 hover:bg-red-500/30 text-red-400 transition-colors"
+                                    className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#71717a] hover:text-red-400 transition-colors"
                                     title="Archive"
                                 >
                                     <i className="pi pi-trash text-xs" />
@@ -225,9 +253,9 @@ const TaskListView = () => {
                             </div>
 
                             {selectedTaskId === task.id && (
-                                <div className="flex items-center gap-2 animate-pulse ml-2">
-                                    <span className="text-[10px] text-[#c5a059] uppercase tracking-[0.3em] font-bold">Focusing</span>
-                                    <i className="pi pi-bolt text-[#c5a059]"></i>
+                                <div className="flex items-center gap-1.5 ml-2">
+                                    <span className="text-[10px] text-[#6366f1] font-medium">Focusing</span>
+                                    <i className="pi pi-bolt text-[#6366f1] text-xs"></i>
                                 </div>
                             )}
                         </div>
@@ -236,47 +264,85 @@ const TaskListView = () => {
             </div>
 
             {tasks.length === 0 && (
-                <div className="text-center py-20 bg-[#1e1e1e]/20 rounded-3xl border border-dashed border-[#c5a059]/10">
-                    <p className="font-serif text-[#c5a059]/40 italic">No directives inscribed in the archives.</p>
+                <div className="text-center py-16 bg-[#18181b] rounded-xl border border-dashed border-[#27272a]">
+                    <p className="text-sm text-[#71717a]">No tasks yet. Add one above to get started.</p>
                 </div>
             )}
 
+            {/* ─── Create Dialog ─── */}
+            <Dialog
+                header="New Task"
+                visible={showCreateDialog}
+                onHide={() => setShowCreateDialog(false)}
+                className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
+                pt={{
+                    header: { className: 'bg-[#18181b] text-[#fafafa] border-b border-[#27272a] p-5' },
+                    content: { className: 'p-5 bg-[#18181b]' },
+                    footer: { className: 'p-5 bg-[#18181b] border-t border-[#27272a]' },
+                }}
+            >
+                <div className="flex flex-col gap-5 mt-2">
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Title</label>
+                        <InputText
+                            value={newTask.title}
+                            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                        />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Description</label>
+                        <InputTextarea
+                            value={newTask.description}
+                            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                            rows={3}
+                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                        />
+                    </div>
+                    <Button
+                        label="Create Task"
+                        onClick={handleCreateTask}
+                        className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
+                    />
+                </div>
+            </Dialog>
+
             {/* ─── Edit Dialog ─── */}
             <Dialog
-                header="Edit Directive"
+                header="Edit Task"
                 visible={showEditDialog}
                 onHide={() => { setShowEditDialog(false); setEditingTask(null); }}
-                className="w-full max-w-lg bg-[#1e1e1e]/90 backdrop-blur-xl border border-[#c5a059]/30"
+                className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
                 pt={{
-                    header: { className: 'bg-transparent text-[#fffdd0] font-serif border-b border-[#c5a059]/10 p-6' },
-                    content: { className: 'p-6 bg-transparent' },
-                    footer: { className: 'p-6 bg-transparent border-t border-[#c5a059]/10' },
+                    header: { className: 'bg-[#18181b] text-[#fafafa] border-b border-[#27272a] p-5' },
+                    content: { className: 'p-5 bg-[#18181b]' },
+                    footer: { className: 'p-5 bg-[#18181b] border-t border-[#27272a]' },
                 }}
             >
                 {editingTask && (
-                    <div className="flex flex-col gap-6 mt-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] text-[#c5a059] uppercase tracking-widest">Title</label>
+                    <div className="flex flex-col gap-5 mt-2">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-[#71717a] font-medium">Title</label>
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                                className="bg-[#0f172a]/50 border-[#c5a059]/20 text-[#fffdd0] focus:border-[#c5a059]"
+                                className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                             />
                         </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] text-[#c5a059] uppercase tracking-widest">Description</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-[#71717a] font-medium">Description</label>
                             <InputTextarea
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
                                 rows={3}
-                                className="bg-[#0f172a]/50 border-[#c5a059]/20 text-[#fffdd0] focus:border-[#c5a059]"
+                                className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
                             />
                         </div>
                         <Button
                             label="Save Changes"
                             icon="pi pi-check"
                             onClick={handleSaveEdit}
-                            className="bg-[#c5a059] text-[#0f172a] font-serif py-3 rounded-lg hover:bg-[#b59049]"
+                            className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
                         />
                     </div>
                 )}

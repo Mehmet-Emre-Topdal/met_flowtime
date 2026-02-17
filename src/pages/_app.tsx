@@ -17,17 +17,16 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0f172a] gap-6">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#09090b] gap-6">
         <ProgressSpinner
-          style={{ width: '64px', height: '64px' }}
+          style={{ width: '48px', height: '48px' }}
           strokeWidth="3"
           fill="transparent"
           animationDuration=".5s"
         />
         <div className="flex flex-col items-center gap-2">
-          <h2 className="text-2xl font-serif text-[#fffdd0] tracking-widest animate-pulse">FLOWTIME</h2>
-          <div className="h-[1px] w-24 bg-[#c5a059]/30"></div>
-          <p className="text-[10px] text-[#c5a059]/50 uppercase tracking-[0.4em]">Calibrating Focus</p>
+          <h2 className="text-xl font-semibold text-[#fafafa] tracking-tight">Flowtime</h2>
+          <p className="text-xs text-[#71717a]">Loading workspace...</p>
         </div>
       </div>
     );

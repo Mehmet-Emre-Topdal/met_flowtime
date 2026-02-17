@@ -41,7 +41,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             command: () => setSettingsVisible(true)
         },
         {
-            label: "Logout",
+            label: "Log out",
             icon: "pi pi-sign-out",
             command: handleLogout
         }
@@ -52,37 +52,36 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }
 
     return (
-        <div className="min-h-screen bg-[#0f172a] text-[#fffdd0] font-sans">
-            <header className="fixed top-0 left-0 right-0 h-16 bg-[#0f172a]/80 backdrop-blur-md border-b border-[#d4af3720] z-50">
+        <div className="min-h-screen bg-[#09090b] text-[#fafafa] font-sans">
+            <header className="fixed top-0 left-0 right-0 h-14 bg-[#09090b]/80 backdrop-blur-md border-b border-[#27272a] z-50">
                 <div className="container mx-auto h-full flex items-center justify-between px-6">
                     <Link href="/" className="no-underline">
-                        <h1 className="font-serif text-2xl tracking-widest text-[#d4af37] hover:opacity-80 transition-opacity">
-                            FLOWTIME
+                        <h1 className="text-lg font-semibold tracking-tight text-[#fafafa] hover:text-[#6366f1] transition-colors">
+                            flowtime
                         </h1>
                     </Link>
 
-                    <div className="flex items-center gap-4">
-                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#1e293b] border-[#d4af3720] text-[#fffdd0]" />
+                    <div className="flex items-center gap-3">
+                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#18181b] border-[#27272a] text-[#fafafa]" />
                         <div
-                            className="flex items-center gap-3 cursor-pointer group"
+                            className="flex items-center gap-2.5 cursor-pointer group px-2 py-1.5 rounded-lg hover:bg-[#18181b] transition-colors"
                             onClick={(e) => menuRef.current?.toggle(e)}
                         >
                             <div className="text-right hidden sm:block">
-                                <p className="text-[10px] text-[#c5a059]/50 uppercase tracking-[0.2em] italic font-serif leading-none">Researcher</p>
-                                <p className="text-sm font-medium text-[#fffdd0]/80 group-hover:text-[#d4af37] transition-colors">{user?.displayName?.split(' ')[0]}</p>
+                                <p className="text-xs text-[#a1a1aa] group-hover:text-[#fafafa] transition-colors leading-none">{user?.displayName?.split(' ')[0]}</p>
                             </div>
                             <Avatar
                                 image={user?.photoURL || undefined}
                                 icon={!user?.photoURL ? "pi pi-user" : undefined}
                                 shape="circle"
-                                className="border border-[#d4af3730] group-hover:border-[#d4af37] transition-all w-9 h-9"
+                                className="border border-[#27272a] group-hover:border-[#3f3f46] transition-all w-8 h-8"
                             />
                         </div>
                     </div>
                 </div>
             </header>
 
-            <main className="pt-24 pb-12">
+            <main className="pt-20 pb-12">
                 <div className="container mx-auto px-6 max-w-6xl">
                     {children}
                 </div>
@@ -95,27 +94,31 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
             <style jsx global>{`
                 .p-menu {
-                    background: #1e293b !important;
-                    border: 1px solid rgba(212, 175, 55, 0.2) !important;
-                    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+                    background: #18181b !important;
+                    border: 1px solid #27272a !important;
+                    border-radius: 8px !important;
+                    box-shadow: none !important;
                 }
                 .p-menu .p-menuitem-link {
-                    padding: 0.75rem 1rem !important;
+                    padding: 0.6rem 1rem !important;
                 }
                 .p-menu .p-menuitem-link .p-menuitem-text {
-                    color: rgba(255, 253, 208, 0.8) !important;
-                    font-size: 0.875rem !important;
-                    font-family: var(--font-serif) !important;
+                    color: #a1a1aa !important;
+                    font-size: 0.8125rem !important;
+                    font-family: "Inter", sans-serif !important;
                 }
                 .p-menu .p-menuitem-link .p-menuitem-icon {
-                    color: #c5a059 !important;
-                    margin-right: 0.75rem !important;
+                    color: #71717a !important;
+                    margin-right: 0.5rem !important;
                 }
                 .p-menu .p-menuitem-link:not(.p-disabled):hover {
-                    background: rgba(197, 160, 89, 0.1) !important;
+                    background: #27272a !important;
                 }
                 .p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text {
-                    color: #fffdd0 !important;
+                    color: #fafafa !important;
+                }
+                .p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-icon {
+                    color: #6366f1 !important;
                 }
             `}</style>
         </div>

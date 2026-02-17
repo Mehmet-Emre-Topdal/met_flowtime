@@ -77,21 +77,21 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#0f172a] via-[#1a1c2c] to-[#2d2d2d] animate-fade-in px-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#09090b] animate-fade-in px-4">
             <Card
-                className="w-full max-w-md shadow-2xl border border-[#c5a059]/20 bg-[#1e293b]/90 backdrop-blur-sm animate-slide-up"
+                className="w-full max-w-md border border-[#27272a] bg-[#18181b] animate-slide-up"
                 pt={{
-                    root: { className: 'rounded-2xl overflow-hidden' },
+                    root: { className: 'rounded-xl overflow-hidden' },
                     content: { className: 'p-8' }
                 }}
             >
                 {/* Logo & Title */}
                 <div className="text-center mb-8">
-                    <div className="inline-block p-4 rounded-full bg-[#c5a059]/10 mb-4">
-                        <i className="pi pi-bolt text-4xl text-[#c5a059]"></i>
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#6366f1]/10 mb-4">
+                        <i className="pi pi-bolt text-2xl text-[#6366f1]"></i>
                     </div>
-                    <h1 className="text-3xl font-serif text-[#fffdd0] mb-2 tracking-tight">Flowtime & Kanban</h1>
-                    <p className="text-[#c5a059]/70 font-medium tracking-wide text-sm uppercase">Deep Work Experience</p>
+                    <h1 className="text-2xl font-semibold text-[#fafafa] mb-1.5 tracking-tight">flowtime</h1>
+                    <p className="text-[#71717a] text-sm">Focus tracking & task management</p>
                 </div>
 
                 {/* Error Message */}
@@ -105,38 +105,37 @@ const LoginPage = () => {
                 {/* Email/Password Form */}
                 <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4 mb-6">
                     {mode === "register" && (
-                        <div className="flex flex-col gap-1">
-                            <label className="text-[10px] text-[#c5a059]/50 uppercase tracking-widest">Name</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-xs text-[#71717a] font-medium">Name</label>
                             <InputText
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 placeholder="Your name"
-                                className="bg-[#0f172a]/50 border border-[#c5a059]/15 text-[#fffdd0] rounded-xl px-4 py-3 focus:border-[#c5a059]/50"
+                                className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
                             />
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-[10px] text-[#c5a059]/50 uppercase tracking-widest">Email</label>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Email</label>
                         <InputText
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="you@example.com"
                             type="email"
-                            className="bg-[#0f172a]/50 border border-[#c5a059]/15 text-[#fffdd0] rounded-xl px-4 py-3 focus:border-[#c5a059]/50"
+                            className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1">
-                        <label className="text-[10px] text-[#c5a059]/50 uppercase tracking-widest">Password</label>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs text-[#71717a] font-medium">Password</label>
                         <Password
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
                             feedback={mode === "register"}
                             toggleMask
                             className="auth-password-input"
-                            inputClassName="bg-[#0f172a]/50 border border-[#c5a059]/15 text-[#fffdd0] rounded-xl px-4 py-3 w-full focus:border-[#c5a059]/50"
+                            inputClassName="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 w-full focus:border-[#6366f1]"
                         />
                     </div>
 
@@ -148,15 +147,15 @@ const LoginPage = () => {
                         }
                         icon={mode === "login" ? "pi pi-sign-in" : "pi pi-user-plus"}
                         loading={isEmailLoading || isRegisterLoading}
-                        className="w-full py-3 bg-[#c5a059] text-[#0f172a] font-serif rounded-xl font-semibold hover:bg-[#b59049] transition-all duration-300"
+                        className="w-full py-3 bg-[#6366f1] border-none text-white rounded-lg font-medium hover:bg-[#4f46e5] transition-colors"
                     />
                 </form>
 
                 {/* Divider */}
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="flex-1 h-px bg-[#c5a059]/10"></div>
-                    <span className="text-[10px] text-[#c5a059]/30 uppercase tracking-widest">or</span>
-                    <div className="flex-1 h-px bg-[#c5a059]/10"></div>
+                    <div className="flex-1 h-px bg-[#27272a]"></div>
+                    <span className="text-[10px] text-[#71717a] uppercase tracking-widest">or</span>
+                    <div className="flex-1 h-px bg-[#27272a]"></div>
                 </div>
 
                 {/* Google Login */}
@@ -165,17 +164,17 @@ const LoginPage = () => {
                     icon="pi pi-google"
                     loading={isGoogleLoading}
                     onClick={handleGoogleLogin}
-                    className="w-full py-3 bg-transparent border border-[#c5a059]/30 text-[#fffdd0] hover:bg-[#c5a059]/10 transition-all duration-300 rounded-xl font-semibold"
+                    className="w-full py-3 bg-transparent border border-[#27272a] text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa] transition-all rounded-lg font-medium"
                 />
 
                 {/* Mode Switch */}
-                <div className="mt-6 pt-4 border-t border-[#c5a059]/10 text-center">
-                    <p className="text-xs text-[#c5a059]/40">
+                <div className="mt-6 pt-4 border-t border-[#27272a] text-center">
+                    <p className="text-xs text-[#71717a]">
                         {mode === "login" ? "Don't have an account?" : "Already have an account?"}
                         <button
                             type="button"
                             onClick={switchMode}
-                            className="ml-2 text-[#c5a059] hover:text-[#fffdd0] transition-colors underline underline-offset-2"
+                            className="ml-2 text-[#6366f1] hover:text-[#818cf8] transition-colors font-medium"
                         >
                             {mode === "login" ? "Sign Up" : "Sign In"}
                         </button>
@@ -189,7 +188,7 @@ const LoginPage = () => {
                     to { opacity: 1; }
                 }
                 @keyframes slide-up {
-                    from { transform: translateY(20px); opacity: 0; }
+                    from { transform: translateY(12px); opacity: 0; }
                     to { transform: translateY(0); opacity: 1; }
                 }
                 @keyframes shake {
@@ -198,10 +197,10 @@ const LoginPage = () => {
                     75% { transform: translateX(4px); }
                 }
                 .animate-fade-in {
-                    animation: fade-in 1.2s ease-out forwards;
+                    animation: fade-in 0.4s ease-out forwards;
                 }
                 .animate-slide-up {
-                    animation: slide-up 0.8s ease-out 0.3s both;
+                    animation: slide-up 0.3s ease-out 0.1s both;
                 }
                 .animate-shake {
                     animation: shake 0.3s ease-out;
@@ -209,7 +208,7 @@ const LoginPage = () => {
                 body {
                     margin: 0;
                     padding: 0;
-                    font-family: 'Playfair Display', serif;
+                    font-family: 'Inter', system-ui, sans-serif;
                 }
                 .auth-password-input {
                     width: 100%;
@@ -229,7 +228,7 @@ const LoginPage = () => {
                 }
                 .auth-password-input .p-password-toggle-mask-icon,
                 .auth-password-input .p-password .p-icon {
-                    color: rgba(197, 160, 89, 0.4) !important;
+                    color: #71717a !important;
                     position: absolute;
                     right: 14px;
                     top: 50%;
