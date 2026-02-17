@@ -4,8 +4,10 @@ import { Button } from 'primereact/button';
 import { calculateBreakDuration, formatTime } from '@/utils/timerUtils';
 import { useAppSelector } from '@/hooks/storeHooks';
 import { useUpdateTaskFocusTimeMutation, useGetTasksQuery } from '@/features/kanban/api/tasksApi';
+import { useTranslation } from 'react-i18next';
 
 const FlowtimeTimer = () => {
+    const { t } = useTranslation();
     const { user } = useAppSelector((state) => state.auth);
     const { selectedTaskId } = useAppSelector((state) => state.task);
     const { config } = useAppSelector((state) => state.timer);
@@ -83,18 +85,18 @@ const FlowtimeTimer = () => {
         <div className="flex flex-col items-center justify-center gap-10 py-6 w-full max-w-2xl mx-auto">
             <header className="text-center flex flex-col gap-3">
                 <h2 className="text-2xl font-semibold text-[#fafafa] tracking-tight">
-                    {isBreak ? "Break Time" : "Focus Session"}
+                    {isBreak ? t("timer.breakTime") : t("timer.focusSession")}
                 </h2>
 
                 {activeTask && !isBreak && (
                     <div className="flex items-center gap-2 justify-center animate-fade-in">
-                        <span className="text-xs text-[#71717a]">Working on</span>
+                        <span className="text-xs text-[#71717a]">{t("timer.workingOn")}</span>
                         <span className="text-sm text-[#6366f1] font-medium">{activeTask.title}</span>
                     </div>
                 )}
 
                 <p className="text-[#71717a] text-xs tracking-wide">
-                    {isBreak ? "Recharging focus" : isActive ? "Flow state active" : "Ready to focus"}
+                    {isBreak ? t("timer.rechargingFocus") : isActive ? t("timer.flowActive") : t("timer.readyToFocus")}
                 </p>
             </header>
 
@@ -116,7 +118,7 @@ const FlowtimeTimer = () => {
                         {formatTime(isBreak ? breakSeconds : seconds)}
                     </span>
                     <span className="text-[#71717a] text-[11px] mt-1.5 uppercase tracking-widest">
-                        {isBreak ? "remaining" : "elapsed"}
+                        {isBreak ? t("timer.remaining") : t("timer.elapsed")}
                     </span>
                 </div>
             </div>
@@ -125,7 +127,7 @@ const FlowtimeTimer = () => {
                 {!isActive ? (
                     <Button
                         icon="pi pi-play"
-                        label={seconds > 0 ? "Resume" : "Start"}
+                        label={seconds > 0 ? t("timer.resume") : t("timer.start")}
                         onClick={startTimer}
                         className="bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-8 py-3 rounded-lg text-sm font-medium transition-colors"
                     />
@@ -139,7 +141,7 @@ const FlowtimeTimer = () => {
                         {!isBreak && seconds > 60 && (
                             <Button
                                 icon="pi pi-coffee"
-                                label="Break"
+                                label={t("timer.break")}
                                 onClick={takeBreak}
                                 className="bg-[#ef4444] border-none text-white hover:bg-[#dc2626] px-6 py-3 rounded-lg text-sm font-medium transition-colors"
                             />

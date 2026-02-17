@@ -17,6 +17,7 @@ import { Checkbox } from 'primereact/checkbox';
 import { Tooltip } from 'primereact/tooltip';
 import { TaskDto, TaskStatus } from '@/types/task';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
     DndContext,
     KeyboardSensor,
@@ -51,6 +52,7 @@ const SortableTaskCard = ({
     onEdit: () => void;
     onArchive: () => void;
 }) => {
+    const { t } = useTranslation();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
         useSortable({ id: task.id });
 
@@ -71,14 +73,14 @@ const SortableTaskCard = ({
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
                         className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
-                        title="Edit"
+                        title={t("common.edit")}
                     >
                         <i className="pi pi-pencil text-[10px]" />
                     </button>
                     <button
                         onClick={(e) => { e.stopPropagation(); onArchive(); }}
                         className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#a1a1aa] hover:text-red-400 transition-colors"
-                        title="Archive"
+                        title={t("common.archive")}
                     >
                         <i className="pi pi-trash text-[10px]" />
                     </button>
@@ -90,7 +92,7 @@ const SortableTaskCard = ({
                     </h5>
                     {task.isDaily && (
                         <span className="text-[9px] text-[#818cf8] border border-[#6366f1]/30 bg-[#6366f1]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
-                            Daily
+                            {t("tasks.daily")}
                         </span>
                     )}
                 </div>
@@ -101,7 +103,7 @@ const SortableTaskCard = ({
                 )}
                 <div className="flex items-center gap-1.5 text-[10px] text-[#71717a] mt-2">
                     <i className="pi pi-clock text-[9px]" />
-                    <span>{task.totalFocusedTime}m focused</span>
+                    <span>{task.totalFocusedTime} {t("tasks.focused")}</span>
                 </div>
             </div>
         </div>
@@ -131,7 +133,7 @@ const DroppableColumn = ({
                 }`}
         >
             <div className="flex items-center justify-between pb-3 mb-1">
-                <h4 className="text-sm font-medium text-[#a1a1aa]">{label}</h4>
+                <h4 className="text-sm font-medium text-[#a1a1aa] uppercase tracking-wider">{label}</h4>
                 <span className="text-[10px] bg-[#27272a] text-[#71717a] px-2 py-0.5 rounded-md font-medium">
                     {count}
                 </span>
@@ -146,6 +148,7 @@ interface KanbanBoardProps {
 }
 
 const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
+    const { t } = useTranslation();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const { selectedTaskId } = useAppSelector((state) => state.task);
@@ -205,8 +208,8 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
     const handleArchiveTask = (task: TaskDto) => {
         confirmDialog({
-            message: `"${task.title}" will be archived. Focus data will be preserved.`,
-            header: 'Archive Task',
+            message: `"${task.title}" ${t("tasks.archiveConfirm")}`,
+            header: t("tasks.archiveHeader"),
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
             rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
@@ -248,21 +251,21 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             try {
                 await updateTaskStatus({ taskId, status: newStatus }).unwrap();
             } catch (e) {
-                console.error('Status update failed:', e);
+                console.error(t("tasks.statusUpdateFailed"), e);
             }
         }
     };
 
     const columns: { label: string; status: TaskStatus }[] = [
-        { label: 'To Do', status: 'todo' },
-        { label: 'In Progress', status: 'inprogress' },
-        { label: 'Done', status: 'done' },
+        { label: t("tasks.toDo"), status: 'todo' },
+        { label: t("tasks.inProgress"), status: 'inprogress' },
+        { label: t("tasks.done"), status: 'done' },
     ];
 
     if (isLoading) {
         return (
             <div className="text-[#71717a] text-sm text-center mt-10 animate-pulse">
-                Loading tasks...
+                {t("tasks.loadingTasks")}
             </div>
         );
     }
@@ -275,13 +278,13 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
             <header className="flex justify-between items-center p-5 rounded-xl border border-[#27272a] bg-[#18181b]">
                 <div className="flex flex-col gap-0.5">
-                    <h3 className="text-base font-semibold text-[#fafafa]">Board View</h3>
+                    <h3 className="text-base font-semibold text-[#fafafa]">{t("tasks.boardView")}</h3>
                     <p className="text-xs text-[#71717a]">
-                        {filterDaily ? 'Showing daily tasks only' : 'Drag tasks between columns to update status'}
+                        {filterDaily ? t("tasks.showingDailyOnly") : t("tasks.dragToUpdate")}
                     </p>
                 </div>
                 <Button
-                    label="New Task"
+                    label={t("tasks.newTask")}
                     icon="pi pi-plus"
                     onClick={() => setShowCreateDialog(true)}
                     className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
@@ -350,7 +353,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             </h5>
                             <div className="flex items-center gap-1.5 text-[10px] text-[#71717a] mt-2">
                                 <i className="pi pi-clock text-[9px]" />
-                                <span>{activeTask.totalFocusedTime}m focused</span>
+                                <span>{activeTask.totalFocusedTime} {t("tasks.focused")}</span>
                             </div>
                         </div>
                     ) : null}
@@ -358,7 +361,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             </DndContext>
 
             <Dialog
-                header="New Task"
+                header={t("tasks.newTask")}
                 visible={showCreateDialog}
                 onHide={() => setShowCreateDialog(false)}
                 className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
@@ -370,7 +373,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             >
                 <div className="flex flex-col gap-5 mt-2">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Title</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
                         <InputText
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
@@ -378,7 +381,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Description</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
                         <InputTextarea
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
@@ -394,7 +397,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             className="daily-checkbox"
                         />
                         <label htmlFor="kanban-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
-                            Make this a Daily Task
+                            {t("tasks.dailyToggle")}
                         </label>
                         <i
                             className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
@@ -405,11 +408,11 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             position="top"
                             pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
                         >
-                            Bu görev her gece yarısı listenizde tekrar aktif olur.
+                            {t("tasks.dailyTooltip")}
                         </Tooltip>
                     </div>
                     <Button
-                        label="Create Task"
+                        label={t("tasks.createTask")}
                         onClick={handleCreateTask}
                         className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
                     />
@@ -417,7 +420,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             </Dialog>
 
             <Dialog
-                header="Edit Task"
+                header={t("tasks.editTask")}
                 visible={showEditDialog}
                 onHide={() => { setShowEditDialog(false); setEditingTask(null); }}
                 className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
@@ -430,7 +433,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 {editingTask && (
                     <div className="flex flex-col gap-5 mt-2">
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">Title</label>
+                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
@@ -438,7 +441,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">Description</label>
+                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
                             <InputTextarea
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
@@ -454,7 +457,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                                 className="daily-checkbox"
                             />
                             <label htmlFor="kanban-edit-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
-                                Make this a Daily Task
+                                {t("tasks.dailyToggle")}
                             </label>
                             <i
                                 className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
@@ -465,11 +468,11 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                                 position="top"
                                 pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
                             >
-                                Bu görev her gece yarısı listenizde tekrar aktif olur.
+                                {t("tasks.dailyTooltip")}
                             </Tooltip>
                         </div>
                         <Button
-                            label="Save Changes"
+                            label={t("tasks.saveChanges")}
                             icon="pi pi-check"
                             onClick={handleSaveEdit}
                             className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"

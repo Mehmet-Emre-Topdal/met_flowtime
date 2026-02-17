@@ -10,10 +10,12 @@ import {
     useRegisterWithEmailMutation,
 } from "@/features/auth/api/authApi";
 import { useAppSelector } from "@/hooks/storeHooks";
+import { useTranslation } from "react-i18next";
 
 type AuthMode = "login" | "register";
 
 const LoginPage = () => {
+    const { t } = useTranslation();
     const router = useRouter();
     const [loginWithGoogle, { isLoading: isGoogleLoading }] = useLoginWithGoogleMutation();
     const [loginWithEmail, { isLoading: isEmailLoading }] = useLoginWithEmailMutation();
@@ -39,7 +41,7 @@ const LoginPage = () => {
         try {
             await loginWithGoogle().unwrap();
         } catch (err: any) {
-            setError(err?.error || "Google login failed.");
+            setError(err?.error || t("auth.googleFailed"));
         }
     };
 
@@ -48,7 +50,7 @@ const LoginPage = () => {
         setError(null);
 
         if (!email.trim() || !password.trim()) {
-            setError("Please fill in all fields.");
+            setError(t("auth.fillAllFields"));
             return;
         }
 
@@ -57,17 +59,17 @@ const LoginPage = () => {
                 await loginWithEmail({ email, password }).unwrap();
             } else {
                 if (!displayName.trim()) {
-                    setError("Please enter your name.");
+                    setError(t("auth.enterName"));
                     return;
                 }
                 if (password.length < 6) {
-                    setError("Password must be at least 6 characters.");
+                    setError(t("auth.passwordMinLength"));
                     return;
                 }
                 await registerWithEmail({ email, password, displayName }).unwrap();
             }
         } catch (err: any) {
-            setError(err?.error || "Authentication failed.");
+            setError(err?.error || t("auth.authFailed"));
         }
     };
 
@@ -85,16 +87,14 @@ const LoginPage = () => {
                     content: { className: 'p-8' }
                 }}
             >
-                {/* Logo & Title */}
                 <div className="text-center mb-8">
                     <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#6366f1]/10 mb-4">
                         <i className="pi pi-bolt text-2xl text-[#6366f1]"></i>
                     </div>
-                    <h1 className="text-2xl font-semibold text-[#fafafa] mb-1.5 tracking-tight">flowtime</h1>
-                    <p className="text-[#71717a] text-sm">Focus tracking & task management</p>
+                    <h1 className="text-2xl font-semibold text-[#fafafa] mb-1.5 tracking-tight">{t("common.appName")}</h1>
+                    <p className="text-[#71717a] text-sm">{t("auth.subtitle")}</p>
                 </div>
 
-                {/* Error Message */}
                 {error && (
                     <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center animate-shake">
                         <i className="pi pi-exclamation-circle mr-2 text-xs" />
@@ -102,33 +102,32 @@ const LoginPage = () => {
                     </div>
                 )}
 
-                {/* Email/Password Form */}
                 <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4 mb-6">
                     {mode === "register" && (
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">Name</label>
+                            <label className="text-xs text-[#71717a] font-medium">{t("auth.nameLabel")}</label>
                             <InputText
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
-                                placeholder="Your name"
+                                placeholder={t("auth.namePlaceholder")}
                                 className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
                             />
                         </div>
                     )}
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Email</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("auth.emailLabel")}</label>
                         <InputText
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="you@example.com"
+                            placeholder={t("auth.emailPlaceholder")}
                             type="email"
                             className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
                         />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Password</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("auth.passwordLabel")}</label>
                         <Password
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -142,8 +141,8 @@ const LoginPage = () => {
                     <Button
                         type="submit"
                         label={isLoading
-                            ? "Processing..."
-                            : mode === "login" ? "Sign In" : "Create Account"
+                            ? t("auth.processing")
+                            : mode === "login" ? t("auth.signIn") : t("auth.createAccount")
                         }
                         icon={mode === "login" ? "pi pi-sign-in" : "pi pi-user-plus"}
                         loading={isEmailLoading || isRegisterLoading}
@@ -151,32 +150,29 @@ const LoginPage = () => {
                     />
                 </form>
 
-                {/* Divider */}
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-[#27272a]"></div>
-                    <span className="text-[10px] text-[#71717a] uppercase tracking-widest">or</span>
+                    <span className="text-[10px] text-[#71717a] uppercase tracking-widest">{t("common.or")}</span>
                     <div className="flex-1 h-px bg-[#27272a]"></div>
                 </div>
 
-                {/* Google Login */}
                 <Button
-                    label={isGoogleLoading ? "Connecting..." : "Continue with Google"}
+                    label={isGoogleLoading ? t("auth.connectingGoogle") : t("auth.continueWithGoogle")}
                     icon="pi pi-google"
                     loading={isGoogleLoading}
                     onClick={handleGoogleLogin}
                     className="w-full py-3 bg-transparent border border-[#27272a] text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa] transition-all rounded-lg font-medium"
                 />
 
-                {/* Mode Switch */}
                 <div className="mt-6 pt-4 border-t border-[#27272a] text-center">
                     <p className="text-xs text-[#71717a]">
-                        {mode === "login" ? "Don't have an account?" : "Already have an account?"}
+                        {mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")}
                         <button
                             type="button"
                             onClick={switchMode}
                             className="ml-2 text-[#6366f1] hover:text-[#818cf8] transition-colors font-medium"
                         >
-                            {mode === "login" ? "Sign Up" : "Sign In"}
+                            {mode === "login" ? t("auth.signUp") : t("auth.signIn")}
                         </button>
                     </p>
                 </div>

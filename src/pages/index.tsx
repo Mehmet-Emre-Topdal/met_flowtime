@@ -3,18 +3,21 @@ import MainLayout from "@/components/layout/MainLayout";
 import FlowtimeTimer from "@/features/timer/FlowtimeTimer";
 import KanbanBoard from "@/features/kanban/KanbanBoard";
 import TaskListView from "@/features/kanban/TaskListView";
+import TaskQuickAdd from "@/features/kanban/TaskQuickAdd";
 import { SelectButton } from "primereact/selectbutton";
 import { useAppSelector } from "@/hooks/storeHooks";
 import StickyNotes from "@/components/notes/StickyNotes";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { user } = useAppSelector((state) => state.auth);
   const [view, setView] = useState<"list" | "kanban">("list");
   const [filterDaily, setFilterDaily] = useState(false);
 
   const viewOptions = [
-    { label: 'List', value: 'list', icon: 'pi pi-list' },
-    { label: 'Board', value: 'kanban', icon: 'pi pi-th-large' }
+    { label: t("views.list"), value: 'list', icon: 'pi pi-list' },
+    { label: t("views.board"), value: 'kanban', icon: 'pi pi-th-large' }
   ];
 
   return (
@@ -25,7 +28,9 @@ export default function Home() {
           <FlowtimeTimer />
         </section>
 
-        <div className="w-full flex flex-col gap-6">
+        <div className="w-full flex flex-col gap-8">
+
+
           <div className="flex flex-col items-center gap-4">
             <div className="h-px w-full bg-[#27272a]"></div>
             <div className="flex items-center gap-3">
@@ -50,7 +55,7 @@ export default function Home() {
                   }`}
               >
                 <i className="pi pi-replay text-[10px]" />
-                <span>Daily</span>
+                <span>{t("views.daily")}</span>
               </button>
             </div>
           </div>

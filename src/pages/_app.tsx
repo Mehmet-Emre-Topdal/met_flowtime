@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/lib/i18n";
 import type { AppProps } from "next/app";
 import { Provider } from 'react-redux';
 import { store } from '@/store/store';
@@ -26,7 +27,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
         />
         <div className="flex flex-col items-center gap-2">
           <h2 className="text-xl font-semibold text-[#fafafa] tracking-tight">Flowtime</h2>
-          <p className="text-xs text-[#71717a]">Loading workspace...</p>
+          <p className="text-xs text-[#71717a]">Loading...</p>
         </div>
       </div>
     );

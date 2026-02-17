@@ -7,12 +7,14 @@ import { useAppSelector } from "@/hooks/storeHooks";
 import { useLogoutMutation } from "@/features/auth/api/authApi";
 import { MenuItem } from "primereact/menuitem";
 import SettingsModal from "@/components/settings/SettingsModal";
+import { useTranslation } from "react-i18next";
 
 interface MainLayoutProps {
     children: ReactNode;
 }
 
 const MainLayout = ({ children }: MainLayoutProps) => {
+    const { t } = useTranslation();
     const router = useRouter();
     const menuRef = useRef<Menu>(null);
     const [settingsVisible, setSettingsVisible] = useState(false);
@@ -30,18 +32,18 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             await logout().unwrap();
             router.push("/login");
         } catch (error) {
-            console.error("Logout failed:", error);
+            console.error(t("auth.logoutFailed"), error);
         }
     };
 
     const userMenuItems: MenuItem[] = [
         {
-            label: "Settings",
+            label: t("nav.settings"),
             icon: "pi pi-cog",
             command: () => setSettingsVisible(true)
         },
         {
-            label: "Log out",
+            label: t("nav.logout"),
             icon: "pi pi-sign-out",
             command: handleLogout
         }
@@ -57,7 +59,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 <div className="container mx-auto h-full flex items-center justify-between px-6">
                     <Link href="/" className="no-underline">
                         <h1 className="text-lg font-semibold tracking-tight text-[#fafafa] hover:text-[#6366f1] transition-colors">
-                            flowtime
+                            {t("common.appName")}
                         </h1>
                     </Link>
 

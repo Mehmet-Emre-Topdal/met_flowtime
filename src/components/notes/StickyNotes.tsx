@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Tooltip } from 'primereact/tooltip';
+import { useTranslation } from 'react-i18next';
 
 const STORAGE_KEY = 'flowtime_quick_notes';
 
 const StickyNotes = () => {
+    const { t } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [note, setNote] = useState('');
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -26,7 +28,6 @@ const StickyNotes = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) setNote(saved);
         } catch {
-            // silently ignore
         }
     }, []);
 
@@ -37,7 +38,6 @@ const StickyNotes = () => {
             try {
                 localStorage.setItem(STORAGE_KEY, value);
             } catch {
-                // silently ignore
             }
         }, 400);
     };
@@ -51,7 +51,6 @@ const StickyNotes = () => {
 
     return (
         <div ref={containerRef} className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-            {/* Notes Panel */}
             <div
                 className={`transition-all duration-200 ease-out origin-bottom-right
                     ${isOpen
@@ -60,12 +59,11 @@ const StickyNotes = () => {
                     }`}
             >
                 <div className="w-[300px] bg-[#18181b] border border-[#27272a] rounded-xl overflow-hidden">
-                    {/* Header */}
                     <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#27272a]">
                         <div className="flex items-center gap-2">
                             <i className="pi pi-bookmark text-[#6366f1] text-xs" />
                             <span className="text-xs text-[#a1a1aa] font-medium">
-                                Quick Notes
+                                {t("notes.quickNotes")}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -82,7 +80,7 @@ const StickyNotes = () => {
                                 }}
                             >
                                 <span>
-                                    Jot down ideas during your focus session. Notes are stored in your browser, not tied to your account.
+                                    {t("notes.tooltip")}
                                 </span>
                             </Tooltip>
                             <button
@@ -94,36 +92,33 @@ const StickyNotes = () => {
                         </div>
                     </div>
 
-                    {/* Textarea */}
                     <textarea
                         ref={textareaRef}
                         value={note}
                         onChange={(e) => handleNoteChange(e.target.value)}
-                        placeholder="Write your thoughts here..."
+                        placeholder={t("notes.placeholder")}
                         className="w-full h-[180px] bg-transparent text-[#fafafa]/90 text-sm leading-relaxed p-4 resize-none outline-none placeholder:text-[#3f3f46]"
                         spellCheck={false}
                     />
 
-                    {/* Footer */}
                     <div className="flex items-center justify-between px-4 py-2 border-t border-[#27272a]">
                         <span className="text-[9px] text-[#3f3f46] tabular-nums">
-                            {note.length > 0 ? `${note.length} chars` : 'Empty'}
+                            {note.length > 0 ? `${note.length} ${t("common.chars")}` : t("common.empty")}
                         </span>
                         <button
                             onClick={() => {
-                                if (note.trim() && confirm('Clear all notes?')) {
+                                if (note.trim() && confirm(t("notes.clearConfirm"))) {
                                     handleNoteChange('');
                                 }
                             }}
                             className="text-[9px] text-red-400/30 hover:text-red-400 uppercase tracking-wider transition-colors font-medium"
                         >
-                            Clear
+                            {t("common.clear")}
                         </button>
                     </div>
                 </div>
             </div>
 
-            {/* FAB Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`relative w-11 h-11 rounded-lg flex items-center justify-center

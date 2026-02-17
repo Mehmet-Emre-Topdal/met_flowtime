@@ -18,12 +18,14 @@ import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Checkbox } from 'primereact/checkbox';
 import { Tooltip } from 'primereact/tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface TaskListViewProps {
     filterDaily: boolean;
 }
 
 const TaskListView = ({ filterDaily }: TaskListViewProps) => {
+    const { t } = useTranslation();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
     const { selectedTaskId } = useAppSelector((state) => state.task);
@@ -74,16 +76,16 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
 
     const getStatusLabel = (status: string) => {
         switch (status) {
-            case 'done': return 'DONE';
-            case 'inprogress': return 'IN PROGRESS';
-            default: return 'TO DO';
+            case 'done': return t("tasks.done");
+            case 'inprogress': return t("tasks.inProgress");
+            default: return t("tasks.toDo");
         }
     };
 
     const statusOptions: { value: string; label: string; icon: string; color: string }[] = [
-        { value: 'todo', label: 'To Do', icon: 'pi pi-circle', color: 'text-[#71717a]' },
-        { value: 'inprogress', label: 'In Progress', icon: 'pi pi-spinner', color: 'text-[#6366f1]' },
-        { value: 'done', label: 'Done', icon: 'pi pi-check-circle', color: 'text-emerald-500' },
+        { value: 'todo', label: t("tasks.toDoShort"), icon: 'pi pi-circle', color: 'text-[#71717a]' },
+        { value: 'inprogress', label: t("tasks.inProgressShort"), icon: 'pi pi-spinner', color: 'text-[#6366f1]' },
+        { value: 'done', label: t("tasks.doneShort"), icon: 'pi pi-check-circle', color: 'text-emerald-500' },
     ];
 
     const handleStatusSelect = async (taskId: string, newStatus: string) => {
@@ -91,7 +93,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
         try {
             await updateTaskStatus({ taskId, status: newStatus }).unwrap();
         } catch (err) {
-            console.error('Status update failed:', err);
+            console.error(t("tasks.statusUpdateFailed"), err);
         }
     };
 
@@ -127,8 +129,8 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
 
     const handleArchiveTask = (task: TaskDto) => {
         confirmDialog({
-            message: `"${task.title}" will be archived. Focus data will be preserved.`,
-            header: 'Archive Task',
+            message: `"${task.title}" ${t("tasks.archiveConfirm")}`,
+            header: t("tasks.archiveHeader"),
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
             rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
@@ -159,13 +161,13 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
 
             <header className="flex justify-between items-center p-5 rounded-xl border border-[#27272a] bg-[#18181b]">
                 <div className="flex flex-col gap-0.5">
-                    <h3 className="text-base font-semibold text-[#fafafa]">Tasks</h3>
+                    <h3 className="text-base font-semibold text-[#fafafa]">{t("tasks.tasks")}</h3>
                     <p className="text-xs text-[#71717a]">
-                        {filterDaily ? 'Showing daily tasks only' : 'All your tasks, sorted by status'}
+                        {filterDaily ? t("tasks.showingDailyOnly") : t("tasks.allTasksSorted")}
                     </p>
                 </div>
                 <Button
-                    label="New Task"
+                    label={t("tasks.newTask")}
                     icon="pi pi-plus"
                     onClick={() => setShowCreateDialog(true)}
                     className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
@@ -200,7 +202,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                             </span>
                                             {task.isDaily && (
                                                 <span className="text-[9px] text-[#818cf8] border border-[#6366f1]/30 bg-[#6366f1]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider">
-                                                    Daily
+                                                    {t("tasks.daily")}
                                                 </span>
                                             )}
                                             <div className="relative">
@@ -245,7 +247,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2 mt-0.5">
-                                            <span className="text-[10px] text-[#71717a]">{task.totalFocusedTime}m focused</span>
+                                            <span className="text-[10px] text-[#71717a]">{task.totalFocusedTime} {t("tasks.focused")}</span>
                                         </div>
                                         {task.description && (
                                             <p className="text-xs text-[#71717a]/70 mt-1 leading-relaxed">
@@ -262,14 +264,14 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
                                             className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#71717a] hover:text-[#fafafa] transition-colors"
-                                            title="Edit"
+                                            title={t("common.edit")}
                                         >
                                             <i className="pi pi-pencil text-xs" />
                                         </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleArchiveTask(task); }}
                                             className="w-7 h-7 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#71717a] hover:text-red-400 transition-colors"
-                                            title="Archive"
+                                            title={t("common.archive")}
                                         >
                                             <i className="pi pi-trash text-xs" />
                                         </button>
@@ -277,7 +279,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
 
                                     {selectedTaskId === task.id && (
                                         <div className="flex items-center gap-1.5 ml-2">
-                                            <span className="text-[10px] text-[#6366f1] font-medium">Focusing</span>
+                                            <span className="text-[10px] text-[#6366f1] font-medium">{t("tasks.focusing")}</span>
                                             <i className="pi pi-bolt text-[#6366f1] text-xs"></i>
                                         </div>
                                     )}
@@ -291,13 +293,13 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
             {sortedTasks.length === 0 && (
                 <div className="text-center py-16 bg-[#18181b] rounded-xl border border-dashed border-[#27272a]">
                     <p className="text-sm text-[#71717a]">
-                        {filterDaily ? 'No daily tasks found.' : 'No tasks yet. Add one above to get started.'}
+                        {filterDaily ? t("tasks.noDailyTasks") : t("tasks.noTasks")}
                     </p>
                 </div>
             )}
 
             <Dialog
-                header="New Task"
+                header={t("tasks.newTask")}
                 visible={showCreateDialog}
                 onHide={() => setShowCreateDialog(false)}
                 className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
@@ -309,7 +311,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
             >
                 <div className="flex flex-col gap-5 mt-2">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Title</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
                         <InputText
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
@@ -317,7 +319,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Description</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
                         <InputTextarea
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
@@ -333,7 +335,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                             className="daily-checkbox"
                         />
                         <label htmlFor="list-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
-                            Make this a Daily Task
+                            {t("tasks.dailyToggle")}
                         </label>
                         <i
                             className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
@@ -344,11 +346,11 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                             position="top"
                             pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
                         >
-                            Bu görev her gece yarısı listenizde tekrar aktif olur.
+                            {t("tasks.dailyTooltip")}
                         </Tooltip>
                     </div>
                     <Button
-                        label="Create Task"
+                        label={t("tasks.createTask")}
                         onClick={handleCreateTask}
                         className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
                     />
@@ -356,7 +358,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
             </Dialog>
 
             <Dialog
-                header="Edit Task"
+                header={t("tasks.editTask")}
                 visible={showEditDialog}
                 onHide={() => { setShowEditDialog(false); setEditingTask(null); }}
                 className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
@@ -369,7 +371,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                 {editingTask && (
                     <div className="flex flex-col gap-5 mt-2">
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">Title</label>
+                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
@@ -377,7 +379,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                             />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">Description</label>
+                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
                             <InputTextarea
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
@@ -393,7 +395,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                 className="daily-checkbox"
                             />
                             <label htmlFor="list-edit-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
-                                Make this a Daily Task
+                                {t("tasks.dailyToggle")}
                             </label>
                             <i
                                 className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
@@ -404,11 +406,11 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                 position="top"
                                 pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
                             >
-                                Bu görev her gece yarısı listenizde tekrar aktif olur.
+                                {t("tasks.dailyTooltip")}
                             </Tooltip>
                         </div>
                         <Button
-                            label="Save Changes"
+                            label={t("tasks.saveChanges")}
                             icon="pi pi-check"
                             onClick={handleSaveEdit}
                             className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"

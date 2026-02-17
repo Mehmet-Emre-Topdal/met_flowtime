@@ -9,7 +9,7 @@ mutasyonlarda unwrap kullanılmalı
 
 tasklar kendi columnlarında da sıralanabilir olmalı (en son)
 
-lokalizasyon eklenmeli
+lokalizasyon eklenmeli [TAMAMLANDI]
 
 normal auth test edilecek
 

@@ -7,8 +7,10 @@ import { Toast } from 'primereact/toast';
 import { useCreateTaskMutation, useGetTasksQuery } from './api/tasksApi';
 import { useAppSelector } from '@/hooks/storeHooks';
 import { TaskCreateInput } from '@/types/task';
+import { useTranslation } from 'react-i18next';
 
 const TaskQuickAdd = () => {
+    const { t } = useTranslation();
     const toast = useRef<Toast>(null);
     const { user } = useAppSelector((state) => state.auth);
     const { data: tasks = [] } = useGetTasksQuery(user?.uid || '', { skip: !user?.uid });
@@ -25,7 +27,7 @@ const TaskQuickAdd = () => {
     const showSuccess = (msg: string) => {
         toast.current?.show({
             severity: 'success',
-            summary: 'Task Created',
+            summary: t("quickAdd.taskCreated"),
             detail: msg,
             life: 3000,
             className: 'custom-toast'
@@ -35,7 +37,7 @@ const TaskQuickAdd = () => {
     const showError = (msg: string) => {
         toast.current?.show({
             severity: 'error',
-            summary: 'Error',
+            summary: t("quickAdd.errorTitle"),
             detail: msg,
             life: 4000
         });
@@ -45,7 +47,7 @@ const TaskQuickAdd = () => {
         if (e) e.preventDefault();
 
         if (!user?.uid) {
-            showError('Authentication required.');
+            showError(t("quickAdd.authRequired"));
             return;
         }
         if (!quickTitle.trim()) return;
@@ -57,16 +59,16 @@ const TaskQuickAdd = () => {
                 order: tasks.length
             }).unwrap();
 
-            showSuccess('Task added successfully.');
+            showSuccess(t("quickAdd.taskAddedSuccess"));
             setQuickTitle('');
         } catch (err: any) {
-            showError(err.message || 'Failed to create task.');
+            showError(err.message || t("quickAdd.createFailed"));
         }
     };
 
     const handleAdvancedAdd = async () => {
         if (!user?.uid) {
-            showError('Authentication required.');
+            showError(t("quickAdd.authRequired"));
             return;
         }
         if (!advancedTask.title.trim()) return;
@@ -78,11 +80,11 @@ const TaskQuickAdd = () => {
                 order: tasks.length
             }).unwrap();
 
-            showSuccess('Task created successfully.');
+            showSuccess(t("quickAdd.taskCreatedSuccess"));
             setAdvancedTask({ title: '', description: '', status: 'todo' });
             setIsAdvancedOpen(false);
         } catch (err: any) {
-            showError(err.message || 'Failed to create task.');
+            showError(err.message || t("quickAdd.createFailed"));
         }
     };
 
@@ -95,7 +97,7 @@ const TaskQuickAdd = () => {
                     <InputText
                         value={quickTitle}
                         onChange={(e) => setQuickTitle(e.target.value)}
-                        placeholder="Add a new task..."
+                        placeholder={t("quickAdd.placeholder")}
                         disabled={isLoading}
                         className="flex-1 bg-transparent border-none text-[#fafafa] placeholder-[#71717a] text-sm focus:ring-0 disabled:opacity-50"
                     />
@@ -105,14 +107,14 @@ const TaskQuickAdd = () => {
                         onClick={handleQuickAdd}
                         disabled={!quickTitle.trim() || isLoading}
                         className="p-button-rounded p-button-text text-[#6366f1] hover:bg-[#6366f1]/10"
-                        tooltip="Quick add"
+                        tooltip={t("quickAdd.quickAdd")}
                     />
                 </form>
 
                 <div className="h-6 w-px bg-[#27272a] hidden md:block"></div>
 
                 <Button
-                    label="Details"
+                    label={t("quickAdd.details")}
                     icon="pi pi-external-link"
                     onClick={() => setIsAdvancedOpen(true)}
                     disabled={isLoading}
@@ -122,12 +124,12 @@ const TaskQuickAdd = () => {
 
             {isError && (
                 <p className="text-red-400 text-xs text-center">
-                    Error: {(error as any)?.message || 'Something went wrong'}
+                    {t("quickAdd.errorTitle")}: {(error as any)?.message || t("quickAdd.createFailed")}
                 </p>
             )}
 
             <Dialog
-                header="Create Task"
+                header={t("tasks.createTask")}
                 visible={isAdvancedOpen}
                 onHide={() => !isLoading && setIsAdvancedOpen(false)}
                 className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
@@ -139,14 +141,14 @@ const TaskQuickAdd = () => {
                 }}
                 footer={
                     <div className="flex justify-end gap-3">
-                        <Button label="Cancel" onClick={() => setIsAdvancedOpen(false)} disabled={isLoading} className="p-button-text text-[#71717a] hover:text-[#a1a1aa]" />
-                        <Button label="Create" loading={isLoading} onClick={handleAdvancedAdd} disabled={isLoading || !advancedTask.title.trim()} className="bg-[#6366f1] border-none text-white px-5 rounded-lg hover:bg-[#4f46e5]" />
+                        <Button label={t("common.cancel")} onClick={() => setIsAdvancedOpen(false)} disabled={isLoading} className="p-button-text text-[#71717a] hover:text-[#a1a1aa]" />
+                        <Button label={t("common.create")} loading={isLoading} onClick={handleAdvancedAdd} disabled={isLoading || !advancedTask.title.trim()} className="bg-[#6366f1] border-none text-white px-5 rounded-lg hover:bg-[#4f46e5]" />
                     </div>
                 }
             >
                 <div className="flex flex-col gap-5 mt-2">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Title</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
                         <InputText
                             value={advancedTask.title}
                             onChange={(e) => setAdvancedTask({ ...advancedTask, title: e.target.value })}
@@ -155,7 +157,7 @@ const TaskQuickAdd = () => {
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">Description</label>
+                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
                         <InputTextarea
                             value={advancedTask.description}
                             onChange={(e) => setAdvancedTask({ ...advancedTask, description: e.target.value })}
