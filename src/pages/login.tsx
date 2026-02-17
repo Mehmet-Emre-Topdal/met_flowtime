@@ -131,7 +131,7 @@ const LoginPage = () => {
                         <Password
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            feedback={mode === "register"}
+                            feedback={false}
                             toggleMask
                             className="auth-password-input"
                             inputClassName="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 w-full focus:border-[#6366f1]"

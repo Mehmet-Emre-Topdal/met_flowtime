@@ -21,6 +21,21 @@ const FlowtimeTimer = () => {
     const [isBreak, setIsBreak] = useState(false);
     const [breakSeconds, setBreakSeconds] = useState(0);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
+    const breakEndAudio = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        // Initialize audio with a fallback and handle potential loading issues
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.preload = 'auto';
+        breakEndAudio.current = audio;
+    }, []);
+
+    const playBell = () => {
+        if (breakEndAudio.current) {
+            breakEndAudio.current.currentTime = 0;
+            breakEndAudio.current.play().catch(err => console.error("Audio play failed:", err));
+        }
+    };
 
     const startTimer = () => {
         setIsActive(true);
@@ -39,11 +54,14 @@ const FlowtimeTimer = () => {
     };
 
     const takeBreak = async () => {
-        const duration = calculateBreakDuration(seconds, config.intervals);
+        const duration = Math.round(calculateBreakDuration(seconds, config.intervals));
 
-        if (selectedTaskId && seconds > 60) {
+        if (selectedTaskId && seconds > 0) {
+            // Only update if at least 1 minute is focused, otherwise just take break
             const minutes = Math.floor(seconds / 60);
-            await updateTaskFocusTime({ taskId: selectedTaskId, additionalMinutes: minutes });
+            if (minutes > 0) {
+                await updateTaskFocusTime({ taskId: selectedTaskId, additionalMinutes: minutes });
+            }
         }
 
         setBreakSeconds(duration);
@@ -58,6 +76,7 @@ const FlowtimeTimer = () => {
                     setBreakSeconds((prev) => {
                         if (prev <= 1) {
                             setIsActive(false);
+                            playBell();
                             return 0;
                         }
                         return prev - 1;
@@ -138,7 +157,7 @@ const FlowtimeTimer = () => {
                             onClick={pauseTimer}
                             className="p-button-rounded bg-[#27272a] border-none text-[#a1a1aa] hover:bg-[#3f3f46] hover:text-[#fafafa] w-12 h-12 transition-colors"
                         />
-                        {!isBreak && seconds > 60 && (
+                        {!isBreak && (
                             <Button
                                 icon="pi pi-coffee"
                                 label={t("timer.break")}
@@ -153,23 +172,6 @@ const FlowtimeTimer = () => {
                     onClick={resetTimer}
                     className="p-button-rounded p-button-text text-[#71717a] hover:text-[#a1a1aa] w-10 h-10 transition-colors"
                 />
-            </div>
-
-            <div className="flex items-center gap-6 px-6 py-3 bg-[#18181b] border border-[#27272a] rounded-lg">
-                <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-[10px] text-[#71717a] uppercase tracking-wider">Phase 1</span>
-                    <span className="text-sm text-[#a1a1aa] font-medium">25m</span>
-                </div>
-                <div className="w-px h-6 bg-[#27272a]"></div>
-                <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-[10px] text-[#71717a] uppercase tracking-wider">Phase 2</span>
-                    <span className="text-sm text-[#a1a1aa] font-medium">50m</span>
-                </div>
-                <div className="w-px h-6 bg-[#27272a]"></div>
-                <div className="flex flex-col items-center gap-0.5">
-                    <span className="text-[10px] text-[#71717a] uppercase tracking-wider">Phase 3</span>
-                    <span className="text-sm text-[#a1a1aa] font-medium">90m</span>
-                </div>
             </div>
 
             <style jsx global>{`

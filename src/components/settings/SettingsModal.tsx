@@ -151,7 +151,9 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                                         className="settings-input-compact"
                                         inputClassName="bg-transparent border-none text-[#fafafa] w-full text-center text-sm"
                                         suffix=" m"
-                                        min={interval.min + 1}
+                                        min={interval.min + 0.1}
+                                        step={0.1}
+                                        minFractionDigits={1}
                                     />
                                 )}
                             </div>
@@ -164,7 +166,9 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                                         className="settings-input-compact"
                                         inputClassName="bg-transparent border-none text-[#6366f1] w-full text-center font-medium text-sm"
                                         suffix=" m"
-                                        min={1}
+                                        min={0.1}
+                                        step={0.1}
+                                        minFractionDigits={1}
                                     />
                                 </div>
                             </div>
