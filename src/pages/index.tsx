@@ -1,78 +1,112 @@
-import Image from "next/image";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import React, { useState } from "react";
+import MainLayout from "@/components/layout/MainLayout";
+import FlowtimeTimer from "@/features/timer/FlowtimeTimer";
+import KanbanBoard from "@/features/kanban/KanbanBoard";
+import TaskListView from "@/features/kanban/TaskListView";
+import TaskQuickAdd from "@/features/kanban/TaskQuickAdd";
+import { SelectButton } from "primereact/selectbutton";
+import { useAppSelector } from "@/hooks/storeHooks";
+import StickyNotes from "@/components/notes/StickyNotes";
 
 export default function Home() {
+  const { user } = useAppSelector((state) => state.auth);
+  const [view, setView] = useState<"list" | "kanban">("list");
+
+  const viewOptions = [
+    { label: 'Classic List', value: 'list', icon: 'pi pi-list' },
+    { label: 'Kanban Board', value: 'kanban', icon: 'pi pi-th-large' }
+  ];
+
   return (
-    <div
-      className={`${geistSans.className} ${geistMono.className} flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black`}
-    >
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the index.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <MainLayout>
+      <div className="flex flex-col items-center gap-12 animate-fade-in max-w-6xl mx-auto py-10 overflow-x-hidden">
+
+
+        <section className="w-full flex justify-center py-10 bg-[#1e293b]/20 rounded-[3rem] border border-[#c5a059]/10 backdrop-blur-md shadow-2xl shadow-black/20">
+          <FlowtimeTimer />
+        </section>
+
+        <TaskQuickAdd />
+
+        <div className="w-full flex flex-col gap-8">
+          <div className="flex flex-col items-center gap-6">
+            <div className="h-px w-full bg-[#c5a059]/5"></div>
+            <SelectButton
+              value={view}
+              onChange={(e) => e.value && setView(e.value)}
+              options={viewOptions}
+              itemTemplate={(option) => (
+                <div className="flex items-center gap-2 px-6 py-1">
+                  <i className={option.icon}></i>
+                  <span className="font-serif text-sm tracking-wide">{option.label}</span>
+                </div>
+              )}
+              className="custom-switcher"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs/pages/getting-started?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          <main className="w-full min-h-[400px]">
+            {view === "list" ? (
+              <div className="animate-slide-up">
+                <TaskListView />
+              </div>
+            ) : (
+              <div className="animate-slide-up">
+                <KanbanBoard />
+              </div>
+            )}
+          </main>
         </div>
-      </main>
-    </div>
+      </div>
+
+      <style jsx global>{`
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 1.5s ease-out forwards;
+        }
+        .animate-slide-up {
+            animation: slide-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes dropdown-in {
+            from { opacity: 0; transform: translateY(-4px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-dropdown-in {
+            animation: dropdown-in 0.15s ease-out forwards;
+        }
+        
+        .custom-switcher.p-selectbutton {
+            background: rgba(15, 23, 42, 0.6) !important;
+            padding: 4px !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(197, 160, 89, 0.2) !important;
+        }
+        .custom-switcher .p-button {
+            background: transparent !important;
+            border: none !important;
+            color: rgba(197, 160, 89, 0.5) !important;
+            transition: all 0.4s ease !important;
+            border-radius: 8px !important;
+        }
+        .custom-switcher .p-button.p-highlight {
+            background: #c5a059 !important;
+            color: #0f172a !important;
+            box-shadow: 0 4px 12px rgba(197, 160, 89, 0.2) !important;
+        }
+        .custom-switcher .p-button:not(.p-highlight):hover {
+            color: #c5a059 !important;
+            background: rgba(197, 160, 89, 0.05) !important;
+        }
+      `}</style>
+
+      <StickyNotes />
+    </MainLayout>
   );
 }
