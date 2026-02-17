@@ -93,7 +93,14 @@
         "removeInterval": "Remove interval",
         "saveChanges": "Save Changes",
         "language": "Language",
-        "languageDesc": "Change the application language."
+        "languageDesc": "Change the application language.",
+        "sound": "Notification Sound",
+        "soundDesc": "Choose the sound to play when break ends.",
+        "sounds": {
+            "bell": "Bell",
+            "digital": "Digital",
+            "birds": "Birds"
+        }
     },
     "notes": {
         "quickNotes": "Quick Notes",

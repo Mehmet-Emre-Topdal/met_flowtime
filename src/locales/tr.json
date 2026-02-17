@@ -93,7 +93,14 @@
         "removeInterval": "Aralığı kaldır",
         "saveChanges": "Değişiklikleri Kaydet",
         "language": "Dil",
-        "languageDesc": "Uygulama dilini değiştirin."
+        "languageDesc": "Uygulama dilini değiştirin.",
+        "sound": "Bildirim Sesi",
+        "soundDesc": "Mola bittiğinde çalacak sesi seçin.",
+        "sounds": {
+            "bell": "Zil",
+            "digital": "Dijital",
+            "birds": "Kuşlar"
+        }
     },
     "notes": {
         "quickNotes": "Hızlı Notlar",

@@ -2,16 +2,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Knob } from 'primereact/knob';
 import { Button } from 'primereact/button';
 import { calculateBreakDuration, formatTime } from '@/utils/timerUtils';
-import { useAppSelector } from '@/hooks/storeHooks';
 import { useUpdateTaskFocusTimeMutation, useGetTasksQuery } from '@/features/kanban/api/tasksApi';
+import { useGetUserConfigQuery } from '@/features/timer/api/timerApi';
+import { updateConfig, setLoadedFromFirebase } from '@/features/timer/slices/timerSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { useTranslation } from 'react-i18next';
 
 const FlowtimeTimer = () => {
     const { t } = useTranslation();
     const { user } = useAppSelector((state) => state.auth);
     const { selectedTaskId } = useAppSelector((state) => state.task);
-    const { config } = useAppSelector((state) => state.timer);
+    const { config, isLoadedFromFirebase } = useAppSelector((state) => state.timer);
+    const { data: firebaseConfig, isLoading: isConfigLoading } = useGetUserConfigQuery(user?.uid || '', { skip: !user?.uid || isLoadedFromFirebase });
     const { data: tasks = [] } = useGetTasksQuery(user?.uid || '', { skip: !user?.uid });
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (firebaseConfig) {
+            dispatch(updateConfig(firebaseConfig));
+            dispatch(setLoadedFromFirebase(true));
+        }
+    }, [firebaseConfig, dispatch]);
 
     const [updateTaskFocusTime] = useUpdateTaskFocusTimeMutation();
     const activeTask = tasks.find(t => t.id === selectedTaskId);
@@ -23,12 +35,18 @@ const FlowtimeTimer = () => {
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const breakEndAudio = useRef<HTMLAudioElement | null>(null);
 
+    const SOUNDS = {
+        bell: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
+        digital: 'https://assets.mixkit.co/active_storage/sfx/1070/1070-preview.mp3',
+        birds: 'https://assets.mixkit.co/active_storage/sfx/139/139-preview.mp3'
+    };
+
     useEffect(() => {
-        // Initialize audio with a fallback and handle potential loading issues
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        const audioUrl = SOUNDS[config.soundId as keyof typeof SOUNDS] || SOUNDS.bell;
+        const audio = new Audio(audioUrl);
         audio.preload = 'auto';
         breakEndAudio.current = audio;
-    }, []);
+    }, [config.soundId]);
 
     const playBell = () => {
         if (breakEndAudio.current) {

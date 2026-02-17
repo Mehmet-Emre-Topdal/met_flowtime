@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
 import { useAppSelector, useAppDispatch } from '@/hooks/storeHooks';
 import { updateConfig } from '@/features/timer/slices/timerSlice';
+import { useUpdateUserConfigMutation } from '@/features/timer/api/timerApi';
 import { UserConfig, FlowtimeInterval } from '@/types/config';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '@/lib/i18n';
@@ -17,6 +18,8 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
     const { t, i18n } = useTranslation();
     const dispatch = useAppDispatch();
     const { config } = useAppSelector((state) => state.timer);
+    const { user } = useAppSelector((state) => state.auth);
+    const [updateUserConfig, { isLoading: isUpdating }] = useUpdateUserConfigMutation();
     const [localConfig, setLocalConfig] = useState<UserConfig>(config);
 
     useEffect(() => {
@@ -63,8 +66,15 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
         setLocalConfig({ ...localConfig, intervals });
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         dispatch(updateConfig(localConfig));
+        if (user?.uid) {
+            try {
+                await updateUserConfig({ uid: user.uid, config: localConfig }).unwrap();
+            } catch (err) {
+                console.error("Failed to sync config to Firebase:", err);
+            }
+        }
         onHide();
     };
 
@@ -82,7 +92,12 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
             footer={
                 <div className="flex justify-end gap-3">
                     <Button label={t("common.cancel")} onClick={onHide} className="p-button-text text-[#71717a] hover:text-[#a1a1aa]" />
-                    <Button label={t("settings.saveChanges")} onClick={handleSave} className="bg-[#6366f1] border-none text-white px-5 rounded-lg hover:bg-[#4f46e5]" />
+                    <Button
+                        label={isUpdating ? t("common.loading") : t("settings.saveChanges")}
+                        onClick={handleSave}
+                        disabled={isUpdating}
+                        className="bg-[#6366f1] border-none text-white px-5 rounded-lg hover:bg-[#4f46e5]"
+                    />
                 </div>
             }
         >
@@ -116,6 +131,30 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                             <span className="text-base">🇬🇧</span>
                             <span>English</span>
                         </button>
+                    </div>
+                </div>
+
+                {/* Sound Section */}
+                <div className="flex flex-col gap-3">
+                    <header>
+                        <h4 className="text-sm font-medium text-[#fafafa] mb-1">{t("settings.sound")}</h4>
+                        <p className="text-xs text-[#71717a]">{t("settings.soundDesc")}</p>
+                    </header>
+                    <div className="flex flex-wrap gap-2">
+                        {['bell', 'digital', 'birds'].map((soundId) => (
+                            <button
+                                key={soundId}
+                                onClick={() => setLocalConfig({ ...localConfig, soundId })}
+                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-xs font-medium transition-all duration-200
+                                    ${localConfig.soundId === soundId
+                                        ? 'bg-[#6366f1]/10 border-[#6366f1]/30 text-[#6366f1]'
+                                        : 'bg-transparent border-[#27272a] text-[#71717a] hover:border-[#3f3f46] hover:text-[#a1a1aa]'
+                                    }`}
+                            >
+                                <i className={`pi ${soundId === 'bell' ? 'pi-bell' : soundId === 'digital' ? 'pi-mobile' : 'pi-twitter'} text-sm`} />
+                                <span>{t(`settings.sounds.${soundId}`)}</span>
+                            </button>
+                        ))}
                     </div>
                 </div>
 

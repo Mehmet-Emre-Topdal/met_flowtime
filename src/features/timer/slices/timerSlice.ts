@@ -3,10 +3,12 @@ import { UserConfig, DEFAULT_CONFIG } from "@/types/config";
 
 interface TimerState {
     config: UserConfig;
+    isLoadedFromFirebase: boolean;
 }
 
 const initialState: TimerState = {
     config: DEFAULT_CONFIG,
+    isLoadedFromFirebase: false,
 };
 
 const timerSlice = createSlice({
@@ -16,8 +18,11 @@ const timerSlice = createSlice({
         updateConfig: (state, action: PayloadAction<UserConfig>) => {
             state.config = action.payload;
         },
+        setLoadedFromFirebase: (state, action: PayloadAction<boolean>) => {
+            state.isLoadedFromFirebase = action.payload;
+        }
     },
 });
 
-export const { updateConfig } = timerSlice.actions;
+export const { updateConfig, setLoadedFromFirebase } = timerSlice.actions;
 export default timerSlice.reducer;

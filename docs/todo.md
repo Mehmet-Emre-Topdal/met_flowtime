@@ -15,11 +15,7 @@ GOOGLE İLE HESAP AÇARKEN UYGULAMA İSMİ DEĞİŞECEK
 
 ŞİFER GÜCÜNÜ KALDIR
 
-timer nasıl çalışıyo ben anlamadım yanlış çalışıyor
-
 zili düzgün şekilde eklemek lazım undefined gelme şansı var
-
-süre konfigleri çerez olarak saklanmalı
 
 zil sesi değiştirilebilir
 
