@@ -1,0 +1,139 @@
+/* PrimeReact Overrides */
+
+.p-menu {
+    background: #18181b !important;
+    border: 1px solid #27272a !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+
+    .p-menuitem-link {
+        padding: 0.6rem 1rem !important;
+
+        .p-menuitem-text {
+            color: #a1a1aa !important;
+            font-size: 0.8125rem !important;
+            font-family: "Inter", sans-serif !important;
+        }
+
+        .p-menuitem-icon {
+            color: #71717a !important;
+            margin-right: 0.5rem !important;
+        }
+
+        &:not(.p-disabled):hover {
+            background: #27272a !important;
+
+            .p-menuitem-text {
+                color: #fafafa !important;
+            }
+
+            .p-menuitem-icon {
+                color: #6366f1 !important;
+            }
+        }
+    }
+}
+
+.custom-switcher.p-selectbutton {
+    background: #18181b !important;
+    padding: 3px !important;
+    border-radius: 8px !important;
+    border: 1px solid #27272a !important;
+
+    .p-button {
+        background: transparent !important;
+        border: none !important;
+        color: #71717a !important;
+        transition: all 0.2s ease !important;
+        border-radius: 6px !important;
+
+        &.p-highlight {
+            background: #27272a !important;
+            color: #fafafa !important;
+            box-shadow: none !important;
+        }
+
+        &:not(.p-highlight):hover {
+            color: #a1a1aa !important;
+            background: transparent !important;
+        }
+    }
+}
+
+.auth-password-input {
+    width: 100%;
+    display: block;
+
+    .p-password,
+    .p-password-input {
+        width: 100%;
+    }
+
+    .p-input-icon-right,
+    .p-password>span {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .p-password-toggle-mask-icon,
+    .p-password .p-icon {
+        color: #71717a !important;
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+}
+
+.daily-checkbox .p-checkbox-box {
+    background: transparent !important;
+    border: 1.5px solid #3f3f46 !important;
+    border-radius: 4px !important;
+    width: 18px !important;
+    height: 18px !important;
+    transition: all 0.15s ease !important;
+
+    &.p-highlight {
+        background: #6366f1 !important;
+        border-color: #6366f1 !important;
+    }
+
+    .p-checkbox-icon {
+        color: #fafafa !important;
+        font-size: 10px !important;
+    }
+}
+
+.settings-input-compact .p-inputnumber-input {
+    padding: 0.25rem 0.5rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 4px !important;
+    transition: all 0.2s;
+}
+
+.settings-input-compact .p-inputnumber-input:focus {
+    border-color: #6366f1 !important;
+    background: rgba(99, 102, 241, 0.05) !important;
+    outline: none !important;
+}
+
+.p-inputtext:focus,
+.p-inputtextarea:focus {
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3) !important;
+}
+
+.custom-toast .p-toast-message {
+    background: #18181b !important;
+    border: 1px solid #27272a !important;
+    color: #fafafa !important;
+}
+
+.custom-toast .p-toast-message-success .p-toast-message-icon {
+    color: #6366f1 !important;
+}
+
+.p-knob-value {
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}

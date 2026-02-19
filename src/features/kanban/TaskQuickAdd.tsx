@@ -170,19 +170,6 @@ const TaskQuickAdd = () => {
                 </div>
             </Dialog>
 
-            <style jsx global>{`
-                .p-inputtext:focus, .p-inputtextarea:focus {
-                    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3) !important;
-                }
-                .custom-toast .p-toast-message {
-                    background: #18181b !important;
-                    border: 1px solid #27272a !important;
-                    color: #fafafa !important;
-                }
-                .custom-toast .p-toast-message-success .p-toast-message-icon {
-                    color: #6366f1 !important;
-                }
-            `}</style>
         </div>
     );
 };

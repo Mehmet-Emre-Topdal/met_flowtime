@@ -178,60 +178,6 @@ const LoginPage = () => {
                 </div>
             </Card>
 
-            <style jsx global>{`
-                @keyframes fade-in {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes slide-up {
-                    from { transform: translateY(12px); opacity: 0; }
-                    to { transform: translateY(0); opacity: 1; }
-                }
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-4px); }
-                    75% { transform: translateX(4px); }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.4s ease-out forwards;
-                }
-                .animate-slide-up {
-                    animation: slide-up 0.3s ease-out 0.1s both;
-                }
-                .animate-shake {
-                    animation: shake 0.3s ease-out;
-                }
-                body {
-                    margin: 0;
-                    padding: 0;
-                    font-family: 'Inter', system-ui, sans-serif;
-                }
-                .auth-password-input {
-                    width: 100%;
-                    display: block;
-                }
-                .auth-password-input .p-password {
-                    width: 100%;
-                }
-                .auth-password-input .p-password-input {
-                    width: 100%;
-                }
-                .auth-password-input .p-input-icon-right,
-                .auth-password-input .p-password > span {
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                }
-                .auth-password-input .p-password-toggle-mask-icon,
-                .auth-password-input .p-password .p-icon {
-                    color: #71717a !important;
-                    position: absolute;
-                    right: 14px;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    cursor: pointer;
-                }
-            `}</style>
         </div>
     );
 };

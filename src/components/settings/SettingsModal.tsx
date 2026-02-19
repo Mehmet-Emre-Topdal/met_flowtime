@@ -233,19 +233,6 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                 </div>
             </div>
 
-            <style jsx global>{`
-                .settings-input-compact .p-inputnumber-input {
-                    padding: 0.25rem 0.5rem !important;
-                    border: 1px solid transparent !important;
-                    border-radius: 4px !important;
-                    transition: all 0.2s;
-                }
-                .settings-input-compact .p-inputnumber-input:focus {
-                    border-color: #6366f1 !important;
-                    background: rgba(99, 102, 241, 0.05) !important;
-                    outline: none !important;
-                }
-            `}</style>
         </Dialog>
     );
 };

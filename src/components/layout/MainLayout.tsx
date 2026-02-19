@@ -93,36 +93,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                 visible={settingsVisible}
                 onHide={() => setSettingsVisible(false)}
             />
-
-            <style jsx global>{`
-                .p-menu {
-                    background: #18181b !important;
-                    border: 1px solid #27272a !important;
-                    border-radius: 8px !important;
-                    box-shadow: none !important;
-                }
-                .p-menu .p-menuitem-link {
-                    padding: 0.6rem 1rem !important;
-                }
-                .p-menu .p-menuitem-link .p-menuitem-text {
-                    color: #a1a1aa !important;
-                    font-size: 0.8125rem !important;
-                    font-family: "Inter", sans-serif !important;
-                }
-                .p-menu .p-menuitem-link .p-menuitem-icon {
-                    color: #71717a !important;
-                    margin-right: 0.5rem !important;
-                }
-                .p-menu .p-menuitem-link:not(.p-disabled):hover {
-                    background: #27272a !important;
-                }
-                .p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-text {
-                    color: #fafafa !important;
-                }
-                .p-menu .p-menuitem-link:not(.p-disabled):hover .p-menuitem-icon {
-                    color: #6366f1 !important;
-                }
-            `}</style>
         </div>
     );
 };

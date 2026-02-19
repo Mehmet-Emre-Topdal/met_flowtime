@@ -74,53 +74,6 @@ export default function Home() {
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slide-up {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-            animation: fade-in 0.4s ease-out forwards;
-        }
-        .animate-slide-up {
-            animation: slide-up 0.3s ease-out forwards;
-        }
-        @keyframes dropdown-in {
-            from { opacity: 0; transform: translateY(-4px) scale(0.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        .animate-dropdown-in {
-            animation: dropdown-in 0.12s ease-out forwards;
-        }
-        
-        .custom-switcher.p-selectbutton {
-            background: #18181b !important;
-            padding: 3px !important;
-            border-radius: 8px !important;
-            border: 1px solid #27272a !important;
-        }
-        .custom-switcher .p-button {
-            background: transparent !important;
-            border: none !important;
-            color: #71717a !important;
-            transition: all 0.2s ease !important;
-            border-radius: 6px !important;
-        }
-        .custom-switcher .p-button.p-highlight {
-            background: #27272a !important;
-            color: #fafafa !important;
-            box-shadow: none !important;
-        }
-        .custom-switcher .p-button:not(.p-highlight):hover {
-            color: #a1a1aa !important;
-            background: transparent !important;
-        }
-      `}</style>
-
       <StickyNotes />
     </MainLayout>
   );
