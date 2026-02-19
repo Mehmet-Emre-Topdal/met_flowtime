@@ -123,5 +123,71 @@
         "list": "List",
         "board": "Board",
         "daily": "Daily"
+    },
+    "analytics": {
+        "title": "Analytics",
+        "subtitle": "Personal insights generated from your focus data",
+        "primary": "Primary Analytics",
+        "secondary": "Secondary Analytics",
+        "notEnoughData": "Not enough data yet — this analysis is still forming.",
+        "loadingSessions": "Loading sessions...",
+        "noSessions": "No sessions recorded yet. Use the timer to create sessions.",
+        "flowWaves": {
+            "title": "Daily Flow Waves",
+            "peakHour": "Your peak hour",
+            "troughHour": "Your trough hour",
+            "peak": "Peak",
+            "normal": "Normal",
+            "trough": "Trough",
+            "minutes": "min"
+        },
+        "depthScore": {
+            "title": "Depth Score",
+            "deepWork": "Deep Work",
+            "aboveAvg": "{{percent}}% above last week's average",
+            "belowAvg": "{{percent}}% below last week's average",
+            "noComparison": "Not enough data for comparison",
+            "min": "min"
+        },
+        "focusDensity": {
+            "title": "Focus Density",
+            "sharp": "Sharp Focus",
+            "good": "Good Rhythm",
+            "scattered_start": "Scattered Start",
+            "scattered_mind": "Scattered Mind"
+        },
+        "resistancePoint": {
+            "title": "Resistance Point",
+            "usuallyAt": "You usually take a break at minute {{minute}}.",
+            "min": "min"
+        },
+        "earnedFreedom": {
+            "title": "Earned Freedom",
+            "balance": "{{minutes}} min break earned",
+            "weekSummary": "This week: earned {{earned}} min, used {{used}} min."
+        },
+        "flowWindow": {
+            "title": "Natural Flow Window",
+            "windowText": "Your focus window is usually {{start}}-{{end}} minutes.",
+            "medianText": "Median: {{median}} min",
+            "sessions": "sessions"
+        },
+        "flowStreak": {
+            "title": "Flow Streak",
+            "current": "Current streak",
+            "record": "Record",
+            "days": "days"
+        },
+        "taskHarmony": {
+            "title": "Task-Flow Harmony",
+            "sessions": "sessions",
+            "depthMin": "min deep work"
+        },
+        "warmup": {
+            "title": "Warm-up Phase",
+            "avgText": "Your average warm-up time is {{minutes}} minutes.",
+            "improved": "Decreased by {{minutes}} min compared to last month.",
+            "worsened": "Increased by {{minutes}} min compared to last month."
+        }
     }
 }

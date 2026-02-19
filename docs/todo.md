@@ -5,7 +5,7 @@ validasyonlar eklenmeli
 
 mutasyonlarda unwrap kullanılmalı
 
-UI için yeni bir tema bulmalıyım bu çok sade
+UI için yeni bir tema bulmalıyım bu çok sade )(lo fi cozy yapacağız)
 
 şifre güncelleme eklenmeli
 
@@ -13,7 +13,6 @@ mobildeki hover işlemleri test edilmeli
 
 GOOGLE İLE HESAP AÇARKEN UYGULAMA İSMİ DEĞİŞECEK
 
-ŞİFER GÜCÜNÜ KALDIR
 
 zili düzgün şekilde eklemek lazım undefined gelme şansı var
 

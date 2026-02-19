@@ -123,5 +123,71 @@
         "list": "Liste",
         "board": "Pano",
         "daily": "Günlük"
+    },
+    "analytics": {
+        "title": "Analizler",
+        "subtitle": "Odaklanma verilerinizden üretilen kişisel içgörüler",
+        "primary": "Birincil Analizler",
+        "secondary": "İkincil Analizler",
+        "notEnoughData": "Yeterli veri yok — analiz şekillenmeye devam ediyor.",
+        "loadingSessions": "Seanslar yükleniyor...",
+        "noSessions": "Henüz seans kaydı yok. Timer'ı kullanarak seans oluşturun.",
+        "flowWaves": {
+            "title": "Günlük Akış Dalgaları",
+            "peakHour": "Zirve saatiniz",
+            "troughHour": "Vadi saatiniz",
+            "peak": "Zirve",
+            "normal": "Normal",
+            "trough": "Vadi",
+            "minutes": "dk"
+        },
+        "depthScore": {
+            "title": "Derinlik Skoru",
+            "deepWork": "Derin Çalışma",
+            "aboveAvg": "Geçen haftanın ortalamasının %{{percent}} üzerinde",
+            "belowAvg": "Geçen haftanın ortalamasının %{{percent}} altında",
+            "noComparison": "Karşılaştırma için yeterli veri yok",
+            "min": "dk"
+        },
+        "focusDensity": {
+            "title": "Odak Yoğunluk Oranı",
+            "sharp": "Keskin Odak",
+            "good": "İyi Ritim",
+            "scattered_start": "Dağınık Başlangıç",
+            "scattered_mind": "Dağınık Zihin"
+        },
+        "resistancePoint": {
+            "title": "Zihinsel Dayanıklılık Eşiği",
+            "usuallyAt": "Genellikle {{minute}}. dakikada molaya çıkıyorsun.",
+            "min": "dk"
+        },
+        "earnedFreedom": {
+            "title": "Kazanılmış Özgür Zaman",
+            "balance": "{{minutes}} dk mola hakkın birikti",
+            "weekSummary": "Bu hafta {{earned}} dk kazandın, {{used}} dk kullandın."
+        },
+        "flowWindow": {
+            "title": "Odak Kapasitesi Eğrisi",
+            "windowText": "Odak pencereniz genellikle {{start}}-{{end}} dakika.",
+            "medianText": "Medyan: {{median}} dk",
+            "sessions": "seans"
+        },
+        "flowStreak": {
+            "title": "Akış Serisi",
+            "current": "Şu anki seri",
+            "record": "Rekor",
+            "days": "gün"
+        },
+        "taskHarmony": {
+            "title": "Görev Akış Uyumu",
+            "sessions": "seans",
+            "depthMin": "dk derin çalışma"
+        },
+        "warmup": {
+            "title": "Bilişsel Isınma Süresi",
+            "avgText": "Akışa geçiş süreniz ortalama {{minutes}} dakika.",
+            "improved": "Geçen aya göre {{minutes}} dk azaldı.",
+            "worsened": "Geçen aya göre {{minutes}} dk arttı."
+        }
     }
 }

@@ -1,0 +1,493 @@
+@use '../abstracts/variables' as *;
+
+// ─── Page Layout ───────────────────────────────
+
+.analytics-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+
+    &__header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    &__title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #fafafa;
+        margin: 0 0 0.5rem;
+    }
+
+    &__subtitle {
+        color: #71717a;
+        font-size: 0.85rem;
+    }
+
+    &__section {
+        margin-bottom: 2.5rem;
+    }
+
+    &__section-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #71717a;
+        margin-bottom: 1rem;
+        padding-left: 0.25rem;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+}
+
+.analytics-loading,
+.analytics-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    min-height: 50vh;
+    color: #71717a;
+    text-align: center;
+}
+
+.analytics-empty__icon {
+    font-size: 2.5rem;
+    color: #3f3f46;
+}
+
+// ─── Card Base ─────────────────────────────────
+
+.analytics-card {
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+
+    &:hover {
+        border-color: #3f3f46;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    &__icon {
+        font-size: 0.85rem;
+        color: #6366f1;
+    }
+
+    &__title {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #a1a1aa;
+        margin: 0;
+    }
+
+    &__body {
+        min-height: 80px;
+    }
+
+    &__empty {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #52525b;
+        font-size: 0.78rem;
+        padding: 1rem 0;
+
+        i {
+            font-size: 0.85rem;
+        }
+    }
+}
+
+// ─── Flow Waves ────────────────────────────────
+
+.analytics-flow-waves {
+    &__labels {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+
+    &__badge {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        background: #27272a;
+
+        i {
+            font-size: 0.65rem;
+        }
+
+        &--peak {
+            color: #22c55e;
+
+            i {
+                color: #22c55e;
+            }
+        }
+
+        &--trough {
+            color: #f59e0b;
+
+            i {
+                color: #f59e0b;
+            }
+        }
+    }
+}
+
+// ─── Depth Score ───────────────────────────────
+
+.analytics-depth {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    &__score {
+        display: flex;
+        align-items: baseline;
+        gap: 0.25rem;
+    }
+
+    &__number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fafafa;
+        line-height: 1;
+    }
+
+    &__unit {
+        font-size: 0.85rem;
+        color: #71717a;
+    }
+
+    &__label {
+        font-size: 0.75rem;
+        color: #6366f1;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    &__comparison {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.72rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        background: #27272a;
+
+        i {
+            font-size: 0.6rem;
+        }
+
+        &--up {
+            color: #22c55e;
+        }
+
+        &--down {
+            color: #ef4444;
+        }
+    }
+}
+
+// ─── Focus Density ─────────────────────────────
+
+.analytics-density {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+
+    &__ring {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__percent {
+        position: absolute;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fafafa;
+    }
+
+    &__label {
+        font-size: 0.78rem;
+        font-weight: 500;
+    }
+}
+
+// ─── Resistance Point ──────────────────────────
+
+.analytics-resistance {
+    &__text {
+        font-size: 0.8rem;
+        color: #a1a1aa;
+        margin: 0 0 0.75rem;
+    }
+}
+
+// ─── Earned Freedom ────────────────────────────
+
+.analytics-freedom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &__balance {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    &__number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #22c55e;
+        line-height: 1;
+    }
+
+    &__text {
+        font-size: 0.78rem;
+        color: #a1a1aa;
+    }
+
+    &__bar-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__bar {
+        height: 6px;
+        background: #27272a;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    &__bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #22c55e, #6366f1);
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+
+    &__bar-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.65rem;
+        color: #52525b;
+    }
+
+    &__week {
+        font-size: 0.72rem;
+        color: #71717a;
+        margin: 0;
+    }
+}
+
+// ─── Flow Window ───────────────────────────────
+
+.analytics-window {
+    &__text {
+        font-size: 0.8rem;
+        color: #a1a1aa;
+        margin: 0 0 0.25rem;
+    }
+
+    &__median {
+        font-size: 0.7rem;
+        color: #52525b;
+        margin: 0 0 0.75rem;
+    }
+}
+
+// ─── Flow Streak ───────────────────────────────
+
+.analytics-streak {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    &__stats {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    &__stat {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.2rem;
+    }
+
+    &__number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #fafafa;
+        line-height: 1;
+
+        &--record {
+            color: #f59e0b;
+        }
+    }
+
+    &__label {
+        font-size: 0.7rem;
+        color: #71717a;
+    }
+
+    &__divider {
+        width: 1px;
+        height: 32px;
+        background: #27272a;
+    }
+
+    &__calendar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: center;
+        max-width: 230px;
+    }
+
+    &__dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        background: #27272a;
+        transition: background 0.2s;
+
+        &--filled {
+            background: #6366f1;
+        }
+    }
+
+    &__days-label {
+        font-size: 0.65rem;
+        color: #52525b;
+    }
+}
+
+// ─── Task Harmony ──────────────────────────────
+
+.analytics-harmony {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    &__item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__info {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    &__task {
+        font-size: 0.78rem;
+        color: #fafafa;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 140px;
+    }
+
+    &__meta {
+        font-size: 0.65rem;
+        color: #52525b;
+    }
+
+    &__bar-wrap {
+        height: 6px;
+        background: #27272a;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    &__bar {
+        height: 100%;
+        background: #6366f1;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+    }
+}
+
+// ─── Warm-up Phase ─────────────────────────────
+
+.analytics-warmup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    &__main {
+        display: flex;
+        align-items: baseline;
+        gap: 0.25rem;
+    }
+
+    &__number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #fafafa;
+        line-height: 1;
+    }
+
+    &__unit {
+        font-size: 0.85rem;
+        color: #71717a;
+    }
+
+    &__text {
+        font-size: 0.78rem;
+        color: #a1a1aa;
+        text-align: center;
+        margin: 0;
+    }
+
+    &__change {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.72rem;
+        margin: 0;
+
+        i {
+            font-size: 0.6rem;
+        }
+
+        &--good {
+            color: #22c55e;
+        }
+
+        &--bad {
+            color: #ef4444;
+        }
+    }
+}

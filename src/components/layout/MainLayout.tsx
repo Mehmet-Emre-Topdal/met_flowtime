@@ -63,6 +63,27 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         </h1>
                     </Link>
 
+                    <nav className="flex items-center gap-1">
+                        <Link
+                            href="/"
+                            className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/'
+                                    ? 'text-[#fafafa] bg-[#27272a]'
+                                    : 'text-[#71717a] hover:text-[#a1a1aa] hover:bg-[#18181b]'
+                                }`}
+                        >
+                            {t("timer.focusSession")}
+                        </Link>
+                        <Link
+                            href="/report"
+                            className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/report'
+                                    ? 'text-[#fafafa] bg-[#27272a]'
+                                    : 'text-[#71717a] hover:text-[#a1a1aa] hover:bg-[#18181b]'
+                                }`}
+                        >
+                            {t("analytics.title")}
+                        </Link>
+                    </nav>
+
                     <div className="flex items-center gap-3">
                         <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#18181b] border-[#27272a] text-[#fafafa]" />
                         <div
