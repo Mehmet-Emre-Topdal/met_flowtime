@@ -18,6 +18,13 @@ zili düzgün şekilde eklemek lazım undefined gelme şansı var
 
 zil sesi değiştirilebilir
 
+ANALİZLER SÜRELERİN AYARLANABİLİRLİĞİ İLE UYUMLU OLMALI
+
+mock verileri kaldıracağız
+
+dept çok saçma ya 
+
+AI eklememiz lazım
 ---------------
 OPTİMİSTİK UI KODUNU OKUMALIYIM
 

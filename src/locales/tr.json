@@ -134,6 +134,7 @@
         "noSessions": "Henüz seans kaydı yok. Timer'ı kullanarak seans oluşturun.",
         "flowWaves": {
             "title": "Günlük Akış Dalgaları",
+            "tooltip": "Son 14 gündeki seanslarınız saat dilimlerine göre gruplandırılır. Ortalamanın %30 üstü 'Zirve', %30 altı 'Vadi' olarak işaretlenir.",
             "peakHour": "Zirve saatiniz",
             "troughHour": "Vadi saatiniz",
             "peak": "Zirve",
@@ -143,6 +144,7 @@
         },
         "depthScore": {
             "title": "Derinlik Skoru",
+            "tooltip": "Her seansın süresi ağırlıklı çarpanla hesaplanır: <25dk → ×0.5, 25-50dk → ×1.0, >50dk → ×1.25. Günlük toplam, geçen haftayla karşılaştırılır.",
             "deepWork": "Derin Çalışma",
             "aboveAvg": "Geçen haftanın ortalamasının %{{percent}} üzerinde",
             "belowAvg": "Geçen haftanın ortalamasının %{{percent}} altında",
@@ -151,6 +153,7 @@
         },
         "focusDensity": {
             "title": "Odak Yoğunluk Oranı",
+            "tooltip": "Bugünkü toplam odaklanma süreniz, ilk seans başlangıcı ile son seans bitişi arasındaki zaman aralığına oranlanır. ≥80% Keskin, ≥60% İyi, ≥40% Dağınık Başlangıç, <40% Dağınık Zihin.",
             "sharp": "Keskin Odak",
             "good": "İyi Ritim",
             "scattered_start": "Dağınık Başlangıç",
@@ -158,33 +161,39 @@
         },
         "resistancePoint": {
             "title": "Zihinsel Dayanıklılık Eşiği",
+            "tooltip": "Tüm seanslarınızın sürelerinin mod ve medyanı hesaplanır. Fark >%20 ise medyan, değilse mod kullanılır. Bu, genellikle molaya çıktığınız dakikayı gösterir.",
             "usuallyAt": "Genellikle {{minute}}. dakikada molaya çıkıyorsun.",
             "min": "dk"
         },
         "earnedFreedom": {
             "title": "Kazanılmış Özgür Zaman",
+            "tooltip": "Her 5 dakikalık odaklanma karşılığında 1 dakika mola hakkı kazanırsınız. Kullanılan mola süreleri düşülür ve bakiye gösterilir.",
             "balance": "{{minutes}} dk mola hakkın birikti",
             "weekSummary": "Bu hafta {{earned}} dk kazandın, {{used}} dk kullandın."
         },
         "flowWindow": {
             "title": "Odak Kapasitesi Eğrisi",
+            "tooltip": "Tüm seanslarınız 5 dakikalık aralıklara dağıtılır. En yoğun ardışık 2-3 aralık 'baskın pencere' olarak belirlenir. Medyan değeri de gösterilir.",
             "windowText": "Odak pencereniz genellikle {{start}}-{{end}} dakika.",
             "medianText": "Medyan: {{median}} dk",
             "sessions": "seans"
         },
         "flowStreak": {
             "title": "Akış Serisi",
+            "tooltip": "Günlük derinlik skorunuz, 30 günlük ortalamanızın %50'sini aşarsa o gün 'dolu' sayılır. Ardışık dolu günler serinizi oluşturur.",
             "current": "Şu anki seri",
             "record": "Rekor",
             "days": "gün"
         },
         "taskHarmony": {
             "title": "Görev Akış Uyumu",
+            "tooltip": "Göreve etiketlenmiş seanslar gruplanır, her görev için toplam ağırlıklı derinlik skoru ve seans sayısı hesaplanır. En derin görevler üstte yer alır.",
             "sessions": "seans",
             "depthMin": "dk derin çalışma"
         },
         "warmup": {
             "title": "Bilişsel Isınma Süresi",
+            "tooltip": "20+ dakikalık seansların ortalama süresinin %22'si ısınma süresi olarak hesaplanır. Varyasyon katsayısı >0.6 ise veri güvenilir sayılmaz.",
             "avgText": "Akışa geçiş süreniz ortalama {{minutes}} dakika.",
             "improved": "Geçen aya göre {{minutes}} dk azaldı.",
             "worsened": "Geçen aya göre {{minutes}} dk arttı."

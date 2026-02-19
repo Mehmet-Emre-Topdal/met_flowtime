@@ -20,6 +20,7 @@ const FlowWindowCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.flowWindow.title')}
+            tooltip={t('analytics.flowWindow.tooltip')}
             icon="pi-sliders-v"
             hasEnoughData={data.hasEnoughData}
         >

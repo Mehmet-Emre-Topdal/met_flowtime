@@ -134,6 +134,7 @@
         "noSessions": "No sessions recorded yet. Use the timer to create sessions.",
         "flowWaves": {
             "title": "Daily Flow Waves",
+            "tooltip": "Sessions from the last 14 days are grouped by hour. Hours >30% above average are 'Peak', >30% below are 'Trough'.",
             "peakHour": "Your peak hour",
             "troughHour": "Your trough hour",
             "peak": "Peak",
@@ -143,6 +144,7 @@
         },
         "depthScore": {
             "title": "Depth Score",
+            "tooltip": "Each session is weighted: <25min → ×0.5, 25-50min → ×1.0, >50min → ×1.25. Today's total is compared to last week's same-day average.",
             "deepWork": "Deep Work",
             "aboveAvg": "{{percent}}% above last week's average",
             "belowAvg": "{{percent}}% below last week's average",
@@ -151,6 +153,7 @@
         },
         "focusDensity": {
             "title": "Focus Density",
+            "tooltip": "Today's total focus time divided by the time span from first to last session. ≥80% Sharp, ≥60% Good, ≥40% Scattered Start, <40% Scattered Mind.",
             "sharp": "Sharp Focus",
             "good": "Good Rhythm",
             "scattered_start": "Scattered Start",
@@ -158,33 +161,39 @@
         },
         "resistancePoint": {
             "title": "Resistance Point",
+            "tooltip": "Mode and median of all session durations are calculated. If they differ by >20%, median is used. This shows the minute you typically take a break.",
             "usuallyAt": "You usually take a break at minute {{minute}}.",
             "min": "min"
         },
         "earnedFreedom": {
             "title": "Earned Freedom",
+            "tooltip": "For every 5 minutes of focus, you earn 1 minute of break. Used break time is subtracted to show your remaining balance.",
             "balance": "{{minutes}} min break earned",
             "weekSummary": "This week: earned {{earned}} min, used {{used}} min."
         },
         "flowWindow": {
             "title": "Natural Flow Window",
+            "tooltip": "All sessions are bucketed into 5-min intervals. The best consecutive 2-3 buckets form the 'dominant window'. Median duration is also shown.",
             "windowText": "Your focus window is usually {{start}}-{{end}} minutes.",
             "medianText": "Median: {{median}} min",
             "sessions": "sessions"
         },
         "flowStreak": {
             "title": "Flow Streak",
+            "tooltip": "A day counts as 'filled' if your depth score exceeds 50% of your 30-day average. Consecutive filled days make up your streak.",
             "current": "Current streak",
             "record": "Record",
             "days": "days"
         },
         "taskHarmony": {
             "title": "Task-Flow Harmony",
+            "tooltip": "Task-tagged sessions are grouped. Weighted depth score and session count are calculated per task. Deepest tasks appear first.",
             "sessions": "sessions",
             "depthMin": "min deep work"
         },
         "warmup": {
             "title": "Warm-up Phase",
+            "tooltip": "22% of the average duration of 20+ minute sessions is estimated as warm-up time. If coefficient of variation >0.6, data is considered unreliable.",
             "avgText": "Your average warm-up time is {{minutes}} minutes.",
             "improved": "Decreased by {{minutes}} min compared to last month.",
             "worsened": "Increased by {{minutes}} min compared to last month."

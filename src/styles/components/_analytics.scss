@@ -91,6 +91,19 @@
         font-weight: 500;
         color: #a1a1aa;
         margin: 0;
+        flex: 1;
+    }
+
+    &__help {
+        font-size: 0.75rem;
+        color: #52525b;
+        cursor: help;
+        transition: color 0.2s;
+        margin-left: auto;
+
+        &:hover {
+            color: #a1a1aa;
+        }
     }
 
     &__body {

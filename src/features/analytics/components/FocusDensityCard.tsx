@@ -23,6 +23,7 @@ const FocusDensityCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.focusDensity.title')}
+            tooltip={t('analytics.focusDensity.tooltip')}
             icon="pi-clock"
             hasEnoughData={data.hasEnoughData}
         >

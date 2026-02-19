@@ -21,6 +21,7 @@ const DepthScoreCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.depthScore.title')}
+            tooltip={t('analytics.depthScore.tooltip')}
             icon="pi-bolt"
             hasEnoughData={data.hasEnoughData}
         >

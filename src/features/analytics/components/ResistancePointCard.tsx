@@ -19,6 +19,7 @@ const ResistancePointCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.resistancePoint.title')}
+            tooltip={t('analytics.resistancePoint.tooltip')}
             icon="pi-flag"
             hasEnoughData={data.hasEnoughData}
         >

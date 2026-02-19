@@ -17,6 +17,7 @@ const EarnedFreedomCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.earnedFreedom.title')}
+            tooltip={t('analytics.earnedFreedom.tooltip')}
             icon="pi-sun"
             hasEnoughData={data.hasEnoughData}
         >

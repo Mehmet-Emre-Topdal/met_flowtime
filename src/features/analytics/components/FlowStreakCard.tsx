@@ -13,6 +13,7 @@ const FlowStreakCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.flowStreak.title')}
+            tooltip={t('analytics.flowStreak.tooltip')}
             icon="pi-sparkles"
             hasEnoughData={data.hasEnoughData}
         >

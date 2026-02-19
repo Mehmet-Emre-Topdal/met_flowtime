@@ -20,6 +20,7 @@ const DailyFlowWaves: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.flowWaves.title')}
+            tooltip={t('analytics.flowWaves.tooltip')}
             icon="pi-chart-line"
             hasEnoughData={data.hasEnoughData}
         >

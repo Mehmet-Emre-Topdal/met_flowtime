@@ -13,6 +13,7 @@ const WarmupPhaseCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.warmup.title')}
+            tooltip={t('analytics.warmup.tooltip')}
             icon="pi-hourglass"
             hasEnoughData={data.hasEnoughData}
         >

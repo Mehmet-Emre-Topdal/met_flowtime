@@ -9,6 +9,8 @@ import {
     orderBy,
     serverTimestamp,
     Timestamp,
+    writeBatch,
+    doc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -31,9 +33,30 @@ export const sessionsApi = baseApi.injectEndpoints({
             invalidatesTags: ["Analytics"],
         }),
 
+        seedSessions: builder.mutation<{ success: boolean; count: number }, FlowSessionCreateInput[]>({
+            async queryFn(sessions) {
+                try {
+                    const batch = writeBatch(db);
+                    sessions.forEach(s => {
+                        const newDocRef = doc(collection(db, "sessions"));
+                        batch.set(newDocRef, {
+                            ...s,
+                            createdAt: serverTimestamp(),
+                        });
+                    });
+                    await batch.commit();
+                    return { data: { success: true, count: sessions.length } };
+                } catch (error: any) {
+                    return { error: error.message };
+                }
+            },
+            invalidatesTags: ["Analytics"],
+        }),
+
         getSessions: builder.query<FlowSession[], string>({
             async queryFn(userId) {
                 if (!userId) return { data: [] };
+                console.log('Fetching sessions for user:', userId);
                 try {
                     const sessionsRef = collection(db, "sessions");
                     const q = query(
@@ -42,6 +65,7 @@ export const sessionsApi = baseApi.injectEndpoints({
                         orderBy("startedAt", "desc")
                     );
                     const snapshot = await getDocs(q);
+                    console.log(`Fetched ${snapshot.docs.length} sessions`);
                     const sessions = snapshot.docs.map(d => {
                         const data = d.data();
                         return {
@@ -63,6 +87,7 @@ export const sessionsApi = baseApi.injectEndpoints({
                     });
                     return { data: sessions };
                 } catch (error: any) {
+                    console.error('Firestore getSessions error:', error);
                     return { error: error.message };
                 }
             },
@@ -74,4 +99,5 @@ export const sessionsApi = baseApi.injectEndpoints({
 export const {
     useCreateSessionMutation,
     useGetSessionsQuery,
+    useSeedSessionsMutation,
 } = sessionsApi;

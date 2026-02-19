@@ -15,6 +15,7 @@ const TaskFlowHarmonyCard: React.FC<Props> = ({ data }) => {
     return (
         <AnalyticsCard
             title={t('analytics.taskHarmony.title')}
+            tooltip={t('analytics.taskHarmony.tooltip')}
             icon="pi-objects-column"
             hasEnoughData={data.hasEnoughData}
         >
