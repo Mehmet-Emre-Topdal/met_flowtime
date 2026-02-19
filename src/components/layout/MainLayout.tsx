@@ -54,11 +54,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     }
 
     return (
-        <div className="min-h-screen bg-[#09090b] text-[#fafafa] font-sans">
-            <header className="fixed top-0 left-0 right-0 h-14 bg-[#09090b]/80 backdrop-blur-md border-b border-[#27272a] z-50">
+        <div className="min-h-screen bg-[#242424] text-[#F0F0F0] font-sans">
+            <header className="fixed top-0 left-0 right-0 h-14 bg-[#242424]/80 backdrop-blur-md border-b border-[#3D3D3D] z-50">
                 <div className="container mx-auto h-full flex items-center justify-between px-6">
                     <Link href="/" className="no-underline">
-                        <h1 className="text-lg font-semibold tracking-tight text-[#fafafa] hover:text-[#6366f1] transition-colors">
+                        <h1 className="text-lg font-serif font-semibold tracking-tight text-[#F0F0F0] hover:text-[#4F8EF7] transition-colors">
                             {t("common.appName")}
                         </h1>
                     </Link>
@@ -67,8 +67,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <Link
                             href="/"
                             className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/'
-                                    ? 'text-[#fafafa] bg-[#27272a]'
-                                    : 'text-[#71717a] hover:text-[#a1a1aa] hover:bg-[#18181b]'
+                                ? 'text-[#F0F0F0] bg-[#3D3D3D]'
+                                : 'text-[#757575] hover:text-[#9A9A9A] hover:bg-[#2E2E2E]'
                                 }`}
                         >
                             {t("timer.focusSession")}
@@ -76,8 +76,8 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <Link
                             href="/report"
                             className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/report'
-                                    ? 'text-[#fafafa] bg-[#27272a]'
-                                    : 'text-[#71717a] hover:text-[#a1a1aa] hover:bg-[#18181b]'
+                                ? 'text-[#F0F0F0] bg-[#3D3D3D]'
+                                : 'text-[#757575] hover:text-[#9A9A9A] hover:bg-[#2E2E2E]'
                                 }`}
                         >
                             {t("analytics.title")}
@@ -85,19 +85,19 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     </nav>
 
                     <div className="flex items-center gap-3">
-                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#18181b] border-[#27272a] text-[#fafafa]" />
+                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#2E2E2E] border-[#3D3D3D] text-[#F0F0F0]" />
                         <div
-                            className="flex items-center gap-2.5 cursor-pointer group px-2 py-1.5 rounded-lg hover:bg-[#18181b] transition-colors"
+                            className="flex items-center gap-2.5 cursor-pointer group px-2 py-1.5 rounded-lg hover:bg-[#2E2E2E] transition-colors"
                             onClick={(e) => menuRef.current?.toggle(e)}
                         >
                             <div className="text-right hidden sm:block">
-                                <p className="text-xs text-[#a1a1aa] group-hover:text-[#fafafa] transition-colors leading-none">{user?.displayName?.split(' ')[0]}</p>
+                                <p className="text-xs text-[#9A9A9A] group-hover:text-[#F0F0F0] transition-colors leading-none">{user?.displayName?.split(' ')[0]}</p>
                             </div>
                             <Avatar
                                 image={user?.photoURL || undefined}
                                 icon={!user?.photoURL ? "pi pi-user" : undefined}
                                 shape="circle"
-                                className="border border-[#27272a] group-hover:border-[#3f3f46] transition-all w-8 h-8"
+                                className="border border-[#3D3D3D] group-hover:border-[#353535] transition-all w-8 h-8"
                             />
                         </div>
                     </div>

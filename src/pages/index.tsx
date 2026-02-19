@@ -24,7 +24,7 @@ export default function Home() {
     <MainLayout>
       <div className="flex flex-col items-center gap-10 animate-fade-in max-w-6xl mx-auto py-8 overflow-x-hidden">
 
-        <section className="w-full flex justify-center py-8 bg-[#18181b] rounded-2xl border border-[#27272a]">
+        <section className="w-full flex justify-center py-8 bg-[#2E2E2E] rounded-2xl border border-[#3D3D3D]">
           <FlowtimeTimer />
         </section>
 
@@ -32,7 +32,7 @@ export default function Home() {
 
 
           <div className="flex flex-col items-center gap-4">
-            <div className="h-px w-full bg-[#27272a]"></div>
+            <div className="h-px w-full bg-[#3D3D3D]"></div>
             <div className="flex items-center gap-3">
               <SelectButton
                 value={view}
@@ -50,8 +50,8 @@ export default function Home() {
                 onClick={() => setFilterDaily(!filterDaily)}
                 className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg border text-xs font-medium transition-all duration-200
                   ${filterDaily
-                    ? 'bg-[#6366f1]/10 border-[#6366f1]/30 text-[#6366f1]'
-                    : 'bg-[#18181b] border-[#27272a] text-[#71717a] hover:border-[#3f3f46] hover:text-[#a1a1aa]'
+                    ? 'bg-[#4F8EF7]/10 border-[#4F8EF7]/30 text-[#4F8EF7]'
+                    : 'bg-[#2E2E2E] border-[#3D3D3D] text-[#757575] hover:border-[#353535] hover:text-[#9A9A9A]'
                   }`}
               >
                 <i className="pi pi-replay text-[10px]" />

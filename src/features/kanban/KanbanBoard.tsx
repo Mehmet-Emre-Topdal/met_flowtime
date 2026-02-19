@@ -67,21 +67,21 @@ const SortableTaskCard = ({
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-none">
             <div
-                className={`relative p-3.5 rounded-lg cursor-grab active:cursor-grabbing border bg-[#18181b] group transition-colors overflow-hidden
-                    ${isSelected ? 'border-[#6366f1]' : 'border-[#27272a] hover:border-[#3f3f46]'}`}
+                className={`relative p-3.5 rounded-lg cursor-grab active:cursor-grabbing border bg-[#2E2E2E] group transition-colors overflow-hidden
+                    ${isSelected ? 'border-[#4F8EF7]' : 'border-[#3D3D3D] hover:border-[#353535]'}`}
                 onClick={onClick}
             >
                 <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-[#3f3f46] text-[#a1a1aa] hover:text-[#fafafa] transition-colors"
+                        className="w-6 h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#9A9A9A] hover:text-[#F0F0F0] transition-colors"
                         title={t("common.edit")}
                     >
                         <i className="pi pi-pencil text-[10px]" />
                     </button>
                     <button
                         onClick={(e) => { e.stopPropagation(); onArchive(); }}
-                        className="w-6 h-6 flex items-center justify-center rounded bg-[#27272a] hover:bg-red-500/20 text-[#a1a1aa] hover:text-red-400 transition-colors"
+                        className="w-6 h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#9A9A9A] hover:text-red-400 transition-colors"
                         title={t("common.delete")}
                     >
                         <i className="pi pi-trash text-[10px]" />
@@ -89,21 +89,21 @@ const SortableTaskCard = ({
                 </div>
 
                 <div className="flex items-center gap-2 mb-1 overflow-hidden">
-                    <h5 className="text-[#fafafa] text-sm leading-tight select-none pr-14 font-medium truncate">
+                    <h5 className="text-[#F0F0F0] text-sm leading-tight select-none pr-14 font-medium truncate">
                         {task.title}
                     </h5>
                     {task.isDaily && (
-                        <span className="text-[9px] text-[#818cf8] border border-[#6366f1]/30 bg-[#6366f1]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
+                        <span className="text-[9px] text-[#34C774] border border-[#4F8EF7]/30 bg-[#4F8EF7]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
                             {t("tasks.daily")}
                         </span>
                     )}
                 </div>
                 {task.description && (
-                    <p className="text-xs text-[#71717a]/70 mt-1 leading-relaxed select-none overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                    <p className="text-xs text-[#757575]/70 mt-1 leading-relaxed select-none overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
                         {task.description}
                     </p>
                 )}
-                <div className="flex items-center gap-1.5 text-[10px] text-[#71717a] mt-2">
+                <div className="flex items-center gap-1.5 text-[10px] text-[#757575] mt-2">
                     <i className="pi pi-clock text-[9px]" />
                     <span>{task.totalFocusedTime} {t("tasks.focused")}</span>
                 </div>
@@ -130,13 +130,13 @@ const DroppableColumn = ({
             ref={setNodeRef}
             className={`flex flex-col gap-3 p-4 rounded-xl border min-h-[400px] transition-colors duration-200
                 ${isOver
-                    ? 'bg-[#6366f1]/5 border-[#6366f1]/30'
-                    : 'bg-[#09090b] border-[#27272a]'
+                    ? 'bg-[#4F8EF7]/5 border-[#4F8EF7]/30'
+                    : 'bg-[#242424] border-[#3D3D3D]'
                 }`}
         >
             <div className="flex items-center justify-between pb-3 mb-1">
-                <h4 className="text-sm font-medium text-[#a1a1aa] uppercase tracking-wider">{label}</h4>
-                <span className="text-[10px] bg-[#27272a] text-[#71717a] px-2 py-0.5 rounded-md font-medium">
+                <h4 className="text-sm font-medium text-[#9A9A9A] uppercase tracking-wider">{label}</h4>
+                <span className="text-[10px] bg-[#3D3D3D] text-[#757575] px-2 py-0.5 rounded-md font-medium">
                     {count}
                 </span>
             </div>
@@ -219,7 +219,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
             header: t("tasks.archiveHeader"),
             icon: 'pi pi-exclamation-triangle',
             acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
-            rejectClassName: 'border border-[#27272a] text-[#a1a1aa] px-4 py-2 rounded-lg',
+            rejectClassName: 'border border-[#3D3D3D] text-[#9A9A9A] px-4 py-2 rounded-lg',
             acceptLabel: t("common.delete"),
             rejectLabel: t("common.cancel"),
             accept: async () => {
@@ -368,7 +368,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
     if (isLoading) {
         return (
-            <div className="text-[#71717a] text-sm text-center mt-10 animate-pulse">
+            <div className="text-[#757575] text-sm text-center mt-10 animate-pulse">
                 {t("tasks.loadingTasks")}
             </div>
         );
@@ -380,10 +380,10 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
         <div className="flex flex-col gap-6 w-full overflow-hidden">
             <ConfirmDialog />
 
-            <header className="flex justify-between items-center p-5 rounded-xl border border-[#27272a] bg-[#18181b]">
+            <header className="flex justify-between items-center p-5 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E]">
                 <div className="flex flex-col gap-0.5">
-                    <h3 className="text-base font-semibold text-[#fafafa]">{t("tasks.boardView")}</h3>
-                    <p className="text-xs text-[#71717a]">
+                    <h3 className="text-base font-semibold text-[#F0F0F0]">{t("tasks.boardView")}</h3>
+                    <p className="text-xs text-[#757575]">
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -392,9 +392,9 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             inputId="hide-completed-kanban"
                             checked={hideCompleted}
                             onChange={(e) => setHideCompleted(e.checked ?? false)}
-                            className="w-4 h-4 border-[#3f3f46] rounded-sm"
+                            className="w-4 h-4 border-[#353535] rounded-sm"
                         />
-                        <label htmlFor="hide-completed-kanban" className="text-xs text-[#a1a1aa] cursor-pointer hover:text-[#fafafa] transition-colors select-none">
+                        <label htmlFor="hide-completed-kanban" className="text-xs text-[#9A9A9A] cursor-pointer hover:text-[#F0F0F0] transition-colors select-none">
                             {t("tasks.hideDoneTasks")}
                         </label>
                     </div>
@@ -402,7 +402,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                         label={t("tasks.newTask")}
                         icon="pi pi-plus"
                         onClick={() => setShowCreateDialog(true)}
-                        className="p-button-sm bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-4 py-2 rounded-lg text-xs font-medium"
+                        className="p-button-sm bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-4 py-2 rounded-lg text-xs font-medium"
                     />
                 </div>
             </header>
@@ -466,11 +466,11 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
 
                 <DragOverlay dropAnimation={null}>
                     {activeTask ? (
-                        <div className="p-3.5 rounded-lg border border-[#6366f1] bg-[#18181b] opacity-90 rotate-1 pointer-events-none w-[250px]">
-                            <h5 className="text-[#fafafa] text-sm leading-tight font-medium">
+                        <div className="p-3.5 rounded-lg border border-[#4F8EF7] bg-[#2E2E2E] opacity-90 rotate-1 pointer-events-none w-[250px]">
+                            <h5 className="text-[#F0F0F0] text-sm leading-tight font-medium">
                                 {activeTask.title}
                             </h5>
-                            <div className="flex items-center gap-1.5 text-[10px] text-[#71717a] mt-2">
+                            <div className="flex items-center gap-1.5 text-[10px] text-[#757575] mt-2">
                                 <i className="pi pi-clock text-[9px]" />
                                 <span>{activeTask.totalFocusedTime} {t("tasks.focused")}</span>
                             </div>
@@ -483,50 +483,50 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 header={t("tasks.newTask")}
                 visible={showCreateDialog}
                 onHide={() => setShowCreateDialog(false)}
-                className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
+                className="w-full max-w-lg bg-[#2E2E2E] border border-[#3D3D3D]"
                 pt={{
-                    header: { className: 'bg-[#18181b] text-[#fafafa] border-b border-[#27272a] p-5' },
-                    content: { className: 'p-5 bg-[#18181b]' },
-                    footer: { className: 'p-5 bg-[#18181b] border-t border-[#27272a]' },
+                    header: { className: 'bg-[#2E2E2E] text-[#F0F0F0] border-b border-[#3D3D3D] p-5' },
+                    content: { className: 'p-5 bg-[#2E2E2E]' },
+                    footer: { className: 'p-5 bg-[#2E2E2E] border-t border-[#3D3D3D]' },
                 }}
             >
                 <div className="flex flex-col gap-5 mt-2">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
+                        <label className="text-xs text-[#757575] font-medium">{t("tasks.titleLabel")}</label>
                         <InputText
                             value={newTask.title}
                             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
                             onKeyDown={(e) => e.key === 'Enter' && handleCreateTask()}
-                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                            className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
+                        <label className="text-xs text-[#757575] font-medium">{t("tasks.descriptionLabel")}</label>
                         <InputTextarea
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
                             rows={3}
-                            className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                            className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
                         />
                     </div>
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#09090b]">
+                    <div className="flex items-center gap-3 p-3 rounded-lg border border-[#3D3D3D] bg-[#242424]">
                         <Checkbox
                             inputId="kanban-daily-toggle"
                             checked={newTask.isDaily}
                             onChange={(e) => setNewTask({ ...newTask, isDaily: e.checked ?? false })}
                             className="daily-checkbox"
                         />
-                        <label htmlFor="kanban-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
+                        <label htmlFor="kanban-daily-toggle" className="text-xs text-[#9A9A9A] font-medium cursor-pointer select-none">
                             {t("tasks.dailyToggle")}
                         </label>
                         <i
-                            className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
+                            className="pi pi-question-circle text-[#353535] hover:text-[#757575] text-xs cursor-help transition-colors ml-auto"
                             id="kanban-daily-tooltip-icon"
                         />
                         <Tooltip
                             target="#kanban-daily-tooltip-icon"
                             position="top"
-                            pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
+                            pt={{ text: { className: 'bg-[#2E2E2E] text-[#F0F0F0] text-[11px] border border-[#3D3D3D] p-3 rounded-lg' } }}
                         >
                             {t("tasks.dailyTooltip")}
                         </Tooltip>
@@ -534,7 +534,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                     <Button
                         label={t("tasks.createTask")}
                         onClick={handleCreateTask}
-                        className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
+                        className="bg-[#4F8EF7] border-none text-white py-2.5 rounded-lg hover:bg-[#3D77E0] font-medium"
                     />
                 </div>
             </Dialog>
@@ -543,51 +543,51 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 header={t("tasks.editTask")}
                 visible={showEditDialog}
                 onHide={() => { setShowEditDialog(false); setEditingTask(null); }}
-                className="w-full max-w-lg bg-[#18181b] border border-[#27272a]"
+                className="w-full max-w-lg bg-[#2E2E2E] border border-[#3D3D3D]"
                 pt={{
-                    header: { className: 'bg-[#18181b] text-[#fafafa] border-b border-[#27272a] p-5' },
-                    content: { className: 'p-5 bg-[#18181b]' },
-                    footer: { className: 'p-5 bg-[#18181b] border-t border-[#27272a]' },
+                    header: { className: 'bg-[#2E2E2E] text-[#F0F0F0] border-b border-[#3D3D3D] p-5' },
+                    content: { className: 'p-5 bg-[#2E2E2E]' },
+                    footer: { className: 'p-5 bg-[#2E2E2E] border-t border-[#3D3D3D]' },
                 }}
             >
                 {editingTask && (
                     <div className="flex flex-col gap-5 mt-2">
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.titleLabel")}</label>
+                            <label className="text-xs text-[#757575] font-medium">{t("tasks.titleLabel")}</label>
                             <InputText
                                 value={editingTask.title}
                                 onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
-                                className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                                className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
                             />
                         </div>
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">{t("tasks.descriptionLabel")}</label>
+                            <label className="text-xs text-[#757575] font-medium">{t("tasks.descriptionLabel")}</label>
                             <InputTextarea
                                 value={editingTask.description}
                                 onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
                                 rows={3}
-                                className="bg-[#09090b] border-[#27272a] text-[#fafafa] focus:border-[#6366f1]"
+                                className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
                             />
                         </div>
-                        <div className="flex items-center gap-3 p-3 rounded-lg border border-[#27272a] bg-[#09090b]">
+                        <div className="flex items-center gap-3 p-3 rounded-lg border border-[#3D3D3D] bg-[#242424]">
                             <Checkbox
                                 inputId="kanban-edit-daily-toggle"
                                 checked={editingTask.isDaily}
                                 onChange={(e) => setEditingTask({ ...editingTask, isDaily: e.checked ?? false })}
                                 className="daily-checkbox"
                             />
-                            <label htmlFor="kanban-edit-daily-toggle" className="text-xs text-[#a1a1aa] font-medium cursor-pointer select-none">
+                            <label htmlFor="kanban-edit-daily-toggle" className="text-xs text-[#9A9A9A] font-medium cursor-pointer select-none">
                                 {t("tasks.dailyToggle")}
                             </label>
                             <i
-                                className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors ml-auto"
+                                className="pi pi-question-circle text-[#353535] hover:text-[#757575] text-xs cursor-help transition-colors ml-auto"
                                 id="kanban-edit-daily-tooltip-icon"
                             />
                             <Tooltip
                                 target="#kanban-edit-daily-tooltip-icon"
                                 position="top"
-                                pt={{ text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' } }}
+                                pt={{ text: { className: 'bg-[#2E2E2E] text-[#F0F0F0] text-[11px] border border-[#3D3D3D] p-3 rounded-lg' } }}
                             >
                                 {t("tasks.dailyTooltip")}
                             </Tooltip>
@@ -596,7 +596,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             label={t("tasks.saveChanges")}
                             icon="pi pi-check"
                             onClick={handleSaveEdit}
-                            className="bg-[#6366f1] border-none text-white py-2.5 rounded-lg hover:bg-[#4f46e5] font-medium"
+                            className="bg-[#4F8EF7] border-none text-white py-2.5 rounded-lg hover:bg-[#3D77E0] font-medium"
                         />
                     </div>
                 )}

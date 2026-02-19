@@ -29,13 +29,13 @@ const DailyFlowWaves: React.FC<Props> = ({ data }) => {
                     <AreaChart data={chartData}>
                         <defs>
                             <linearGradient id="flowGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                <stop offset="5%" stopColor="#4F8EF7" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#4F8EF7" stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <XAxis
                             dataKey="hour"
-                            tick={{ fill: '#71717a', fontSize: 10 }}
+                            tick={{ fill: '#757575', fontSize: 10 }}
                             axisLine={false}
                             tickLine={false}
                             interval={3}
@@ -43,10 +43,10 @@ const DailyFlowWaves: React.FC<Props> = ({ data }) => {
                         <YAxis hide />
                         <Tooltip
                             contentStyle={{
-                                background: '#18181b',
-                                border: '1px solid #27272a',
+                                background: '#2E2E2E',
+                                border: '1px solid #3D3D3D',
                                 borderRadius: 8,
-                                color: '#fafafa',
+                                color: '#F0F0F0',
                                 fontSize: 12,
                             }}
                             formatter={(value: number | undefined) => [`${value ?? 0} ${t('analytics.flowWaves.minutes')}`, '']}
@@ -54,7 +54,7 @@ const DailyFlowWaves: React.FC<Props> = ({ data }) => {
                         <Area
                             type="monotone"
                             dataKey="minutes"
-                            stroke="#6366f1"
+                            stroke="#4F8EF7"
                             strokeWidth={2}
                             fill="url(#flowGradient)"
                         />

@@ -58,17 +58,17 @@ const StickyNotes = () => {
                         : 'opacity-0 scale-95 translate-y-2 pointer-events-none'
                     }`}
             >
-                <div className="w-[300px] bg-[#18181b] border border-[#27272a] rounded-xl overflow-hidden">
-                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#27272a]">
+                <div className="w-[300px] bg-[#2E2E2E] border border-[#3D3D3D] rounded-xl overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-2.5 border-b border-[#3D3D3D]">
                         <div className="flex items-center gap-2">
-                            <i className="pi pi-bookmark text-[#6366f1] text-xs" />
-                            <span className="text-xs text-[#a1a1aa] font-medium">
+                            <i className="pi pi-bookmark text-[#4F8EF7] text-xs" />
+                            <span className="text-xs text-[#9A9A9A] font-medium">
                                 {t("notes.quickNotes")}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
                             <i
-                                className="pi pi-question-circle text-[#3f3f46] hover:text-[#71717a] text-xs cursor-help transition-colors"
+                                className="pi pi-question-circle text-[#353535] hover:text-[#757575] text-xs cursor-help transition-colors"
                                 id="notes-info-icon"
                             />
                             <Tooltip
@@ -76,7 +76,7 @@ const StickyNotes = () => {
                                 position="left"
                                 className="max-w-[240px]"
                                 pt={{
-                                    text: { className: 'bg-[#18181b] text-[#fafafa] text-[11px] border border-[#27272a] p-3 rounded-lg' }
+                                    text: { className: 'bg-[#2E2E2E] text-[#F0F0F0] text-[11px] border border-[#3D3D3D] p-3 rounded-lg' }
                                 }}
                             >
                                 <span>
@@ -85,7 +85,7 @@ const StickyNotes = () => {
                             </Tooltip>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="w-5 h-5 flex items-center justify-center rounded text-[#3f3f46] hover:text-[#a1a1aa] hover:bg-[#27272a] transition-colors"
+                                className="w-5 h-5 flex items-center justify-center rounded text-[#353535] hover:text-[#9A9A9A] hover:bg-[#3D3D3D] transition-colors"
                             >
                                 <i className="pi pi-minus text-[10px]" />
                             </button>
@@ -97,12 +97,12 @@ const StickyNotes = () => {
                         value={note}
                         onChange={(e) => handleNoteChange(e.target.value)}
                         placeholder={t("notes.placeholder")}
-                        className="w-full h-[180px] bg-transparent text-[#fafafa]/90 text-sm leading-relaxed p-4 resize-none outline-none placeholder:text-[#3f3f46]"
+                        className="w-full h-[180px] bg-transparent text-[#F0F0F0]/90 text-sm leading-relaxed p-4 resize-none outline-none placeholder:text-[#353535]"
                         spellCheck={false}
                     />
 
-                    <div className="flex items-center justify-between px-4 py-2 border-t border-[#27272a]">
-                        <span className="text-[9px] text-[#3f3f46] tabular-nums">
+                    <div className="flex items-center justify-between px-4 py-2 border-t border-[#3D3D3D]">
+                        <span className="text-[9px] text-[#353535] tabular-nums">
                             {note.length > 0 ? `${note.length} ${t("common.chars")}` : t("common.empty")}
                         </span>
                         <button
@@ -124,14 +124,14 @@ const StickyNotes = () => {
                 className={`relative w-11 h-11 rounded-lg flex items-center justify-center
                     transition-all duration-200
                     ${isOpen
-                        ? 'bg-[#6366f1] text-white'
-                        : 'bg-[#18181b] border border-[#27272a] text-[#71717a] hover:bg-[#27272a] hover:text-[#a1a1aa]'
+                        ? 'bg-[#4F8EF7] text-white'
+                        : 'bg-[#2E2E2E] border border-[#3D3D3D] text-[#757575] hover:bg-[#3D3D3D] hover:text-[#9A9A9A]'
                     }`}
             >
                 <i className={`pi ${isOpen ? 'pi-times' : 'pi-pencil'} text-sm transition-transform duration-200`} />
 
                 {!isOpen && note.trim().length > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#6366f1] rounded-full border-2 border-[#09090b]" />
+                    <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-[#4F8EF7] rounded-full border-2 border-[#242424]" />
                 )}
             </button>
         </div>

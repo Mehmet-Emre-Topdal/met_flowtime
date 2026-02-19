@@ -1,60 +1,60 @@
-/* PrimeReact Overrides */
+/* PrimeReact Overrides — Slate Dark */
 
 .p-menu {
-    background: #18181b !important;
-    border: 1px solid #27272a !important;
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border) !important;
     border-radius: 8px !important;
-    box-shadow: none !important;
+    box-shadow: var(--shadow-md) !important;
 
     .p-menuitem-link {
         padding: 0.6rem 1rem !important;
 
         .p-menuitem-text {
-            color: #a1a1aa !important;
+            color: var(--secondary) !important;
             font-size: 0.8125rem !important;
-            font-family: "Inter", sans-serif !important;
+            font-family: var(--font-body) !important;
         }
 
         .p-menuitem-icon {
-            color: #71717a !important;
+            color: var(--muted) !important;
             margin-right: 0.5rem !important;
         }
 
         &:not(.p-disabled):hover {
-            background: #27272a !important;
+            background: var(--hover) !important;
 
             .p-menuitem-text {
-                color: #fafafa !important;
+                color: var(--foreground) !important;
             }
 
             .p-menuitem-icon {
-                color: #6366f1 !important;
+                color: var(--accent) !important;
             }
         }
     }
 }
 
 .custom-switcher.p-selectbutton {
-    background: #18181b !important;
+    background: var(--surface) !important;
     padding: 3px !important;
     border-radius: 8px !important;
-    border: 1px solid #27272a !important;
+    border: 1px solid var(--border) !important;
 
     .p-button {
         background: transparent !important;
         border: none !important;
-        color: #71717a !important;
+        color: var(--muted) !important;
         transition: all 0.2s ease !important;
         border-radius: 6px !important;
 
         &.p-highlight {
-            background: #27272a !important;
-            color: #fafafa !important;
+            background: var(--subtle) !important;
+            color: var(--foreground) !important;
             box-shadow: none !important;
         }
 
         &:not(.p-highlight):hover {
-            color: #a1a1aa !important;
+            color: var(--secondary) !important;
             background: transparent !important;
         }
     }
@@ -78,7 +78,7 @@
 
     .p-password-toggle-mask-icon,
     .p-password .p-icon {
-        color: #71717a !important;
+        color: var(--muted) !important;
         position: absolute;
         right: 14px;
         top: 50%;
@@ -89,19 +89,19 @@
 
 .daily-checkbox .p-checkbox-box {
     background: transparent !important;
-    border: 1.5px solid #3f3f46 !important;
+    border: 1.5px solid var(--border) !important;
     border-radius: 4px !important;
     width: 18px !important;
     height: 18px !important;
     transition: all 0.15s ease !important;
 
     &.p-highlight {
-        background: #6366f1 !important;
-        border-color: #6366f1 !important;
+        background: var(--accent) !important;
+        border-color: var(--accent) !important;
     }
 
     .p-checkbox-icon {
-        color: #fafafa !important;
+        color: white !important;
         font-size: 10px !important;
     }
 }
@@ -114,24 +114,25 @@
 }
 
 .settings-input-compact .p-inputnumber-input:focus {
-    border-color: #6366f1 !important;
-    background: rgba(99, 102, 241, 0.05) !important;
+    border-color: var(--accent) !important;
+    background: rgba(79, 142, 247, 0.08) !important;
     outline: none !important;
 }
 
 .p-inputtext:focus,
 .p-inputtextarea:focus {
-    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3) !important;
+    box-shadow: 0 0 0 1px rgba(79, 142, 247, 0.3) !important;
 }
 
 .custom-toast .p-toast-message {
-    background: #18181b !important;
-    border: 1px solid #27272a !important;
-    color: #fafafa !important;
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--foreground) !important;
+    box-shadow: var(--shadow-lg) !important;
 }
 
 .custom-toast .p-toast-message-success .p-toast-message-icon {
-    color: #6366f1 !important;
+    color: var(--success) !important;
 }
 
 .p-knob-value {

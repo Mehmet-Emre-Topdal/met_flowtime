@@ -79,20 +79,20 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#09090b] animate-fade-in px-4">
+        <div className="min-h-screen flex items-center justify-center bg-[#242424] animate-fade-in px-4">
             <Card
-                className="w-full max-w-md border border-[#27272a] bg-[#18181b] animate-slide-up"
+                className="w-full max-w-md border border-[#3D3D3D] bg-[#2E2E2E] animate-slide-up"
                 pt={{
                     root: { className: 'rounded-xl overflow-hidden' },
                     content: { className: 'p-8' }
                 }}
             >
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#6366f1]/10 mb-4">
-                        <i className="pi pi-bolt text-2xl text-[#6366f1]"></i>
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#4F8EF7]/10 mb-4">
+                        <i className="pi pi-bolt text-2xl text-[#4F8EF7]"></i>
                     </div>
-                    <h1 className="text-2xl font-semibold text-[#fafafa] mb-1.5 tracking-tight">{t("common.appName")}</h1>
-                    <p className="text-[#71717a] text-sm">{t("auth.subtitle")}</p>
+                    <h1 className="text-2xl font-serif font-semibold text-[#F0F0F0] mb-1.5 tracking-tight">{t("common.appName")}</h1>
+                    <p className="text-[#757575] text-sm">{t("auth.subtitle")}</p>
                 </div>
 
                 {error && (
@@ -105,36 +105,36 @@ const LoginPage = () => {
                 <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4 mb-6">
                     {mode === "register" && (
                         <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#71717a] font-medium">{t("auth.nameLabel")}</label>
+                            <label className="text-xs text-[#757575] font-medium">{t("auth.nameLabel")}</label>
                             <InputText
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 placeholder={t("auth.namePlaceholder")}
-                                className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
+                                className="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 focus:border-[#34C774]"
                             />
                         </div>
                     )}
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">{t("auth.emailLabel")}</label>
+                        <label className="text-xs text-[#757575] font-medium">{t("auth.emailLabel")}</label>
                         <InputText
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder={t("auth.emailPlaceholder")}
                             type="email"
-                            className="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 focus:border-[#6366f1]"
+                            className="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 focus:border-[#34C774]"
                         />
                     </div>
 
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#71717a] font-medium">{t("auth.passwordLabel")}</label>
+                        <label className="text-xs text-[#757575] font-medium">{t("auth.passwordLabel")}</label>
                         <Password
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             feedback={false}
                             toggleMask
                             className="auth-password-input"
-                            inputClassName="bg-[#09090b] border border-[#27272a] text-[#fafafa] rounded-lg px-4 py-3 w-full focus:border-[#6366f1]"
+                            inputClassName="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 w-full focus:border-[#34C774]"
                         />
                     </div>
 
@@ -146,14 +146,14 @@ const LoginPage = () => {
                         }
                         icon={mode === "login" ? "pi pi-sign-in" : "pi pi-user-plus"}
                         loading={isEmailLoading || isRegisterLoading}
-                        className="w-full py-3 bg-[#6366f1] border-none text-white rounded-lg font-medium hover:bg-[#4f46e5] transition-colors"
+                        className="w-full py-3 bg-[#4F8EF7] border-none text-white rounded-lg font-medium hover:bg-[#3D77E0] transition-colors"
                     />
                 </form>
 
                 <div className="flex items-center gap-4 mb-6">
-                    <div className="flex-1 h-px bg-[#27272a]"></div>
-                    <span className="text-[10px] text-[#71717a] uppercase tracking-widest">{t("common.or")}</span>
-                    <div className="flex-1 h-px bg-[#27272a]"></div>
+                    <div className="flex-1 h-px bg-[#3D3D3D]"></div>
+                    <span className="text-[10px] text-[#757575] uppercase tracking-widest">{t("common.or")}</span>
+                    <div className="flex-1 h-px bg-[#3D3D3D]"></div>
                 </div>
 
                 <Button
@@ -161,16 +161,16 @@ const LoginPage = () => {
                     icon="pi pi-google"
                     loading={isGoogleLoading}
                     onClick={handleGoogleLogin}
-                    className="w-full py-3 bg-transparent border border-[#27272a] text-[#a1a1aa] hover:bg-[#27272a] hover:text-[#fafafa] transition-all rounded-lg font-medium"
+                    className="w-full py-3 bg-transparent border border-[#3D3D3D] text-[#9A9A9A] hover:bg-[#3D3D3D] hover:text-[#F0F0F0] transition-all rounded-lg font-medium"
                 />
 
-                <div className="mt-6 pt-4 border-t border-[#27272a] text-center">
-                    <p className="text-xs text-[#71717a]">
+                <div className="mt-6 pt-4 border-t border-[#3D3D3D] text-center">
+                    <p className="text-xs text-[#757575]">
                         {mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")}
                         <button
                             type="button"
                             onClick={switchMode}
-                            className="ml-2 text-[#6366f1] hover:text-[#818cf8] transition-colors font-medium"
+                            className="ml-2 text-[#4F8EF7] hover:text-[#34C774] transition-colors font-medium"
                         >
                             {mode === "login" ? t("auth.signUp") : t("auth.signIn")}
                         </button>

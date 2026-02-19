@@ -39,17 +39,17 @@ const FlowWindowCard: React.FC<Props> = ({ data }) => {
                     <BarChart data={chartData}>
                         <XAxis
                             dataKey="range"
-                            tick={{ fill: '#71717a', fontSize: 9 }}
+                            tick={{ fill: '#757575', fontSize: 9 }}
                             axisLine={false}
                             tickLine={false}
                         />
                         <YAxis hide />
                         <Tooltip
                             contentStyle={{
-                                background: '#18181b',
-                                border: '1px solid #27272a',
+                                background: '#2E2E2E',
+                                border: '1px solid #3D3D3D',
                                 borderRadius: 8,
-                                color: '#fafafa',
+                                color: '#F0F0F0',
                                 fontSize: 12,
                             }}
                             formatter={(value: number | undefined) => [`${value ?? 0} ${t('analytics.flowWindow.sessions')}`, '']}
@@ -58,7 +58,7 @@ const FlowWindowCard: React.FC<Props> = ({ data }) => {
                             {chartData.map((entry, index) => (
                                 <Cell
                                     key={index}
-                                    fill={entry.isDominant ? '#6366f1' : '#3f3f46'}
+                                    fill={entry.isDominant ? '#4F8EF7' : '#353535'}
                                 />
                             ))}
                         </Bar>

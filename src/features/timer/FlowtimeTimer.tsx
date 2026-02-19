@@ -146,23 +146,23 @@ const FlowtimeTimer = () => {
         ? Math.floor((breakSeconds / calculateBreakDuration(seconds, config.intervals)) * 100)
         : (seconds % 60);
 
-    const timerColor = isBreak ? "#ef4444" : "#6366f1";
+    const timerColor = isBreak ? "#E05555" : "#4F8EF7";
 
     return (
         <div className="flex flex-col items-center justify-center gap-10 py-6 w-full max-w-2xl mx-auto">
             <header className="text-center flex flex-col gap-3">
-                <h2 className="text-2xl font-semibold text-[#fafafa] tracking-tight">
+                <h2 className="text-2xl font-serif font-semibold text-[#F0F0F0] tracking-tight">
                     {isBreak ? t("timer.breakTime") : t("timer.focusSession")}
                 </h2>
 
                 {activeTask && !isBreak && (
                     <div className="flex items-center gap-2 justify-center animate-fade-in">
-                        <span className="text-xs text-[#71717a]">{t("timer.workingOn")}</span>
-                        <span className="text-sm text-[#6366f1] font-medium">{activeTask.title}</span>
+                        <span className="text-xs text-[#757575]">{t("timer.workingOn")}</span>
+                        <span className="text-sm text-[#4F8EF7] font-medium">{activeTask.title}</span>
                     </div>
                 )}
 
-                <p className="text-[#71717a] text-xs tracking-wide">
+                <p className="text-[#757575] text-xs tracking-wide">
                     {isBreak ? t("timer.rechargingFocus") : isActive ? t("timer.flowActive") : t("timer.readyToFocus")}
                 </p>
             </header>
@@ -175,16 +175,16 @@ const FlowtimeTimer = () => {
                     max={isBreak ? 100 : 60}
                     readOnly
                     strokeWidth={3}
-                    rangeColor="#27272a"
+                    rangeColor="#3D3D3D"
                     valueColor={timerColor}
                     textColor="transparent"
                 />
 
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-5xl font-semibold text-[#fafafa] tracking-tight tabular-nums">
+                    <span className="text-5xl font-mono font-semibold text-[#F0F0F0] tracking-tight tabular-nums">
                         {formatTime(isBreak ? breakSeconds : seconds)}
                     </span>
-                    <span className="text-[#71717a] text-[11px] mt-1.5 uppercase tracking-widest">
+                    <span className="text-[#757575] text-[11px] mt-1.5 uppercase tracking-widest">
                         {isBreak ? t("timer.remaining") : t("timer.elapsed")}
                     </span>
                 </div>
@@ -196,21 +196,21 @@ const FlowtimeTimer = () => {
                         icon="pi pi-play"
                         label={seconds > 0 ? t("timer.resume") : t("timer.start")}
                         onClick={startTimer}
-                        className="bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-8 py-3 rounded-lg text-sm font-medium transition-colors"
+                        className="bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-8 py-3 rounded-lg text-sm font-medium transition-colors"
                     />
                 ) : (
                     <>
                         <Button
                             icon="pi pi-pause"
                             onClick={pauseTimer}
-                            className="p-button-rounded bg-[#27272a] border-none text-[#a1a1aa] hover:bg-[#3f3f46] hover:text-[#fafafa] w-12 h-12 transition-colors"
+                            className="p-button-rounded bg-[#3D3D3D] border-none text-[#9A9A9A] hover:bg-[#353535] hover:text-[#F0F0F0] w-12 h-12 transition-colors"
                         />
                         {!isBreak && (
                             <Button
                                 icon="pi pi-coffee"
                                 label={t("timer.break")}
                                 onClick={takeBreak}
-                                className="bg-[#ef4444] border-none text-white hover:bg-[#dc2626] px-6 py-3 rounded-lg text-sm font-medium transition-colors"
+                                className="bg-[#E05555] border-none text-white hover:bg-[#C44545] px-6 py-3 rounded-lg text-sm font-medium transition-colors"
                             />
                         )}
                     </>
@@ -218,7 +218,7 @@ const FlowtimeTimer = () => {
                 <Button
                     icon="pi pi-refresh"
                     onClick={resetTimer}
-                    className="p-button-rounded p-button-text text-[#71717a] hover:text-[#a1a1aa] w-10 h-10 transition-colors"
+                    className="p-button-rounded p-button-text text-[#757575] hover:text-[#9A9A9A] w-10 h-10 transition-colors"
                 />
             </div>
 

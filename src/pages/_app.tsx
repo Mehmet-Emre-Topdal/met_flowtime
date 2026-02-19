@@ -18,7 +18,7 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#09090b] gap-6">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#242424] gap-6">
         <ProgressSpinner
           style={{ width: '48px', height: '48px' }}
           strokeWidth="3"
@@ -26,8 +26,8 @@ function AuthInitializer({ children }: { children: React.ReactNode }) {
           animationDuration=".5s"
         />
         <div className="flex flex-col items-center gap-2">
-          <h2 className="text-xl font-semibold text-[#fafafa] tracking-tight">Flowtime</h2>
-          <p className="text-xs text-[#71717a]">Loading...</p>
+          <h2 className="text-xl font-semibold text-[#F0F0F0] tracking-tight">Flowtime</h2>
+          <p className="text-xs text-[#757575]">Loading...</p>
         </div>
       </div>
     );

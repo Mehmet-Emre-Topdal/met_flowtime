@@ -105,7 +105,7 @@ const ReportPage = () => {
                         icon={isSeeding ? "pi pi-spin pi-spinner" : "pi pi-database"}
                         onClick={handleSeed}
                         disabled={isSeeding}
-                        className="bg-[#6366f1] border-none text-white hover:bg-[#4f46e5] px-6 py-2 rounded-lg text-sm font-medium transition-colors mt-4"
+                        className="bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-6 py-2 rounded-lg text-sm font-medium transition-colors mt-4"
                     />
                 </div>
             </MainLayout>

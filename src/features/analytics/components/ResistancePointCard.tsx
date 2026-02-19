@@ -33,23 +33,23 @@ const ResistancePointCard: React.FC<Props> = ({ data }) => {
                         <BarChart data={chartData}>
                             <XAxis
                                 dataKey="name"
-                                tick={{ fill: '#71717a', fontSize: 10 }}
+                                tick={{ fill: '#757575', fontSize: 10 }}
                                 axisLine={false}
                                 tickLine={false}
                             />
                             <YAxis hide />
                             <Tooltip
                                 contentStyle={{
-                                    background: '#18181b',
-                                    border: '1px solid #27272a',
+                                    background: '#2E2E2E',
+                                    border: '1px solid #3D3D3D',
                                     borderRadius: 8,
-                                    color: '#fafafa',
+                                    color: '#F0F0F0',
                                     fontSize: 12,
                                 }}
                                 formatter={(value: number | undefined) => [`${value ?? 0} ${t('analytics.resistancePoint.min')}`, '']}
                             />
-                            <ReferenceLine y={data.resistanceMinute} stroke="#ef4444" strokeDasharray="4 4" strokeOpacity={0.6} />
-                            <Bar dataKey="duration" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                            <ReferenceLine y={data.resistanceMinute} stroke="#E05555" strokeDasharray="4 4" strokeOpacity={0.6} />
+                            <Bar dataKey="duration" fill="#4F8EF7" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 )}

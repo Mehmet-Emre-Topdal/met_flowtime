@@ -15,12 +15,13 @@
     &__title {
         font-size: 1.75rem;
         font-weight: 600;
-        color: #fafafa;
+        color: #F0F0F0;
+        font-family: var(--font-heading);
         margin: 0 0 0.5rem;
     }
 
     &__subtitle {
-        color: #71717a;
+        color: #757575;
         font-size: 0.85rem;
     }
 
@@ -32,7 +33,7 @@
         font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        color: #71717a;
+        color: #757575;
         margin-bottom: 1rem;
         padding-left: 0.25rem;
     }
@@ -52,26 +53,41 @@
     justify-content: center;
     gap: 1rem;
     min-height: 50vh;
-    color: #71717a;
+    color: #757575;
     text-align: center;
 }
 
 .analytics-empty__icon {
     font-size: 2.5rem;
-    color: #3f3f46;
+    color: #353535;
 }
 
 // ─── Card Base ─────────────────────────────────
 
 .analytics-card {
-    background: #18181b;
-    border: 1px solid #27272a;
+    background: #2E2E2E;
+    border: 1px solid #3D3D3D;
     border-radius: 12px;
     padding: 1.25rem;
     transition: border-color 0.2s;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+
+    /* Noise grain texture */
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        opacity: 0.03;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 128px 128px;
+    }
 
     &:hover {
-        border-color: #3f3f46;
+        border-color: #353535;
     }
 
     &__header {
@@ -83,26 +99,26 @@
 
     &__icon {
         font-size: 0.85rem;
-        color: #6366f1;
+        color: #4F8EF7;
     }
 
     &__title {
         font-size: 0.8rem;
         font-weight: 500;
-        color: #a1a1aa;
+        color: #9A9A9A;
         margin: 0;
         flex: 1;
     }
 
     &__help {
         font-size: 0.75rem;
-        color: #52525b;
+        color: #404040;
         cursor: help;
         transition: color 0.2s;
         margin-left: auto;
 
         &:hover {
-            color: #a1a1aa;
+            color: #9A9A9A;
         }
     }
 
@@ -114,7 +130,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        color: #52525b;
+        color: #404040;
         font-size: 0.78rem;
         padding: 1rem 0;
 
@@ -140,25 +156,25 @@
         font-size: 0.72rem;
         padding: 0.25rem 0.5rem;
         border-radius: 6px;
-        background: #27272a;
+        background: #3D3D3D;
 
         i {
             font-size: 0.65rem;
         }
 
         &--peak {
-            color: #22c55e;
+            color: #34C774;
 
             i {
-                color: #22c55e;
+                color: #34C774;
             }
         }
 
         &--trough {
-            color: #f59e0b;
+            color: #4F8EF7;
 
             i {
-                color: #f59e0b;
+                color: #4F8EF7;
             }
         }
     }
@@ -181,18 +197,18 @@
     &__number {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #fafafa;
+        color: #F0F0F0;
         line-height: 1;
     }
 
     &__unit {
         font-size: 0.85rem;
-        color: #71717a;
+        color: #757575;
     }
 
     &__label {
         font-size: 0.75rem;
-        color: #6366f1;
+        color: #4F8EF7;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
@@ -204,18 +220,18 @@
         font-size: 0.72rem;
         padding: 0.2rem 0.5rem;
         border-radius: 6px;
-        background: #27272a;
+        background: #3D3D3D;
 
         i {
             font-size: 0.6rem;
         }
 
         &--up {
-            color: #22c55e;
+            color: #34C774;
         }
 
         &--down {
-            color: #ef4444;
+            color: #E05555;
         }
     }
 }
@@ -239,7 +255,7 @@
         position: absolute;
         font-size: 1.5rem;
         font-weight: 700;
-        color: #fafafa;
+        color: #F0F0F0;
     }
 
     &__label {
@@ -253,7 +269,7 @@
 .analytics-resistance {
     &__text {
         font-size: 0.8rem;
-        color: #a1a1aa;
+        color: #9A9A9A;
         margin: 0 0 0.75rem;
     }
 }
@@ -274,13 +290,13 @@
     &__number {
         font-size: 2rem;
         font-weight: 700;
-        color: #22c55e;
+        color: #34C774;
         line-height: 1;
     }
 
     &__text {
         font-size: 0.78rem;
-        color: #a1a1aa;
+        color: #9A9A9A;
     }
 
     &__bar-container {
@@ -291,14 +307,14 @@
 
     &__bar {
         height: 6px;
-        background: #27272a;
+        background: #3D3D3D;
         border-radius: 3px;
         overflow: hidden;
     }
 
     &__bar-fill {
         height: 100%;
-        background: linear-gradient(90deg, #22c55e, #6366f1);
+        background: linear-gradient(90deg, #34C774, #4F8EF7);
         border-radius: 3px;
         transition: width 0.5s ease;
     }
@@ -307,12 +323,12 @@
         display: flex;
         justify-content: space-between;
         font-size: 0.65rem;
-        color: #52525b;
+        color: #404040;
     }
 
     &__week {
         font-size: 0.72rem;
-        color: #71717a;
+        color: #757575;
         margin: 0;
     }
 }
@@ -322,13 +338,13 @@
 .analytics-window {
     &__text {
         font-size: 0.8rem;
-        color: #a1a1aa;
+        color: #9A9A9A;
         margin: 0 0 0.25rem;
     }
 
     &__median {
         font-size: 0.7rem;
-        color: #52525b;
+        color: #404040;
         margin: 0 0 0.75rem;
     }
 }
@@ -357,23 +373,23 @@
     &__number {
         font-size: 2rem;
         font-weight: 700;
-        color: #fafafa;
+        color: #F0F0F0;
         line-height: 1;
 
         &--record {
-            color: #f59e0b;
+            color: #4F8EF7;
         }
     }
 
     &__label {
         font-size: 0.7rem;
-        color: #71717a;
+        color: #757575;
     }
 
     &__divider {
         width: 1px;
         height: 32px;
-        background: #27272a;
+        background: #3D3D3D;
     }
 
     &__calendar {
@@ -388,17 +404,17 @@
         width: 12px;
         height: 12px;
         border-radius: 3px;
-        background: #27272a;
+        background: #3D3D3D;
         transition: background 0.2s;
 
         &--filled {
-            background: #6366f1;
+            background: #4F8EF7;
         }
     }
 
     &__days-label {
         font-size: 0.65rem;
-        color: #52525b;
+        color: #404040;
     }
 }
 
@@ -423,7 +439,7 @@
 
     &__task {
         font-size: 0.78rem;
-        color: #fafafa;
+        color: #F0F0F0;
         font-weight: 500;
         white-space: nowrap;
         overflow: hidden;
@@ -433,19 +449,19 @@
 
     &__meta {
         font-size: 0.65rem;
-        color: #52525b;
+        color: #404040;
     }
 
     &__bar-wrap {
         height: 6px;
-        background: #27272a;
+        background: #3D3D3D;
         border-radius: 3px;
         overflow: hidden;
     }
 
     &__bar {
         height: 100%;
-        background: #6366f1;
+        background: #4F8EF7;
         border-radius: 3px;
         transition: width 0.5s ease;
     }
@@ -468,18 +484,18 @@
     &__number {
         font-size: 2.5rem;
         font-weight: 700;
-        color: #fafafa;
+        color: #F0F0F0;
         line-height: 1;
     }
 
     &__unit {
         font-size: 0.85rem;
-        color: #71717a;
+        color: #757575;
     }
 
     &__text {
         font-size: 0.78rem;
-        color: #a1a1aa;
+        color: #9A9A9A;
         text-align: center;
         margin: 0;
     }
@@ -496,11 +512,11 @@
         }
 
         &--good {
-            color: #22c55e;
+            color: #34C774;
         }
 
         &--bad {
-            color: #ef4444;
+            color: #E05555;
         }
     }
 }

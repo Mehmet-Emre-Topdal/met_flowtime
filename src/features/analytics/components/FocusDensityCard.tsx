@@ -11,10 +11,10 @@ const FocusDensityCard: React.FC<Props> = ({ data }) => {
     const { t } = useTranslation();
 
     const labelColors: Record<string, string> = {
-        sharp: '#22c55e',
-        good: '#6366f1',
+        sharp: '#34C774',
+        good: '#4F8EF7',
         scattered_start: '#f59e0b',
-        scattered_mind: '#ef4444',
+        scattered_mind: '#E05555',
     };
 
     const circumference = 2 * Math.PI * 50;
@@ -30,7 +30,7 @@ const FocusDensityCard: React.FC<Props> = ({ data }) => {
             <div className="analytics-density">
                 <div className="analytics-density__ring">
                     <svg viewBox="0 0 120 120" width="120" height="120">
-                        <circle cx="60" cy="60" r="50" fill="none" stroke="#27272a" strokeWidth="8" />
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#3D3D3D" strokeWidth="8" />
                         <circle
                             cx="60" cy="60" r="50" fill="none"
                             stroke={labelColors[data.label]}
