@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
     calcDailyFlowWaves,
-    calcDepthScore,
+    calcWeeklyWorkTime,
     calcFocusDensity,
     calcResistancePoint,
     calcEarnedFreedom,
@@ -140,46 +140,40 @@ describe('calcDailyFlowWaves', () => {
 });
 
 // ═══════════════════════════════════════════════════════════
-//  2. Depth Score
+//  2. Weekly Work Time
 // ═══════════════════════════════════════════════════════════
 
-describe('calcDepthScore', () => {
-    it('should return hasEnoughData=false when no sessions today', () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const sessions = [makeSession({ startedAt: yesterday.toISOString() })];
-        const result = calcDepthScore(sessions);
-        expect(result.hasEnoughData).toBe(false);
-        expect(result.todayScore).toBe(0);
-    });
-
-    it('should calculate todayScore using depth multiplier', () => {
-        // 30 min session → multiplier 1.0 → depth = 30
+describe('calcWeeklyWorkTime', () => {
+    it('should return 7 days (Mon–Sun)', () => {
         const sessions = makeTodaySessions(1, 1800);
-        const result = calcDepthScore(sessions);
-        expect(result.hasEnoughData).toBe(true);
-        expect(result.todayScore).toBe(30); // 30 min * 1.0
+        const result = calcWeeklyWorkTime(sessions);
+        expect(result.days).toHaveLength(7);
+        expect(result.days[0].dayLabel).toBe('mon');
+        expect(result.days[6].dayLabel).toBe('sun');
     });
 
-    it('should apply 0.5 multiplier for sessions under 25 min', () => {
-        // 20 min session → multiplier 0.5 → depth = 10
-        const sessions = makeTodaySessions(1, 1200);
-        const result = calcDepthScore(sessions);
-        expect(result.todayScore).toBe(10); // 20 min * 0.5
+    it('should return hasEnoughData=false when no sessions this week', () => {
+        const oldDate = new Date();
+        oldDate.setDate(oldDate.getDate() - 14);
+        const sessions = [makeSession({ startedAt: oldDate.toISOString() })];
+        const result = calcWeeklyWorkTime(sessions);
+        expect(result.hasEnoughData).toBe(false);
     });
 
-    it('should apply 1.25 multiplier for sessions over 50 min', () => {
-        // 60 min session → multiplier 1.25 → depth = 75
-        const sessions = makeTodaySessions(1, 3600);
-        const result = calcDepthScore(sessions);
-        expect(result.todayScore).toBe(75); // 60 min * 1.25
-    });
-
-    it('should sum multiple today sessions', () => {
-        // Two 30-min sessions → 30 + 30 = 60
+    it('should sum minutes correctly for today', () => {
+        // 2 sessions of 30 min each today → 60 min total for today
         const sessions = makeTodaySessions(2, 1800);
-        const result = calcDepthScore(sessions);
-        expect(result.todayScore).toBe(60);
+        const result = calcWeeklyWorkTime(sessions);
+        const now = new Date();
+        const dayOfWeek = now.getDay();
+        const todayIndex = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        expect(result.days[todayIndex].totalMinutes).toBe(60);
+    });
+
+    it('should calculate weekTotalMinutes as sum of all days', () => {
+        const sessions = makeTodaySessions(3, 1800); // 3 x 30 = 90 min
+        const result = calcWeeklyWorkTime(sessions);
+        expect(result.weekTotalMinutes).toBe(90);
     });
 });
 
@@ -202,10 +196,9 @@ describe('calcFocusDensity', () => {
         expect(result.label).toBe('sharp');
     });
 
-    it('should calculate density based on focus time / total span', () => {
-        // 2 sessions of 30 min each with 10 min gap
-        // Total focus: 60 min, Total span: 30 + 10 + 30 = 70 min
-        // Density: 60/70 ≈ 86%
+    it('should calculate density within a single block (small gap)', () => {
+        // 2 sessions of 30 min each with 10 min gap → same block
+        // Block focus: 60 min, Block span: 70 min → 86%
         const sessions = makeTodaySessions(2, 1800, 10);
         const result = calcFocusDensity(sessions);
         expect(result.hasEnoughData).toBe(true);
@@ -213,9 +206,8 @@ describe('calcFocusDensity', () => {
         expect(result.label).toBe('sharp');
     });
 
-    it('should label as scattered_mind when density is low', () => {
-        // 2 short sessions with huge gap
-        // 5 min + 5 min focus, but 3-hour span
+    it('should treat >30 min gap as separate blocks (not penalize long breaks)', () => {
+        // 2 short sessions with 3-hour gap → 2 separate blocks, each 100%
         const today = new Date();
         today.setHours(9, 0, 0, 0);
         const later = new Date(today);
@@ -225,14 +217,33 @@ describe('calcFocusDensity', () => {
             makeSession({ startedAt: later.toISOString(), durationSeconds: 300 }),       // 5 min
         ];
         const result = calcFocusDensity(sessions);
-        // 10 min / 185 min ≈ 5%
-        expect(result.label).toBe('scattered_mind');
-        expect(result.percentage).toBeLessThan(40);
+        // Each block has 1 session → 100% each → weighted avg = 100%
+        expect(result.percentage).toBe(100);
+        expect(result.label).toBe('sharp');
     });
 
-    it('should label as good for 60-79% density', () => {
-        // 2 sessions: 30 min each with 20 min gap
-        // Focus: 60 min, Span: 30 + 20 + 30 = 80 min → 75%
+    it('should label as scattered_mind when density within a block is low', () => {
+        // 3 sessions within same block (<30 min gaps) but very short focus vs span
+        // 5 min work, 25 min gap, 5 min work, 25 min gap, 5 min work
+        // Block span: 65 min, Block focus: 15 min → 23%
+        const today = new Date();
+        today.setHours(9, 0, 0, 0);
+        const s1 = new Date(today);
+        const s2 = new Date(today.getTime() + 30 * 60 * 1000); // +30 min (gap=25 min, <30 threshold)
+        const s3 = new Date(today.getTime() + 60 * 60 * 1000); // +60 min (gap=25 min, <30 threshold)
+        const sessions = [
+            makeSession({ startedAt: s1.toISOString(), durationSeconds: 300 }),
+            makeSession({ startedAt: s2.toISOString(), durationSeconds: 300 }),
+            makeSession({ startedAt: s3.toISOString(), durationSeconds: 300 }),
+        ];
+        const result = calcFocusDensity(sessions);
+        expect(result.percentage).toBeLessThan(40);
+        expect(result.label).toBe('scattered_mind');
+    });
+
+    it('should label as good for 60-79% density within block', () => {
+        // 2 sessions: 30 min each with 20 min gap (same block)
+        // Focus: 60 min, Span: 80 min → 75%
         const sessions = makeTodaySessions(2, 1800, 20);
         const result = calcFocusDensity(sessions);
         expect(result.label).toBe('good');

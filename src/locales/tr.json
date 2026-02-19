@@ -142,14 +142,24 @@
             "trough": "Vadi",
             "minutes": "dk"
         },
-        "depthScore": {
-            "title": "Derinlik Skoru",
-            "tooltip": "Her seansın süresi ağırlıklı çarpanla hesaplanır: <25dk → ×0.5, 25-50dk → ×1.0, >50dk → ×1.25. Günlük toplam, geçen haftayla karşılaştırılır.",
-            "deepWork": "Derin Çalışma",
-            "aboveAvg": "Geçen haftanın ortalamasının %{{percent}} üzerinde",
-            "belowAvg": "Geçen haftanın ortalamasının %{{percent}} altında",
-            "noComparison": "Karşılaştırma için yeterli veri yok",
-            "min": "dk"
+        "weeklyWorkTime": {
+            "title": "Haftalık Çalışma Süresi",
+            "tooltip": "Bu haftanın her günü için toplam çalışma sürenizi gösterir (Pazartesi–Pazar).",
+            "weekTotal": "Haftalık Toplam",
+            "workTime": "Çalışma Süresi",
+            "prevWeek": "Önceki hafta",
+            "nextWeek": "Sonraki hafta",
+            "min": "dk",
+            "h": "sa",
+            "days": {
+                "mon": "Pzt",
+                "tue": "Sal",
+                "wed": "Çar",
+                "thu": "Per",
+                "fri": "Cum",
+                "sat": "Cmt",
+                "sun": "Paz"
+            }
         },
         "focusDensity": {
             "title": "Odak Yoğunluk Oranı",

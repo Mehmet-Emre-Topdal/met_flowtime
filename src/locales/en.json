@@ -142,14 +142,24 @@
             "trough": "Trough",
             "minutes": "min"
         },
-        "depthScore": {
-            "title": "Depth Score",
-            "tooltip": "Each session is weighted: <25min → ×0.5, 25-50min → ×1.0, >50min → ×1.25. Today's total is compared to last week's same-day average.",
-            "deepWork": "Deep Work",
-            "aboveAvg": "{{percent}}% above last week's average",
-            "belowAvg": "{{percent}}% below last week's average",
-            "noComparison": "Not enough data for comparison",
-            "min": "min"
+        "weeklyWorkTime": {
+            "title": "Weekly Work Time",
+            "tooltip": "Shows your total work time for each day of the current week (Monday–Sunday).",
+            "weekTotal": "Week Total",
+            "workTime": "Work Time",
+            "prevWeek": "Previous week",
+            "nextWeek": "Next week",
+            "min": "m",
+            "h": "h",
+            "days": {
+                "mon": "Mon",
+                "tue": "Tue",
+                "wed": "Wed",
+                "thu": "Thu",
+                "fri": "Fri",
+                "sat": "Sat",
+                "sun": "Sun"
+            }
         },
         "focusDensity": {
             "title": "Focus Density",

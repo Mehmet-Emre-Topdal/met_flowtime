@@ -2,7 +2,7 @@ import { FlowSession } from '@/types/session';
 import { TaskDto } from '@/types/task';
 import {
     DailyFlowWavesResult,
-    DepthScoreResult,
+    WeeklyWorkTimeResult,
     FocusDensityResult,
     FocusDensityLabel,
     ResistancePointResult,
@@ -104,42 +104,41 @@ export function calcDailyFlowWaves(sessions: FlowSession[]): DailyFlowWavesResul
     return { slots, peakHour, troughHour, hasEnoughData: true };
 }
 
-// ─── 2. Depth Score ─────────────────────────────────────────
+// ─── 2. Weekly Work Time ────────────────────────────────────
 
-export function calcDepthScore(sessions: FlowSession[]): DepthScoreResult {
-    const today = todayStr();
-    const todaySessions = sessions.filter(s => getDateString(s.startedAt) === today);
-
-    if (todaySessions.length === 0) {
-        return { todayScore: 0, lastWeekAvg: 0, percentChange: 0, hasEnoughData: false };
-    }
-
-    const todayScore = todaySessions.reduce((sum, s) => sum + calcSessionDepthScore(s), 0);
-
-    // Last week same day average
+export function calcWeeklyWorkTime(sessions: FlowSession[], weekOffset: number = 0): WeeklyWorkTimeResult {
     const now = new Date();
-    const dayOfWeek = now.getDay();
-    const lastWeekSameDays = sessions.filter(s => {
-        const d = new Date(s.startedAt);
-        return d.getDay() === dayOfWeek && getDateString(s.startedAt) !== today;
+    // Get Monday of current week
+    const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(now);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - diffToMonday + weekOffset * 7);
+
+    const sunday = new Date(monday);
+    sunday.setDate(sunday.getDate() + 6);
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const weekLabel = `${monday.getDate()} ${monthNames[monday.getMonth()]} – ${sunday.getDate()} ${monthNames[sunday.getMonth()]}`;
+
+    const dayLabels = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+    const days = dayLabels.map((label, i) => {
+        const d = new Date(monday);
+        d.setDate(d.getDate() + i);
+        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const daySessions = sessions.filter(s => getDateString(s.startedAt) === dateStr);
+        const totalMinutes = Math.round(daySessions.reduce((sum, s) => sum + getDurationMinutes(s), 0));
+        return { dayLabel: label, date: dateStr, totalMinutes };
     });
 
-    const dayGroups: Record<string, number> = {};
-    lastWeekSameDays.forEach(s => {
-        const dateKey = getDateString(s.startedAt);
-        dayGroups[dateKey] = (dayGroups[dateKey] || 0) + calcSessionDepthScore(s);
+    const weekTotalMinutes = days.reduce((sum, d) => sum + d.totalMinutes, 0);
+    const hasEnoughData = sessions.some(s => {
+        const sDate = new Date(s.startedAt);
+        return sDate >= monday && sDate <= sunday;
     });
 
-    const dayScores = Object.values(dayGroups);
-    const lastWeekAvg = dayScores.length > 0 ? dayScores.reduce((a, b) => a + b, 0) / dayScores.length : 0;
-    const percentChange = lastWeekAvg > 0 ? ((todayScore - lastWeekAvg) / lastWeekAvg) * 100 : 0;
-
-    return {
-        todayScore: Math.round(todayScore),
-        lastWeekAvg: Math.round(lastWeekAvg),
-        percentChange: Math.round(percentChange),
-        hasEnoughData: true,
-    };
+    return { days, weekTotalMinutes, hasEnoughData, weekLabel };
 }
 
 // ─── 3. Focus Density ───────────────────────────────────────
@@ -148,27 +147,54 @@ export function calcFocusDensity(sessions: FlowSession[]): FocusDensityResult {
     const today = todayStr();
     const todaySessions = sessions.filter(s => getDateString(s.startedAt) === today);
 
-    if (todaySessions.length < 2) {
-        const totalFocusMin = todaySessions.reduce((sum, s) => sum + getDurationMinutes(s), 0);
-        return {
-            percentage: todaySessions.length === 1 ? 100 : 0,
-            label: todaySessions.length === 1 ? 'sharp' : 'scattered_mind',
-            hasEnoughData: todaySessions.length > 0,
-        };
+    if (todaySessions.length === 0) {
+        return { percentage: 0, label: 'scattered_mind', hasEnoughData: false };
     }
 
-    // Calculate from first session start to last session end
-    const sorted = [...todaySessions].sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
-    const firstStart = new Date(sorted[0].startedAt).getTime();
-    const lastEnd = new Date(sorted[sorted.length - 1].endedAt).getTime();
-    const totalSpanMinutes = (lastEnd - firstStart) / 60000;
-
-    if (totalSpanMinutes <= 0) {
+    if (todaySessions.length === 1) {
         return { percentage: 100, label: 'sharp', hasEnoughData: true };
     }
 
-    const totalFocusMinutes = todaySessions.reduce((sum, s) => sum + getDurationMinutes(s), 0);
-    const percentage = Math.min(100, Math.round((totalFocusMinutes / totalSpanMinutes) * 100));
+    // Sort sessions chronologically
+    const sorted = [...todaySessions].sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime());
+
+    // Split into blocks: >30 min gap = new block
+    const GAP_THRESHOLD_MS = 30 * 60 * 1000;
+    const blocks: FlowSession[][] = [[sorted[0]]];
+
+    for (let i = 1; i < sorted.length; i++) {
+        const prevEnd = new Date(sorted[i - 1].endedAt).getTime();
+        const currStart = new Date(sorted[i].startedAt).getTime();
+        const gap = currStart - prevEnd;
+
+        if (gap > GAP_THRESHOLD_MS) {
+            blocks.push([sorted[i]]); // new block
+        } else {
+            blocks[blocks.length - 1].push(sorted[i]); // same block
+        }
+    }
+
+    // Calculate density per block, then weighted average by focus time
+    let totalWeightedDensity = 0;
+    let totalFocusMinutes = 0;
+
+    for (const block of blocks) {
+        const blockFocus = block.reduce((sum, s) => sum + getDurationMinutes(s), 0);
+        totalFocusMinutes += blockFocus;
+
+        if (block.length === 1) {
+            // Single session block = 100% density
+            totalWeightedDensity += blockFocus * 100;
+        } else {
+            const blockStart = new Date(block[0].startedAt).getTime();
+            const blockEnd = new Date(block[block.length - 1].endedAt).getTime();
+            const blockSpan = (blockEnd - blockStart) / 60000;
+            const blockDensity = blockSpan > 0 ? Math.min(100, (blockFocus / blockSpan) * 100) : 100;
+            totalWeightedDensity += blockFocus * blockDensity;
+        }
+    }
+
+    const percentage = totalFocusMinutes > 0 ? Math.round(totalWeightedDensity / totalFocusMinutes) : 0;
 
     let label: FocusDensityLabel;
     if (percentage >= 80) label = 'sharp';

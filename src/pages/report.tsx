@@ -12,7 +12,6 @@ import { useRef } from 'react';
 
 import {
     calcDailyFlowWaves,
-    calcDepthScore,
     calcFocusDensity,
     calcResistancePoint,
     calcEarnedFreedom,
@@ -23,7 +22,7 @@ import {
 } from '@/features/analytics/utils/analyticsCalculations';
 
 import DailyFlowWaves from '@/features/analytics/components/DailyFlowWaves';
-import DepthScoreCard from '@/features/analytics/components/DepthScoreCard';
+import WeeklyWorkTimeCard from '@/features/analytics/components/WeeklyWorkTimeCard';
 import FocusDensityCard from '@/features/analytics/components/FocusDensityCard';
 import ResistancePointCard from '@/features/analytics/components/ResistancePointCard';
 import EarnedFreedomCard from '@/features/analytics/components/EarnedFreedomCard';
@@ -72,7 +71,6 @@ const ReportPage = () => {
         if (sessions.length === 0) return null;
         return {
             flowWaves: calcDailyFlowWaves(sessions),
-            depthScore: calcDepthScore(sessions),
             focusDensity: calcFocusDensity(sessions),
             resistancePoint: calcResistancePoint(sessions),
             earnedFreedom: calcEarnedFreedom(sessions),
@@ -126,8 +124,8 @@ const ReportPage = () => {
                 <section className="analytics-page__section">
                     <h2 className="analytics-page__section-title">{t('analytics.primary')}</h2>
                     <div className="analytics-page__grid">
+                        <WeeklyWorkTimeCard sessions={sessions} />
                         <DailyFlowWaves data={analytics.flowWaves} />
-                        <DepthScoreCard data={analytics.depthScore} />
                         <FocusDensityCard data={analytics.focusDensity} />
                         <ResistancePointCard data={analytics.resistancePoint} />
                         <EarnedFreedomCard data={analytics.earnedFreedom} />

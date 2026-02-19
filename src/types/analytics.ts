@@ -14,12 +14,18 @@ export interface DailyFlowWavesResult {
     hasEnoughData: boolean;
 }
 
-// --- 2. Depth Score ---
-export interface DepthScoreResult {
-    todayScore: number;         // dakika cinsinden ağırlıklı toplam
-    lastWeekAvg: number;        // geçen haftanın aynı gün ortalaması
-    percentChange: number;      // yüzde fark
+// --- 2. Weekly Work Time ---
+export interface WeeklyWorkDay {
+    dayLabel: string;       // Pzt, Sal, ... or Mon, Tue, ...
+    date: string;           // YYYY-MM-DD
+    totalMinutes: number;
+}
+
+export interface WeeklyWorkTimeResult {
+    days: WeeklyWorkDay[];
+    weekTotalMinutes: number;
     hasEnoughData: boolean;
+    weekLabel: string;      // e.g. "10 Feb – 16 Feb"
 }
 
 // --- 3. Focus Density ---
