@@ -1,14 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
-import {
-    useLoginWithGoogleMutation,
-    useLoginWithEmailMutation,
-    useRegisterWithEmailMutation,
-} from "@/features/auth/api/authApi";
+import { useLoginWithGoogleMutation, useLoginWithEmailMutation, useRegisterWithEmailMutation } from "@/features/auth/api/authApi";
 import { useAppSelector } from "@/hooks/storeHooks";
 import { useTranslation } from "react-i18next";
 
@@ -27,13 +19,12 @@ const LoginPage = () => {
     const [password, setPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [showPass, setShowPass] = useState(false);
 
     const isLoading = isGoogleLoading || isEmailLoading || isRegisterLoading;
 
     useEffect(() => {
-        if (isAuthenticated) {
-            router.push("/");
-        }
+        if (isAuthenticated) router.push("/");
     }, [isAuthenticated, router]);
 
     const handleGoogleLogin = async () => {
@@ -50,22 +41,15 @@ const LoginPage = () => {
         setError(null);
 
         if (!email.trim() || !password.trim()) {
-            setError(t("auth.fillAllFields"));
-            return;
+            setError(t("auth.fillAllFields")); return;
         }
 
         try {
             if (mode === "login") {
                 await loginWithEmail({ email, password }).unwrap();
             } else {
-                if (!displayName.trim()) {
-                    setError(t("auth.enterName"));
-                    return;
-                }
-                if (password.length < 6) {
-                    setError(t("auth.passwordMinLength"));
-                    return;
-                }
+                if (!displayName.trim()) { setError(t("auth.enterName")); return; }
+                if (password.length < 6) { setError(t("auth.passwordMinLength")); return; }
                 await registerWithEmail({ email, password, displayName }).unwrap();
             }
         } catch (err: any) {
@@ -79,105 +63,122 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#242424] animate-fade-in px-4">
-            <Card
-                className="w-full max-w-md border border-[#3D3D3D] bg-[#2E2E2E] animate-slide-up"
-                pt={{
-                    root: { className: 'rounded-xl overflow-hidden' },
-                    content: { className: 'p-8' }
-                }}
-            >
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-[#4F8EF7]/10 mb-4">
-                        <i className="pi pi-bolt text-2xl text-[#4F8EF7]"></i>
+        <div className="login-page">
+            <div className="login-card">
+                {/* Header */}
+                <div className="login-card__header">
+                    <div className="login-card__icon">
+                        <i className="pi pi-bolt" />
                     </div>
-                    <h1 className="text-2xl font-serif font-semibold text-[#F0F0F0] mb-1.5 tracking-tight">{t("common.appName")}</h1>
-                    <p className="text-[#757575] text-sm">{t("auth.subtitle")}</p>
+                    <h1 className="login-card__title">{t("common.appName")}</h1>
+                    <p className="login-card__subtitle">{t("auth.subtitle")}</p>
                 </div>
 
+                {/* Error */}
                 {error && (
-                    <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center animate-shake">
-                        <i className="pi pi-exclamation-circle mr-2 text-xs" />
+                    <div className="login-error animate-shake">
+                        <i className="pi pi-exclamation-circle" />
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleEmailSubmit} className="flex flex-col gap-4 mb-6">
+                {/* Google */}
+                <button
+                    className="login-btn-google"
+                    onClick={handleGoogleLogin}
+                    disabled={isLoading}
+                    type="button"
+                >
+                    {isGoogleLoading
+                        ? <><i className="pi pi-spin pi-spinner" /> {t("auth.connectingGoogle")}</>
+                        : <><i className="pi pi-google" /> {t("auth.continueWithGoogle")}</>
+                    }
+                </button>
+
+                {/* Divider */}
+                <div className="login-divider">
+                    <div className="login-divider__line" />
+                    <span className="login-divider__text">{t("common.or")}</span>
+                    <div className="login-divider__line" />
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleEmailSubmit} className="login-form">
                     {mode === "register" && (
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#757575] font-medium">{t("auth.nameLabel")}</label>
-                            <InputText
+                        <div className="login-field">
+                            <label className="login-label">{t("auth.nameLabel")}</label>
+                            <input
+                                className="login-input"
                                 value={displayName}
                                 onChange={(e) => setDisplayName(e.target.value)}
                                 placeholder={t("auth.namePlaceholder")}
-                                className="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 focus:border-[#34C774]"
+                                type="text"
                             />
                         </div>
                     )}
 
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#757575] font-medium">{t("auth.emailLabel")}</label>
-                        <InputText
+                    <div className="login-field">
+                        <label className="login-label">{t("auth.emailLabel")}</label>
+                        <input
+                            className="login-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder={t("auth.emailPlaceholder")}
                             type="email"
-                            className="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 focus:border-[#34C774]"
+                            autoComplete="email"
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#757575] font-medium">{t("auth.passwordLabel")}</label>
-                        <Password
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            feedback={false}
-                            toggleMask
-                            className="auth-password-input"
-                            inputClassName="bg-[#242424] border border-[#3D3D3D] text-[#F0F0F0] rounded-lg px-4 py-3 w-full focus:border-[#34C774]"
-                        />
+                    <div className="login-field">
+                        <label className="login-label">{t("auth.passwordLabel")}</label>
+                        <div style={{ position: "relative" }}>
+                            <input
+                                className="login-input"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="••••••••"
+                                type={showPass ? "text" : "password"}
+                                autoComplete={mode === "login" ? "current-password" : "new-password"}
+                                style={{ paddingRight: "44px" }}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPass(!showPass)}
+                                style={{
+                                    position: "absolute", right: "12px", top: "50%",
+                                    transform: "translateY(-50%)", background: "none",
+                                    border: "none", cursor: "pointer", color: "var(--muted)",
+                                    padding: "4px",
+                                }}
+                            >
+                                <i className={`pi ${showPass ? "pi-eye-slash" : "pi-eye"}`} style={{ fontSize: "14px" }} />
+                            </button>
+                        </div>
                     </div>
 
-                    <Button
+                    <button
                         type="submit"
-                        label={isLoading
-                            ? t("auth.processing")
-                            : mode === "login" ? t("auth.signIn") : t("auth.createAccount")
+                        className="login-btn-primary"
+                        disabled={isLoading}
+                    >
+                        {(isEmailLoading || isRegisterLoading)
+                            ? <><i className="pi pi-spin pi-spinner" /> {t("auth.processing")}</>
+                            : <><i className={`pi ${mode === "login" ? "pi-sign-in" : "pi-user-plus"}`} />
+                                {mode === "login" ? t("auth.signIn") : t("auth.createAccount")}</>
                         }
-                        icon={mode === "login" ? "pi pi-sign-in" : "pi pi-user-plus"}
-                        loading={isEmailLoading || isRegisterLoading}
-                        className="w-full py-3 bg-[#4F8EF7] border-none text-white rounded-lg font-medium hover:bg-[#3D77E0] transition-colors"
-                    />
+                    </button>
                 </form>
 
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="flex-1 h-px bg-[#3D3D3D]"></div>
-                    <span className="text-[10px] text-[#757575] uppercase tracking-widest">{t("common.or")}</span>
-                    <div className="flex-1 h-px bg-[#3D3D3D]"></div>
-                </div>
-
-                <Button
-                    label={isGoogleLoading ? t("auth.connectingGoogle") : t("auth.continueWithGoogle")}
-                    icon="pi pi-google"
-                    loading={isGoogleLoading}
-                    onClick={handleGoogleLogin}
-                    className="w-full py-3 bg-transparent border border-[#3D3D3D] text-[#9A9A9A] hover:bg-[#3D3D3D] hover:text-[#F0F0F0] transition-all rounded-lg font-medium"
-                />
-
-                <div className="mt-6 pt-4 border-t border-[#3D3D3D] text-center">
-                    <p className="text-xs text-[#757575]">
+                {/* Footer */}
+                <div className="login-footer">
+                    <p>
                         {mode === "login" ? t("auth.noAccount") : t("auth.hasAccount")}
-                        <button
-                            type="button"
-                            onClick={switchMode}
-                            className="ml-2 text-[#4F8EF7] hover:text-[#34C774] transition-colors font-medium"
-                        >
+                        <button type="button" onClick={switchMode}>
                             {mode === "login" ? t("auth.signUp") : t("auth.signIn")}
                         </button>
                     </p>
                 </div>
-            </Card>
-
+            </div>
         </div>
     );
 };

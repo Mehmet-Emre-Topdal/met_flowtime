@@ -146,71 +146,82 @@ const FlowtimeTimer = () => {
         ? Math.floor((breakSeconds / calculateBreakDuration(seconds, config.intervals)) * 100)
         : (seconds % 60);
 
-    const timerColor = isBreak ? "#E05555" : "#4F8EF7";
+    const accentColor = isBreak ? '#34d399' : '#7c6ff7';
+    const accentRingDim = isBreak ? 'rgba(52, 211, 153, 0.1)' : 'rgba(124, 111, 247, 0.1)';
 
     return (
-        <div className="flex flex-col items-center justify-center gap-10 py-6 w-full max-w-2xl mx-auto">
-            <header className="text-center flex flex-col gap-3">
-                <h2 className="text-2xl font-serif font-semibold text-[#F0F0F0] tracking-tight">
+        <div className="timer-root animate-fade-in">
+            {/* Status header */}
+            <header className="timer-header">
+                <h2 className="timer-header__title">
                     {isBreak ? t("timer.breakTime") : t("timer.focusSession")}
                 </h2>
 
                 {activeTask && !isBreak && (
-                    <div className="flex items-center gap-2 justify-center animate-fade-in">
-                        <span className="text-xs text-[#757575]">{t("timer.workingOn")}</span>
-                        <span className="text-sm text-[#4F8EF7] font-medium">{activeTask.title}</span>
+                    <div className="timer-header__task animate-fade-in">
+                        <i className="pi pi-tag timer-header__task-icon" />
+                        <span className="timer-header__task-name">{activeTask.title}</span>
                     </div>
                 )}
 
-                <p className="text-[#757575] text-xs tracking-wide">
-                    {isBreak ? t("timer.rechargingFocus") : isActive ? t("timer.flowActive") : t("timer.readyToFocus")}
+                <p className="timer-header__status">
+                    {isBreak
+                        ? t("timer.rechargingFocus")
+                        : isActive
+                            ? t("timer.flowActive")
+                            : t("timer.readyToFocus")}
                 </p>
             </header>
 
-            <div className="relative">
+            {/* Knob + time display */}
+            <div className="timer-knob-wrapper">
+                <div
+                    className="timer-knob-glow"
+                    style={{ background: `radial-gradient(circle, ${accentRingDim} 0%, transparent 70%)` }}
+                />
                 <Knob
                     value={knobValue}
                     size={240}
                     min={0}
                     max={isBreak ? 100 : 60}
                     readOnly
-                    strokeWidth={3}
-                    rangeColor="#3D3D3D"
-                    valueColor={timerColor}
+                    strokeWidth={4}
+                    rangeColor="rgba(255,255,255,0.05)"
+                    valueColor={accentColor}
                     textColor="transparent"
                 />
-
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-5xl font-mono font-semibold text-[#F0F0F0] tracking-tight tabular-nums">
+                <div className="timer-time-overlay">
+                    <span className="timer-time-display">
                         {formatTime(isBreak ? breakSeconds : seconds)}
                     </span>
-                    <span className="text-[#757575] text-[11px] mt-1.5 uppercase tracking-widest">
+                    <span className="timer-time-label">
                         {isBreak ? t("timer.remaining") : t("timer.elapsed")}
                     </span>
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Controls */}
+            <div className="timer-controls">
                 {!isActive ? (
                     <Button
                         icon="pi pi-play"
                         label={seconds > 0 ? t("timer.resume") : t("timer.start")}
                         onClick={startTimer}
-                        className="bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-8 py-3 rounded-lg text-sm font-medium transition-colors"
+                        className="timer-btn timer-btn--primary"
                     />
                 ) : (
                     <>
                         <Button
                             icon="pi pi-pause"
                             onClick={pauseTimer}
-                            className="p-button-rounded bg-[#3D3D3D] border-none text-[#9A9A9A] hover:bg-[#353535] hover:text-[#F0F0F0] w-12 h-12 transition-colors"
+                            className="timer-btn timer-btn--icon"
                         />
                         {!isBreak && (
                             <Button
                                 icon="pi pi-coffee"
                                 label={t("timer.break")}
                                 onClick={takeBreak}
-                                className="bg-[#E05555] border-none text-white hover:bg-[#C44545] px-6 py-3 rounded-lg text-sm font-medium transition-colors"
+                                className="timer-btn timer-btn--break"
                             />
                         )}
                     </>
@@ -218,10 +229,9 @@ const FlowtimeTimer = () => {
                 <Button
                     icon="pi pi-refresh"
                     onClick={resetTimer}
-                    className="p-button-rounded p-button-text text-[#757575] hover:text-[#9A9A9A] w-10 h-10 transition-colors"
+                    className="timer-btn timer-btn--ghost"
                 />
             </div>
-
         </div>
     );
 };

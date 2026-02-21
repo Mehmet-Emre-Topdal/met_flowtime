@@ -18,6 +18,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     const router = useRouter();
     const menuRef = useRef<Menu>(null);
     const [settingsVisible, setSettingsVisible] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const { user, isAuthenticated, isLoading } = useAppSelector((state) => state.auth);
     const [logout] = useLogoutMutation();
 
@@ -26,6 +27,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
             router.push("/login");
         }
     }, [isAuthenticated, isLoading, router]);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8);
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
 
     const handleLogout = async () => {
         try {
@@ -53,59 +60,59 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         return null;
     }
 
+    const navLinkClass = (path: string) =>
+        `nav-link ${router.pathname === path ? "nav-link--active" : ""}`;
+
     return (
-        <div className="min-h-screen bg-[#242424] text-[#F0F0F0] font-sans">
-            <header className="fixed top-0 left-0 right-0 h-14 bg-[#242424]/80 backdrop-blur-md border-b border-[#3D3D3D] z-50">
-                <div className="container mx-auto h-full flex items-center justify-between px-6">
-                    <Link href="/" className="no-underline">
-                        <h1 className="text-lg font-serif font-semibold tracking-tight text-[#F0F0F0] hover:text-[#4F8EF7] transition-colors">
-                            {t("common.appName")}
-                        </h1>
+        <div className="layout-root">
+            {/* Header */}
+            <header className={`layout-header ${scrolled ? "layout-header--scrolled" : ""}`}>
+                <div className="layout-header__inner">
+                    {/* Logo */}
+                    <Link href="/" className="layout-logo no-underline">
+                        <div className="layout-logo__icon">
+                            <i className="pi pi-bolt" />
+                        </div>
+                        <span className="layout-logo__text">{t("common.appName")}</span>
                     </Link>
 
-                    <nav className="flex items-center gap-1">
-                        <Link
-                            href="/"
-                            className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/'
-                                ? 'text-[#F0F0F0] bg-[#3D3D3D]'
-                                : 'text-[#757575] hover:text-[#9A9A9A] hover:bg-[#2E2E2E]'
-                                }`}
-                        >
+                    {/* Nav */}
+                    <nav className="layout-nav">
+                        <Link href="/" className={navLinkClass("/")}>
+                            <i className="pi pi-clock nav-link__icon" />
                             {t("timer.focusSession")}
                         </Link>
-                        <Link
-                            href="/report"
-                            className={`text-xs px-3 py-1.5 rounded-md no-underline transition-colors ${router.pathname === '/report'
-                                ? 'text-[#F0F0F0] bg-[#3D3D3D]'
-                                : 'text-[#757575] hover:text-[#9A9A9A] hover:bg-[#2E2E2E]'
-                                }`}
-                        >
+                        <Link href="/report" className={navLinkClass("/report")}>
+                            <i className="pi pi-chart-bar nav-link__icon" />
                             {t("analytics.title")}
                         </Link>
                     </nav>
 
-                    <div className="flex items-center gap-3">
-                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" className="bg-[#2E2E2E] border-[#3D3D3D] text-[#F0F0F0]" />
-                        <div
-                            className="flex items-center gap-2.5 cursor-pointer group px-2 py-1.5 rounded-lg hover:bg-[#2E2E2E] transition-colors"
+                    {/* User */}
+                    <div className="layout-header__actions">
+                        <Menu model={userMenuItems} popup ref={menuRef} id="user_menu" />
+                        <button
+                            className="layout-avatar-btn"
                             onClick={(e) => menuRef.current?.toggle(e)}
+                            aria-label="User menu"
                         >
-                            <div className="text-right hidden sm:block">
-                                <p className="text-xs text-[#9A9A9A] group-hover:text-[#F0F0F0] transition-colors leading-none">{user?.displayName?.split(' ')[0]}</p>
-                            </div>
+                            <span className="layout-avatar-btn__name">
+                                {user?.displayName?.split(" ")[0]}
+                            </span>
                             <Avatar
                                 image={user?.photoURL || undefined}
                                 icon={!user?.photoURL ? "pi pi-user" : undefined}
                                 shape="circle"
-                                className="border border-[#3D3D3D] group-hover:border-[#353535] transition-all w-8 h-8"
+                                className="layout-avatar"
                             />
-                        </div>
+                        </button>
                     </div>
                 </div>
             </header>
 
-            <main className="pt-20 pb-12">
-                <div className="container mx-auto px-6 max-w-6xl">
+            {/* Main content */}
+            <main className="layout-main">
+                <div className="layout-container">
                     {children}
                 </div>
             </main>
