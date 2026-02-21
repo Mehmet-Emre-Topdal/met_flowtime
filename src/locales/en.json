@@ -208,5 +208,14 @@
             "improved": "Decreased by {{minutes}} min compared to last month.",
             "worsened": "Increased by {{minutes}} min compared to last month."
         }
+    },
+    "assistant": {
+        "title": "Focus Assistant",
+        "toggle": "Toggle assistant",
+        "online": "Online",
+        "thinking": "Thinking...",
+        "placeholder": "Ask something...",
+        "error": "An error occurred, please try again. 🔄",
+        "rateLimitReached": "You've reached today's assistant limit. Let's continue tomorrow. 🌙"
     }
 }

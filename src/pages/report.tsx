@@ -30,6 +30,7 @@ import FlowWindowCard from '@/features/analytics/components/FlowWindowCard';
 import FlowStreakCard from '@/features/analytics/components/FlowStreakCard';
 import TaskFlowHarmonyCard from '@/features/analytics/components/TaskFlowHarmonyCard';
 import WarmupPhaseCard from '@/features/analytics/components/WarmupPhaseCard';
+import AssistantChat from '@/features/assistant/components/AssistantChat';
 
 const ReportPage = () => {
     const { t } = useTranslation();
@@ -88,6 +89,7 @@ const ReportPage = () => {
                     <ProgressSpinner style={{ width: '40px', height: '40px' }} strokeWidth="4" />
                     <span>{t('analytics.loadingSessions')}</span>
                 </div>
+                <AssistantChat />
             </MainLayout>
         );
     }
@@ -108,6 +110,7 @@ const ReportPage = () => {
                         className="bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-6 py-2 rounded-lg text-sm font-medium transition-colors mt-4"
                     />
                 </div>
+                <AssistantChat />
             </MainLayout>
         );
     }
@@ -142,6 +145,7 @@ const ReportPage = () => {
                     </div>
                 </section>
             </div>
+            <AssistantChat />
         </MainLayout>
     );
 };

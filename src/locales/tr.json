@@ -208,5 +208,14 @@
             "improved": "Geçen aya göre {{minutes}} dk azaldı.",
             "worsened": "Geçen aya göre {{minutes}} dk arttı."
         }
+    },
+    "assistant": {
+        "title": "Odak Asistanı",
+        "toggle": "Asistanı aç/kapat",
+        "online": "Çevrimiçi",
+        "thinking": "Düşünüyor...",
+        "placeholder": "Bir şey sor...",
+        "error": "Bir hata oluştu, lütfen tekrar dene. 🔄",
+        "rateLimitReached": "Bugünkü asistan limitine ulaştın, yarın devam edebiliriz. 🌙"
     }
 }
