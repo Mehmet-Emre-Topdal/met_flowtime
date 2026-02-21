@@ -3,11 +3,15 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Avatar } from "primereact/avatar";
 import { Menu } from "primereact/menu";
-import { useAppSelector } from "@/hooks/storeHooks";
+import { useAppSelector, useAppDispatch } from "@/hooks/storeHooks";
 import { useLogoutMutation } from "@/features/auth/api/authApi";
+import { resetTimer } from "@/features/timer/slices/timerSlice";
+import { resetTask } from "@/features/kanban/slices/taskSlice";
 import { MenuItem } from "primereact/menuitem";
 import SettingsModal from "@/components/settings/SettingsModal";
 import { useTranslation } from "react-i18next";
+
+import { baseApi } from "@/store/api/baseApi";
 
 interface MainLayoutProps {
     children: ReactNode;
@@ -16,6 +20,7 @@ interface MainLayoutProps {
 const MainLayout = ({ children }: MainLayoutProps) => {
     const { t } = useTranslation();
     const router = useRouter();
+    const dispatch = useAppDispatch();
     const menuRef = useRef<Menu>(null);
     const [settingsVisible, setSettingsVisible] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -37,6 +42,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     const handleLogout = async () => {
         try {
             await logout().unwrap();
+            dispatch(resetTimer());
+            dispatch(resetTask());
+            dispatch(baseApi.util.resetApiState());
             router.push("/login");
         } catch (error) {
             console.error(t("auth.logoutFailed"), error);
@@ -44,6 +52,11 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     };
 
     const userMenuItems: MenuItem[] = [
+        {
+            label: t("nav.howTo"),
+            icon: "pi pi-info-circle",
+            command: () => router.push("/how-to")
+        },
         {
             label: t("nav.settings"),
             icon: "pi pi-cog",
@@ -91,6 +104,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <Link href="/report" className={navLinkClass("/report")}>
                             <i className="pi pi-chart-bar nav-link__icon" />
                             {t("analytics.title")}
+                        </Link>
+                        <Link href="/how-to" className={navLinkClass("/how-to")}>
+                            <i className="pi pi-info-circle nav-link__icon" />
+                            {t("nav.howTo")}
                         </Link>
                     </nav>
 

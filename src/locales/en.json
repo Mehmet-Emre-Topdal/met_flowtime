@@ -37,7 +37,8 @@
     },
     "nav": {
         "settings": "Settings",
-        "logout": "Log out"
+        "logout": "Log out",
+        "howTo": "How to Use?"
     },
     "timer": {
         "focusSession": "Focus Session",
@@ -217,5 +218,25 @@
         "placeholder": "Ask something...",
         "error": "An error occurred, please try again. 🔄",
         "rateLimitReached": "You've reached today's assistant limit. Let's continue tomorrow. 🌙"
+    },
+    "howto": {
+        "title": "How to Use?",
+        "subtitle": "Achieve peak productivity with Flowtime's scientific and flexible approach",
+        "methodology": {
+            "title": "1. Flowtime Methodology",
+            "desc": "Flowtime breaks the rigid 25-minute boundaries of Pomodoro. The human mind doesn't work at the same capacity every moment. With this method, you decide exactly how long you focus. Stop when you feel tired; the app analyzes your session and instantly calculates the ideal break duration (usually via the 5:1 ratio). This ensures you work in your natural rhythm without burnout."
+        },
+        "timer": {
+            "title": "2. Smart Timer",
+            "desc": "The flow begins the moment you hit 'Start' on the Timer screen. Track your elapsed time and get into focus mode with the 'breathing' ring effect. When you hit 'Break', the system automatically calculates your earned break time based on your performance and starts the countdown. You'll be notified with your chosen sound (Bell, Birds, etc.) when it's time to get back."
+        },
+        "kanban": {
+            "title": "3. Task & Context Management",
+            "desc": "Successful analysis requires knowing what you're focusing on. Select a task from the Kanban board to link your Timer session to it. Use the 'Daily Task' feature for recurring routines (emails, planning, etc.) to have them reset every midnight. Your tasks are automatically synchronized between 'To Do', 'In Progress', and 'Done' columns."
+        },
+        "ai": {
+            "title": "4. Personal Productivity Analyst",
+            "desc": "The AI Assistant at the bottom right isn't just a chatbot; it's your performance analyst. It examines all your session data stored on Firebase. You can ask data-driven questions like 'What is my most productive day?', 'What's my average weekly focus time?' or 'Why wasn't I as productive today as yesterday?' and get personalized growth advice."
+        }
     }
 }

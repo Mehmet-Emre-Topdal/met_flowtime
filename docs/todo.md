@@ -5,14 +5,11 @@ validasyonlar eklenmeli
 
 mutasyonlarda unwrap kullanılmalı
 
-UI için yeni bir tema bulmalıyım bu çok sade )(lo fi cozy yapacağız)
-
 şifre güncelleme eklenmeli
 
 mobildeki hover işlemleri test edilmeli
 
 GOOGLE İLE HESAP AÇARKEN UYGULAMA İSMİ DEĞİŞECEK
-
 
 zili düzgün şekilde eklemek lazım undefined gelme şansı var
 
@@ -24,7 +21,8 @@ mock verileri kaldıracağız
 
 dept çok saçma ya 
 
-AI eklememiz lazım
+AI görev ile ilgili sorulara cevap veremiyor aslında AI'a kendi sorsusunu yazdırmamız lazım
+
 ---------------
 OPTİMİSTİK UI KODUNU OKUMALIYIM
 

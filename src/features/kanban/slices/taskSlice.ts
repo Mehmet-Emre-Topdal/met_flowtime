@@ -15,8 +15,11 @@ const taskSlice = createSlice({
         setSelectedTaskId: (state, action: PayloadAction<string | null>) => {
             state.selectedTaskId = action.payload;
         },
+        resetTask: (state) => {
+            state.selectedTaskId = null;
+        }
     },
 });
 
-export const { setSelectedTaskId } = taskSlice.actions;
+export const { setSelectedTaskId, resetTask } = taskSlice.actions;
 export default taskSlice.reducer;

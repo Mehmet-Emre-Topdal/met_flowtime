@@ -20,9 +20,13 @@ const timerSlice = createSlice({
         },
         setLoadedFromFirebase: (state, action: PayloadAction<boolean>) => {
             state.isLoadedFromFirebase = action.payload;
+        },
+        resetTimer: (state) => {
+            state.config = DEFAULT_CONFIG;
+            state.isLoadedFromFirebase = false;
         }
     },
 });
 
-export const { updateConfig, setLoadedFromFirebase } = timerSlice.actions;
+export const { updateConfig, setLoadedFromFirebase, resetTimer } = timerSlice.actions;
 export default timerSlice.reducer;
