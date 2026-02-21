@@ -176,7 +176,7 @@ const FlowtimeTimer = () => {
             {/* Knob + time display */}
             <div className="timer-knob-wrapper">
                 <div
-                    className="timer-knob-glow"
+                    className={`timer-knob-glow ${isActive ? 'timer-knob-glow--active' : ''}`}
                     style={{ background: `radial-gradient(circle, ${accentRingDim} 0%, transparent 70%)` }}
                 />
                 <Knob

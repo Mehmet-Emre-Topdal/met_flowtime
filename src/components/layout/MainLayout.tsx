@@ -65,6 +65,12 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
     return (
         <div className="layout-root">
+            {/* Background Decorations */}
+            <div className="layout-bg-blobs">
+                <div className="layout-bg-blob layout-bg-blob--1" />
+                <div className="layout-bg-blob layout-bg-blob--2" />
+            </div>
+
             {/* Header */}
             <header className={`layout-header ${scrolled ? "layout-header--scrolled" : ""}`}>
                 <div className="layout-header__inner">

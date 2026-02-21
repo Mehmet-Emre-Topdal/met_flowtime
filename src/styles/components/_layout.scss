@@ -5,6 +5,62 @@
 .layout-root {
     min-height: 100vh;
     background: var(--background);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ─── Background Blobs ─────────────────────────────────── */
+
+.layout-bg-blobs {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.layout-bg-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: blob-float 20s infinite alternate ease-in-out;
+
+    &--1 {
+        width: 400px;
+        height: 400px;
+        background: var(--accent);
+        top: -100px;
+        left: -100px;
+        animation-duration: 25s;
+    }
+
+    &--2 {
+        width: 450px;
+        height: 450px;
+        background: var(--accent-secondary);
+        bottom: -150px;
+        right: -100px;
+        animation-duration: 35s;
+        animation-delay: -5s;
+    }
+}
+
+@keyframes blob-float {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    33% {
+        transform: translate(30px, 50px) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
 }
 
 /* ─── Header ───────────────────────────────────────────── */
@@ -434,14 +490,21 @@
    TIMER
    ═══════════════════════════════════════════════════════════ */
 
+.timer-card {
+    width: 100%;
+    max-width: 520px;
+    margin: 40px auto;
+    padding: 20px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
 .timer-root {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 40px;
-    padding: 48px 24px;
-    max-width: 480px;
-    margin: 0 auto;
+    padding: 28px 12px;
 }
 
 /* ─── Header ───────────────────────────────────────────── */
@@ -505,6 +568,24 @@
     border-radius: 50%;
     pointer-events: none;
     transition: background 0.6s ease;
+
+    &--active {
+        animation: glow-breathe 4s infinite ease-in-out;
+    }
+}
+
+@keyframes glow-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
 }
 
 .timer-time-overlay {

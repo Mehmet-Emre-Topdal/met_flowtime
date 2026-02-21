@@ -23,12 +23,9 @@ import {
 
 import DailyFlowWaves from '@/features/analytics/components/DailyFlowWaves';
 import WeeklyWorkTimeCard from '@/features/analytics/components/WeeklyWorkTimeCard';
-import FocusDensityCard from '@/features/analytics/components/FocusDensityCard';
 import ResistancePointCard from '@/features/analytics/components/ResistancePointCard';
-import EarnedFreedomCard from '@/features/analytics/components/EarnedFreedomCard';
 import FlowWindowCard from '@/features/analytics/components/FlowWindowCard';
 import FlowStreakCard from '@/features/analytics/components/FlowStreakCard';
-import TaskFlowHarmonyCard from '@/features/analytics/components/TaskFlowHarmonyCard';
 import WarmupPhaseCard from '@/features/analytics/components/WarmupPhaseCard';
 import AssistantChat from '@/features/assistant/components/AssistantChat';
 
@@ -72,12 +69,9 @@ const ReportPage = () => {
         if (sessions.length === 0) return null;
         return {
             flowWaves: calcDailyFlowWaves(sessions),
-            focusDensity: calcFocusDensity(sessions),
             resistancePoint: calcResistancePoint(sessions),
-            earnedFreedom: calcEarnedFreedom(sessions),
             flowWindow: calcNaturalFlowWindow(sessions),
             flowStreak: calcFlowStreak(sessions),
-            taskHarmony: calcTaskFlowHarmony(sessions, tasks),
             warmup: calcWarmupPhase(sessions),
         };
     }, [sessions, tasks]);
@@ -129,9 +123,7 @@ const ReportPage = () => {
                     <div className="analytics-page__grid">
                         <WeeklyWorkTimeCard sessions={sessions} />
                         <DailyFlowWaves data={analytics.flowWaves} />
-                        <FocusDensityCard data={analytics.focusDensity} />
                         <ResistancePointCard data={analytics.resistancePoint} />
-                        <EarnedFreedomCard data={analytics.earnedFreedom} />
                         <FlowWindowCard data={analytics.flowWindow} />
                         <FlowStreakCard data={analytics.flowStreak} />
                     </div>
@@ -140,7 +132,6 @@ const ReportPage = () => {
                 <section className="analytics-page__section">
                     <h2 className="analytics-page__section-title">{t('analytics.secondary')}</h2>
                     <div className="analytics-page__grid">
-                        <TaskFlowHarmonyCard data={analytics.taskHarmony} />
                         <WarmupPhaseCard data={analytics.warmup} />
                     </div>
                 </section>
