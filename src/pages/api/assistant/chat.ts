@@ -1,40 +1,195 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { adminAuth } from '@/lib/firebase-admin';
-import { callGemini, callGeminiWithHistory } from '@/lib/gemini';
-import { fetchMetrics } from '@/features/assistant/utils/metricFunctions';
+import { callGemini, callGeminiWithHistory, callGeminiWithTools, Type } from '@/lib/gemini';
+import type { Tool } from '@/lib/gemini';
 import { checkRateLimit, incrementUsage } from '@/features/assistant/utils/rateLimit';
-import { ChatMessage, ChatResponse, ResolverOutput } from '@/types/assistant';
+import {
+    toolGetSessionsSummary,
+    toolGetTopTasks,
+    toolGetHourlyDistribution,
+    toolComparePeriods,
+    toolGetStreak,
+    toolGetWeekdayStats,
+    toolGetResistancePoint,
+    toolGetLongestSession,
+    toolGetWarmupDuration,
+} from '@/features/assistant/utils/metricFunctions';
+import { ChatMessage, ChatResponse } from '@/types/assistant';
 
-// ─── System Prompts ─────────────────────────────────────────
+// ─── Tool Declarations ───────────────────────────────────────
 
-const RESOLVER_SYSTEM_PROMPT = `Sen bir veri router'ısın. Kullanıcının sorusunu analiz et ve 
-cevaplamak için gereken metrikleri ve zaman aralığını JSON olarak döndür.
-Sadece JSON döndür, başka hiçbir şey yazma.
+const ASSISTANT_TOOLS: Tool[] = [{
+    functionDeclarations: [
+        {
+            name: 'get_sessions_summary',
+            description: 'Belirli bir tarih aralığındaki odak oturumlarının özetini döndürür. Toplam süre, oturum sayısı, ortalama süre ve dağılım bilgisi içerir.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD formatında. Örnek: 2025-01-01' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD formatında. Örnek: 2025-01-20' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_top_tasks',
+            description: 'Belirli tarih aralığında en çok odaklanılan görevleri listeler.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                    limit: { type: Type.NUMBER, description: 'Kaç görev dönsün. Varsayılan: 5' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_hourly_distribution',
+            description: 'Günün hangi saatlerinde daha verimli çalışıldığını gösterir.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'compare_periods',
+            description: 'İki farklı zaman dilimini karşılaştırır. Örneğin bu ay ile geçen ayı karşılaştırmak için kullan.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    period1Start: { type: Type.STRING, description: 'Birinci dönem başlangıç tarihi YYYY-MM-DD' },
+                    period1End: { type: Type.STRING, description: 'Birinci dönem bitiş tarihi YYYY-MM-DD' },
+                    period2Start: { type: Type.STRING, description: 'İkinci dönem başlangıç tarihi YYYY-MM-DD' },
+                    period2End: { type: Type.STRING, description: 'İkinci dönem bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['period1Start', 'period1End', 'period2Start', 'period2End'],
+            },
+        },
+        {
+            name: 'get_streak',
+            description: 'Kullanıcının mevcut akış serisini ve kişisel rekor serisini döndürür.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {},
+                required: [],
+            },
+        },
+        {
+            name: 'get_weekday_stats',
+            description: 'Haftanın günlerine göre odaklanma dağılımını döndürür. Hangi günler daha verimli sorularında kullan.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_resistance_point',
+            description: 'Kullanıcının doğal oturum süresi tatlı noktasını döndürür. Kaç dakikada takılıp kaldığını, tipik oturum uzunluğunu gösterir.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_longest_session',
+            description: 'Belirli tarih aralığındaki en uzun odak oturumunu ve tarihini döndürür.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_warmup_duration',
+            description: 'Kullanıcının verimli oturumlara (20+ dakika) ulaşmak için geçirdiği ortalama ısınma süresini döndürür.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
+    ],
+}];
 
-Mevcut metrikler:
-- total_sessions
-- session_duration_distribution
-- peak_hours
-- flow_streak
-- resistance_point
-- focus_density_ratio
-- earned_freedom_balance
-- session_times_by_weekday
-- average_session_duration
-- longest_session
-- warmup_duration
-- task_flow_harmony
+// ─── Tool Executor ───────────────────────────────────────────
 
-Mevcut periyotlar: today, last_7_days, last_30_days, last_90_days, all_time
+async function executeToolCall(name: string, args: Record<string, unknown>, userId: string): Promise<unknown> {
+    console.log('[Chat API] Executing tool:', name, 'args:', JSON.stringify(args));
 
-Çıktı formatı:
-{
-  "period": "last_30_days",
-  "metrics": ["peak_hours", "depth_score_by_weekday"]
-}`;
+    switch (name) {
+        case 'get_sessions_summary': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetSessionsSummary(userId, startDate, endDate);
+        }
+        case 'get_top_tasks': {
+            const { startDate, endDate, limit = 5 } = args as { startDate: string; endDate: string; limit?: number };
+            return toolGetTopTasks(userId, startDate, endDate, Number(limit));
+        }
+        case 'get_hourly_distribution': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetHourlyDistribution(userId, startDate, endDate);
+        }
+        case 'compare_periods': {
+            const { period1Start, period1End, period2Start, period2End } = args as {
+                period1Start: string; period1End: string;
+                period2Start: string; period2End: string;
+            };
+            return toolComparePeriods(userId, period1Start, period1End, period2Start, period2End);
+        }
+        case 'get_streak':
+            return toolGetStreak(userId);
+        case 'get_resistance_point': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetResistancePoint(userId, startDate, endDate);
+        }
+        case 'get_longest_session': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetLongestSession(userId, startDate, endDate);
+        }
+        case 'get_warmup_duration': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetWarmupDuration(userId, startDate, endDate);
+        }
+        case 'get_weekday_stats': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetWeekdayStats(userId, startDate, endDate);
+        }
+        default:
+            return { error: `Unknown tool: ${name}` };
+    }
+}
 
-const MAIN_ASSISTANT_PROMPT = `Sen Flowtime uygulamasının yapay zeka odaklanma asistanısın.
-Kullanıcının odaklanma ve akış verilerine tam erişimin var.
+// ─── System Prompt ───────────────────────────────────────────
+
+const SUMMARY_PROMPT = `Aşağıdaki konuşmayı 3-4 cümleyle özetle.
+Kullanıcının sorduğu önemli konuları ve verilen tavsiyeleri koru.
+Sadece özeti yaz, başka hiçbir şey ekleme.`;
+
+function buildSystemPrompt(summary: string | null): string {
+    const today = new Date().toISOString().split('T')[0];
+
+    let prompt = `Sen Flowtime uygulamasının yapay zeka odaklanma asistanısın.
+Kullanıcının odaklanma ve akış verilerine araçlar aracılığıyla erişebilirsin.
 
 Flowtime metodolojisini biliyorsun:
 - Esneklik: Sabit süre yok, kullanıcı akışta olduğu kadar çalışır
@@ -46,17 +201,10 @@ Kişiliğin:
 - Kısa ve net, gereksiz giriş cümleleri yok
 - Asla "Yapay zekayım" veya "Verilerine göre" gibi meta cümleler kullanma
 - Kullanıcı Flowtime dışı bir şey sorarsa nazikçe odaklanma konusuna yönlendir
-- Türkçe yaz`;
+- Türkçe yaz
 
-const SUMMARY_PROMPT = `Aşağıdaki konuşmayı 3-4 cümleyle özetle. 
-Kullanıcının sorduğu önemli konuları ve verilen tavsiyeleri koru.
-Sadece özeti yaz, başka hiçbir şey ekleme.`;
-
-// ─── Helpers ────────────────────────────────────────────────
-
-function buildAssistantSystemPrompt(metricsData: Record<string, unknown>, summary: string | null, history: ChatMessage[]): string {
-    let prompt = MAIN_ASSISTANT_PROMPT;
-    prompt += `\n\nKullanıcı verisi:\n${JSON.stringify(metricsData, null, 2)}`;
+Bugünün tarihi: ${today}
+Tarih aralıklarını hesaplarken bu tarihi baz al.`;
 
     if (summary) {
         prompt += `\n\nÖnceki konuşma özeti:\n${summary}`;
@@ -65,33 +213,9 @@ function buildAssistantSystemPrompt(metricsData: Record<string, unknown>, summar
     return prompt;
 }
 
-function parseResolverOutput(text: string): ResolverOutput {
-    // Extract JSON from response (may contain backticks or extra text)
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-        throw new Error('Resolver did not return valid JSON');
-    }
-    const parsed = JSON.parse(jsonMatch[0]);
-
-    // Validate
-    const validMetrics = [
-        'total_sessions',
-        'session_duration_distribution', 'peak_hours', 'flow_streak', 'resistance_point',
-        'focus_density_ratio', 'earned_freedom_balance',
-        'session_times_by_weekday', 'average_session_duration', 'longest_session',
-        'warmup_duration', 'task_flow_harmony',
-    ];
-    const validPeriods = ['today', 'last_7_days', 'last_30_days', 'last_90_days', 'all_time'];
-
-    const metrics = (parsed.metrics || []).filter((m: string) => validMetrics.includes(m));
-    const period = validPeriods.includes(parsed.period) ? parsed.period : 'last_30_days';
-
-    return { period, metrics };
-}
-
 // ─── Welcome Message Handler ────────────────────────────────
 
-async function handleWelcome(userId: string): Promise<ChatResponse> {
+async function handleWelcome(): Promise<ChatResponse> {
     const welcomeMessage = `Merhaba! 👋 Ben Flowtime yapay zeka asistanıyım. Beni odaklanma verilerini analiz etmek, verimliliğini artırmak ve akış halini derinleştirmek için kullanabilirsin. Ne merak ediyorsun?`;
 
     return {
@@ -115,7 +239,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    // Auth
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
         console.log('[Chat API] No auth header');
@@ -138,10 +261,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.log('[Chat API] Message:', message ? message.substring(0, 100) : 'NONE (welcome)');
     console.log('[Chat API] History length:', conversationHistory.length);
 
-    // Welcome message (no message sent)
     if (!message && conversationHistory.length === 0) {
         console.log('[Chat API] Handling welcome message');
-        const welcomeResponse = await handleWelcome(userId);
+        const welcomeResponse = await handleWelcome();
         return res.status(200).json(welcomeResponse);
     }
 
@@ -149,7 +271,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Message is required' });
     }
 
-    // Rate limiting
     const { allowed, remaining } = checkRateLimit(userId);
     console.log('[Chat API] Rate limit - allowed:', allowed, 'remaining:', remaining);
     if (!allowed) {
@@ -162,32 +283,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        // Stage 1: Intent Resolver
-        console.log('[Chat API] ── Stage 1: Intent Resolver ──');
-        const resolverRaw = await callGemini(RESOLVER_SYSTEM_PROMPT, message);
-        console.log('[Chat API] Resolver raw output:', resolverRaw);
-
-        const resolverOutput = parseResolverOutput(resolverRaw);
-        console.log('[Chat API] Parsed resolver output:', JSON.stringify(resolverOutput));
-
-        // Fetch metrics based on resolver output
-        console.log('[Chat API] ── Fetching Metrics ──');
-        const metricsData = await fetchMetrics(resolverOutput, userId);
-        console.log('[Chat API] Metrics fetched OK, keys:', Object.keys(metricsData));
-
-        // Stage 2: Main Assistant
-        console.log('[Chat API] ── Stage 2: Main Assistant ──');
-        const systemPrompt = buildAssistantSystemPrompt(metricsData, conversationSummary, conversationHistory);
+        const systemPrompt = buildSystemPrompt(conversationSummary);
 
         const historyForLLM = conversationHistory.map((msg: ChatMessage) => ({
             role: msg.role,
             content: msg.content,
         }));
 
-        const assistantReply = await callGeminiWithHistory(systemPrompt, message, historyForLLM);
+        console.log('[Chat API] ── Calling Gemini with Tools ──');
+        const assistantReply = await callGeminiWithTools(
+            systemPrompt,
+            message,
+            historyForLLM,
+            ASSISTANT_TOOLS,
+            (name, args) => executeToolCall(name, args, userId),
+        );
         console.log('[Chat API] Assistant reply:', assistantReply.substring(0, 200));
 
-        // Update conversation history
         const now = new Date().toISOString();
         const updatedHistory: ChatMessage[] = [
             ...conversationHistory,
@@ -195,7 +307,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             { role: 'assistant', content: assistantReply, timestamp: now },
         ];
 
-        // Memory management: sliding window + summary
         let updatedSummary = conversationSummary;
         if (updatedHistory.length > 10) {
             console.log('[Chat API] ── Summarizing old messages ──');
@@ -211,18 +322,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 updatedSummary = await callGemini(SUMMARY_PROMPT, summaryInput);
             } catch {
-                // Keep old summary if summarization fails
                 console.warn('[Chat API] Summarization failed, keeping old summary');
             }
 
-            // Keep only last 10 messages
-            const trimmedHistory = updatedHistory.slice(-10);
-
             incrementUsage(userId);
-
             return res.status(200).json({
                 reply: assistantReply,
-                updatedHistory: trimmedHistory,
+                updatedHistory: updatedHistory.slice(-10),
                 updatedSummary,
             });
         }

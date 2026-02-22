@@ -16,9 +16,3 @@ export interface ChatResponse {
     updatedSummary: string | null;
 }
 
-export interface ResolverOutput {
-    period: string;
-    metrics: string[];
-}
-
-export type MetricResult = Record<string, unknown>;
