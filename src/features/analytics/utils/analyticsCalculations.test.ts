@@ -489,7 +489,7 @@ describe('calcTaskFlowHarmony', () => {
         expect(backend!.totalFocusMinutes).toBeGreaterThan(frontend!.totalFocusMinutes);
     });
 
-    it('should sort items by depth descending', () => {
+    it('should sort items by focus time descending', () => {
         const sessions: FlowSession[] = [];
         for (let i = 0; i < 6; i++) {
             const d = new Date();

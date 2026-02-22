@@ -300,7 +300,7 @@ export function calcFlowStreak(sessions: FlowSession[]): FlowStreakResult {
         return { currentStreak: 0, recordStreak: 0, last30Days: [], hasEnoughData: false };
     }
 
-    // Calculate daily depth scores
+    // Calculate daily focus minutes
     const dailyScores: Record<string, number> = {};
     sessions.forEach(s => {
         const dateKey = getDateString(s.startedAt);

@@ -119,6 +119,7 @@ const TaskQuickAdd = () => {
                     onClick={() => setIsAdvancedOpen(true)}
                     disabled={isLoading}
                     className="p-button-text p-button-sm text-[#757575] hover:text-[#9A9A9A] text-xs px-3"
+                    pt={{ label: { className: 'hidden sm:inline-block' } }}
                 />
             </div>
 

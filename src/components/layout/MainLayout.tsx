@@ -94,15 +94,15 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                     <nav className="layout-nav">
                         <Link href="/" className={navLinkClass("/")}>
                             <i className="pi pi-clock nav-link__icon" />
-                            {t("timer.focusSession")}
+                            <span>{t("timer.focusSession")}</span>
                         </Link>
                         <Link href="/report" className={navLinkClass("/report")}>
                             <i className="pi pi-chart-bar nav-link__icon" />
-                            {t("analytics.title")}
+                            <span>{t("analytics.title")}</span>
                         </Link>
                         <Link href="/how-to" className={navLinkClass("/how-to")}>
                             <i className="pi pi-info-circle nav-link__icon" />
-                            {t("nav.howTo")}
+                            <span>{t("nav.howTo")}</span>
                         </Link>
                     </nav>
 

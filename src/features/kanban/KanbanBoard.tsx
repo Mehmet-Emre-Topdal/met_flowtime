@@ -71,25 +71,25 @@ const SortableTaskCard = ({
                     ${isSelected ? 'border-[#4F8EF7]' : 'border-[#3D3D3D] hover:border-[#353535]'}`}
                 onClick={onClick}
             >
-                <div className="absolute top-2.5 right-2.5 flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
+                <div className="absolute top-2 right-2 flex gap-1.5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
                     <button
                         onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="w-6 h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#9A9A9A] hover:text-[#F0F0F0] transition-colors"
+                        className="w-8 h-8 sm:w-7 sm:h-7 lg:w-6 lg:h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#9A9A9A] hover:text-[#F0F0F0] transition-colors"
                         title={t("common.edit")}
                     >
-                        <i className="pi pi-pencil text-[10px]" />
+                        <i className="pi pi-pencil text-xs lg:text-[10px]" />
                     </button>
                     <button
                         onClick={(e) => { e.stopPropagation(); onArchive(); }}
-                        className="w-6 h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#9A9A9A] hover:text-red-400 transition-colors"
+                        className="w-8 h-8 sm:w-7 sm:h-7 lg:w-6 lg:h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#9A9A9A] hover:text-red-400 transition-colors"
                         title={t("common.delete")}
                     >
-                        <i className="pi pi-trash text-[10px]" />
+                        <i className="pi pi-trash text-xs lg:text-[10px]" />
                     </button>
                 </div>
 
                 <div className="flex items-center gap-2 mb-1 overflow-hidden">
-                    <h5 className="text-[#F0F0F0] text-sm leading-tight select-none pr-14 font-medium truncate">
+                    <h5 className="text-[#F0F0F0] text-sm leading-tight select-none pr-16 font-medium truncate">
                         {task.title}
                     </h5>
                     {task.isDaily && (
@@ -380,13 +380,11 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
         <div className="flex flex-col gap-6 w-full overflow-hidden">
             <ConfirmDialog />
 
-            <header className="flex justify-between items-center p-5 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E]">
-                <div className="flex flex-col gap-0.5">
-                    <h3 className="text-base font-semibold text-[#F0F0F0]">{t("tasks.boardView")}</h3>
-                    <p className="text-xs text-[#757575]">
-                    </p>
+            <header className="flex justify-between items-center p-4 sm:p-5 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E] gap-2">
+                <div className="flex flex-col gap-0.5 min-w-0">
+                    <h3 className="text-sm sm:text-base font-semibold text-[#F0F0F0] truncate">{t("tasks.boardView")}</h3>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <div className="flex items-center gap-2">
                         <Checkbox
                             inputId="hide-completed-kanban"
@@ -394,7 +392,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                             onChange={(e) => setHideCompleted(e.checked ?? false)}
                             className="w-4 h-4 border-[#353535] rounded-sm"
                         />
-                        <label htmlFor="hide-completed-kanban" className="text-xs text-[#9A9A9A] cursor-pointer hover:text-[#F0F0F0] transition-colors select-none">
+                        <label htmlFor="hide-completed-kanban" className="hidden sm:block text-xs text-[#9A9A9A] cursor-pointer hover:text-[#F0F0F0] transition-colors select-none">
                             {t("tasks.hideDoneTasks")}
                         </label>
                     </div>
@@ -402,7 +400,7 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                         label={t("tasks.newTask")}
                         icon="pi pi-plus"
                         onClick={() => setShowCreateDialog(true)}
-                        className="p-button-sm bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-4 py-2 rounded-lg text-xs font-medium"
+                        className="p-button-sm bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-3 sm:px-4 py-2 rounded-lg text-xs font-medium"
                     />
                 </div>
             </header>

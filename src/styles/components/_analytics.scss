@@ -180,61 +180,6 @@
     }
 }
 
-// ─── Depth Score ───────────────────────────────
-
-.analytics-depth {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-
-    &__score {
-        display: flex;
-        align-items: baseline;
-        gap: 0.25rem;
-    }
-
-    &__number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #F0F0F0;
-        line-height: 1;
-    }
-
-    &__unit {
-        font-size: 0.85rem;
-        color: #757575;
-    }
-
-    &__label {
-        font-size: 0.75rem;
-        color: #4F8EF7;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    &__comparison {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-        font-size: 0.72rem;
-        padding: 0.2rem 0.5rem;
-        border-radius: 6px;
-        background: #3D3D3D;
-
-        i {
-            font-size: 0.6rem;
-        }
-
-        &--up {
-            color: #34C774;
-        }
-
-        &--down {
-            color: #E05555;
-        }
-    }
-}
 
 // ─── Focus Density ─────────────────────────────
 

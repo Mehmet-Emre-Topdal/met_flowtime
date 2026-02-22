@@ -166,13 +166,11 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
         <div className="flex flex-col gap-4 w-full max-w-4xl mx-auto py-6">
             <ConfirmDialog />
 
-            <header className="flex justify-between items-center p-5 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E]">
-                <div className="flex flex-col gap-0.5">
-                    <h3 className="text-base font-semibold text-[#F0F0F0]">{t("tasks.tasks")}</h3>
-                    <p className="text-xs text-[#757575]">
-                    </p>
+            <header className="flex justify-between items-center p-4 sm:p-5 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E] gap-2">
+                <div className="flex flex-col gap-0.5 min-w-0">
+                    <h3 className="text-sm sm:text-base font-semibold text-[#F0F0F0] truncate">{t("tasks.tasks")}</h3>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 shrink-0">
                     <div className="flex items-center gap-2">
                         <Checkbox
                             inputId="hide-completed"
@@ -180,7 +178,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                             onChange={(e) => setHideCompleted(e.checked ?? false)}
                             className="w-4 h-4 border-[#353535] rounded-sm"
                         />
-                        <label htmlFor="hide-completed" className="text-xs text-[#9A9A9A] cursor-pointer hover:text-[#F0F0F0] transition-colors select-none">
+                        <label htmlFor="hide-completed" className="hidden sm:block text-xs text-[#9A9A9A] cursor-pointer hover:text-[#F0F0F0] transition-colors select-none">
                             {t("tasks.hideDoneTasks")}
                         </label>
                     </div>
@@ -188,12 +186,12 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                         label={t("tasks.newTask")}
                         icon="pi pi-plus"
                         onClick={() => setShowCreateDialog(true)}
-                        className="p-button-sm bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-4 py-2 rounded-lg text-xs font-medium"
+                        className="p-button-sm bg-[#4F8EF7] border-none text-white hover:bg-[#3D77E0] px-3 sm:px-4 py-2 rounded-lg text-xs font-medium"
                     />
                 </div>
             </header>
 
-            <div className="flex flex-col gap-1.5 max-h-[calc(100vh-150px)] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex flex-col gap-1.5 max-h-[calc(100vh-180px)] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
                 <AnimatePresence mode="popLayout" initial={false}>
                     {sortedTasks.map((task) => (
                         <motion.div
@@ -209,25 +207,24 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                         >
                             <div
                                 onClick={() => handleTaskClick(task.id)}
-                                className={`flex items-center justify-between p-3.5 rounded-lg border transition-all duration-200 cursor-pointer group
+                                className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-lg border transition-all duration-200 cursor-pointer group gap-3
                                     ${selectedTaskId === task.id
                                         ? 'bg-[#4F8EF7]/5 border-[#4F8EF7]/30'
                                         : 'bg-[#2E2E2E] border-[#3D3D3D] hover:border-[#353535]'}`}
                             >
-                                <div className="flex items-center gap-3.5">
-                                    <i className={getStatusIcon(task.status)}></i>
-                                    <div className="flex flex-col">
-                                        <div className="flex items-center gap-2.5">
-                                            <span className={`text-sm font-medium transition-colors
+                                <div className="flex items-start sm:items-center gap-3.5 min-w-0">
+                                    <div className="flex flex-col min-w-0">
+                                        <div className="flex items-center gap-2.5 flex-wrap">
+                                            <span className={`text-sm font-medium transition-colors truncate
                                                 ${selectedTaskId === task.id ? 'text-[#F0F0F0]' : 'text-[#9A9A9A] group-hover:text-[#F0F0F0]'}`}>
                                                 {task.title}
                                             </span>
                                             {task.isDaily && (
-                                                <span className="text-[9px] text-[#34C774] border border-[#4F8EF7]/30 bg-[#4F8EF7]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider">
+                                                <span className="text-[9px] text-[#34C774] border border-[#4F8EF7]/30 bg-[#4F8EF7]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
                                                     {t("tasks.daily")}
                                                 </span>
                                             )}
-                                            <div className="relative">
+                                            <div className="relative shrink-0">
                                                 <Tag
                                                     value={getStatusLabel(task.status)}
                                                     severity={getStatusSeverity(task.status)}
@@ -242,7 +239,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                                 {statusDropdownTaskId === task.id && (
                                                     <div
                                                         ref={dropdownRef}
-                                                        className="absolute left-0 top-full mt-1 z-50 bg-[#2E2E2E] border border-[#3D3D3D] rounded-lg overflow-hidden min-w-[140px] animate-dropdown-in"
+                                                        className="absolute left-0 top-full mt-1 z-50 bg-[#2E2E2E] border border-[#3D3D3D] rounded-lg overflow-hidden min-w-[140px] animate-dropdown-in shadow-xl"
                                                     >
                                                         {statusOptions.map((opt) => (
                                                             <button
@@ -251,7 +248,7 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                                                     e.stopPropagation();
                                                                     handleStatusSelect(task.id, opt.value);
                                                                 }}
-                                                                className={`w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors
+                                                                className={`w-full flex items-center gap-2 px-3 py-2.5 sm:py-2 text-xs transition-colors
                                                                     ${task.status === opt.value
                                                                         ? 'bg-[#3D3D3D] text-[#F0F0F0]'
                                                                         : 'text-[#9A9A9A] hover:bg-[#3D3D3D] hover:text-[#F0F0F0]'
@@ -272,37 +269,35 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                             <span className="text-[10px] text-[#757575]">{task.totalFocusedTime} {t("tasks.focused")}</span>
                                         </div>
                                         {task.description && (
-                                            <p className="text-xs text-[#757575]/70 mt-1 leading-relaxed">
-                                                {task.description.length > 80
-                                                    ? `${task.description.slice(0, 80)}...`
-                                                    : task.description}
+                                            <p className="text-xs text-[#757575]/70 mt-1 leading-relaxed line-clamp-1 sm:line-clamp-2">
+                                                {task.description}
                                             </p>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <div className="flex items-center justify-between sm:justify-end gap-3 mt-1 sm:mt-0">
+                                    <div className="flex items-center gap-2">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleEditTask(task); }}
-                                            className="w-7 h-7 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#757575] hover:text-[#F0F0F0] transition-colors"
+                                            className="w-9 h-9 sm:w-8 sm:h-8 lg:w-7 lg:h-7 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#757575] hover:text-[#F0F0F0] transition-colors"
                                             title={t("common.edit")}
                                         >
-                                            <i className="pi pi-pencil text-xs" />
+                                            <i className="pi pi-pencil text-sm sm:text-xs" />
                                         </button>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleArchiveTask(task); }}
-                                            className="w-7 h-7 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#757575] hover:text-red-400 transition-colors"
+                                            className="w-9 h-9 sm:w-8 sm:h-8 lg:w-7 lg:h-7 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#757575] hover:text-red-400 transition-colors"
                                             title={t("common.delete")}
                                         >
-                                            <i className="pi pi-trash text-xs" />
+                                            <i className="pi pi-trash text-sm sm:text-xs" />
                                         </button>
                                     </div>
 
                                     {selectedTaskId === task.id && (
-                                        <div className="flex items-center gap-1.5 ml-2">
+                                        <div className="flex items-center gap-1.5 ml-0 sm:ml-2 bg-[#4F8EF7]/10 px-2 py-1 rounded-md">
                                             <span className="text-[10px] text-[#4F8EF7] font-medium">{t("tasks.focusing")}</span>
-                                            <i className="pi pi-bolt text-[#4F8EF7] text-xs"></i>
+                                            <i className="pi pi-bolt text-[#4F8EF7] text-[10px] animate-pulse"></i>
                                         </div>
                                     )}
                                 </div>
