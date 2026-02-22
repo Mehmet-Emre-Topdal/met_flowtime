@@ -103,9 +103,17 @@ const SortableTaskCard = ({
                         {task.description}
                     </p>
                 )}
-                <div className="flex items-center gap-1.5 text-[10px] text-[#757575] mt-2">
-                    <i className="pi pi-clock text-[9px]" />
-                    <span>{task.totalFocusedTime} {t("tasks.focused")}</span>
+                <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-1.5 text-[10px] text-[#757575]">
+                        <i className="pi pi-clock text-[9px]" />
+                        <span>{task.totalFocusedTime} {t("tasks.focused")}</span>
+                    </div>
+                    {isSelected && (
+                        <div className="flex items-center gap-1 ml-2 bg-[#4F8EF7]/10 px-1.5 py-0.5 rounded">
+                            <span className="text-[9px] text-[#4F8EF7] font-medium">{t("tasks.focusing")}</span>
+                            <i className="pi pi-bolt text-[#4F8EF7] text-[9px] animate-pulse"></i>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

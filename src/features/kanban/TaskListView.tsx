@@ -224,6 +224,12 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                                     {t("tasks.daily")}
                                                 </span>
                                             )}
+                                            {selectedTaskId === task.id && (
+                                                <div className="flex items-center gap-1.5 bg-[#4F8EF7]/10 px-1.5 py-0.5 rounded shrink-0">
+                                                    <span className="text-[9px] text-[#4F8EF7] font-medium">{t("tasks.focusing")}</span>
+                                                    <i className="pi pi-bolt text-[#4F8EF7] text-[8px] animate-pulse"></i>
+                                                </div>
+                                            )}
                                             <div className="relative shrink-0">
                                                 <Tag
                                                     value={getStatusLabel(task.status)}
@@ -293,13 +299,6 @@ const TaskListView = ({ filterDaily }: TaskListViewProps) => {
                                             <i className="pi pi-trash text-sm sm:text-xs" />
                                         </button>
                                     </div>
-
-                                    {selectedTaskId === task.id && (
-                                        <div className="flex items-center gap-1.5 ml-0 sm:ml-2 bg-[#4F8EF7]/10 px-2 py-1 rounded-md">
-                                            <span className="text-[10px] text-[#4F8EF7] font-medium">{t("tasks.focusing")}</span>
-                                            <i className="pi pi-bolt text-[#4F8EF7] text-[10px] animate-pulse"></i>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </motion.div>
