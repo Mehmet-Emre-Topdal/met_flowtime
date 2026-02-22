@@ -191,16 +191,16 @@
         },
         "flowStreak": {
             "title": "Flow Streak",
-            "tooltip": "A day counts as 'filled' if your depth score exceeds 50% of your 30-day average. Consecutive filled days make up your streak.",
+            "tooltip": "A day counts as 'filled' if your total focus time exceeds 50% of your 30-day average. Consecutive filled days make up your streak.",
             "current": "Current streak",
             "record": "Record",
             "days": "days"
         },
         "taskHarmony": {
             "title": "Task-Flow Harmony",
-            "tooltip": "Task-tagged sessions are grouped. Weighted depth score and session count are calculated per task. Deepest tasks appear first.",
+            "tooltip": "Task-tagged sessions are grouped. Total focus time and session count are calculated per task. Most focused tasks appear first.",
             "sessions": "sessions",
-            "depthMin": "min deep work"
+            "focusMin": "min focus"
         },
         "warmup": {
             "title": "Warm-up Phase",

@@ -13,16 +13,12 @@ Sadece JSON döndür, başka hiçbir şey yazma.
 
 Mevcut metrikler:
 - total_sessions
-- daily_depth_score
-- weekly_depth_score  
-- monthly_depth_score
 - session_duration_distribution
 - peak_hours
 - flow_streak
 - resistance_point
 - focus_density_ratio
 - earned_freedom_balance
-- depth_score_by_weekday
 - session_times_by_weekday
 - average_session_duration
 - longest_session
@@ -79,9 +75,9 @@ function parseResolverOutput(text: string): ResolverOutput {
 
     // Validate
     const validMetrics = [
-        'total_sessions', 'daily_depth_score', 'weekly_depth_score', 'monthly_depth_score',
+        'total_sessions',
         'session_duration_distribution', 'peak_hours', 'flow_streak', 'resistance_point',
-        'focus_density_ratio', 'earned_freedom_balance', 'depth_score_by_weekday',
+        'focus_density_ratio', 'earned_freedom_balance',
         'session_times_by_weekday', 'average_session_duration', 'longest_session',
         'warmup_duration', 'task_flow_harmony',
     ];

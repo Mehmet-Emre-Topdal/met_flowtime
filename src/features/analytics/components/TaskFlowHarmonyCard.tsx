@@ -10,7 +10,7 @@ interface Props {
 const TaskFlowHarmonyCard: React.FC<Props> = ({ data }) => {
     const { t } = useTranslation();
 
-    const maxDepth = Math.max(...data.items.map(i => i.actualDepthMinutes), 1);
+    const maxDepth = Math.max(...data.items.map(i => i.totalFocusMinutes), 1);
 
     return (
         <AnalyticsCard
@@ -25,13 +25,13 @@ const TaskFlowHarmonyCard: React.FC<Props> = ({ data }) => {
                         <div className="analytics-harmony__info">
                             <span className="analytics-harmony__task">{item.taskTitle}</span>
                             <span className="analytics-harmony__meta">
-                                {item.sessionCount} {t('analytics.taskHarmony.sessions')} · {item.actualDepthMinutes} {t('analytics.taskHarmony.depthMin')}
+                                {item.sessionCount} {t('analytics.taskHarmony.sessions')} · {item.totalFocusMinutes} {t('analytics.taskHarmony.focusMin')}
                             </span>
                         </div>
                         <div className="analytics-harmony__bar-wrap">
                             <div
                                 className="analytics-harmony__bar"
-                                style={{ width: `${(item.actualDepthMinutes / maxDepth) * 100}%` }}
+                                style={{ width: `${(item.totalFocusMinutes / maxDepth) * 100}%` }}
                             />
                         </div>
                     </div>

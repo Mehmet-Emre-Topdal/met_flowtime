@@ -87,7 +87,7 @@ export interface FlowStreakResult {
 export interface TaskFlowItem {
     taskTitle: string;
     estimatedMinutes: number | null;
-    actualDepthMinutes: number;
+    totalFocusMinutes: number;
     sessionCount: number;
 }
 

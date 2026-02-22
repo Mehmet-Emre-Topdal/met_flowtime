@@ -484,9 +484,9 @@ describe('calcTaskFlowHarmony', () => {
 
         expect(frontend?.sessionCount).toBe(6);
         expect(backend?.sessionCount).toBe(5);
-        // Backend has 60-min sessions (depth: 60*1.25=75)
-        // Frontend has 30-min sessions (depth: 30*1=30)
-        expect(backend!.actualDepthMinutes).toBeGreaterThan(frontend!.actualDepthMinutes);
+        // Backend has 60-min sessions (60 min total)
+        // Frontend has 30-min sessions (30 min total)
+        expect(backend!.totalFocusMinutes).toBeGreaterThan(frontend!.totalFocusMinutes);
     });
 
     it('should sort items by depth descending', () => {
@@ -505,7 +505,7 @@ describe('calcTaskFlowHarmony', () => {
         }
         const result = calcTaskFlowHarmony(sessions, tasks);
         for (let i = 0; i < result.items.length - 1; i++) {
-            expect(result.items[i].actualDepthMinutes).toBeGreaterThanOrEqual(result.items[i + 1].actualDepthMinutes);
+            expect(result.items[i].totalFocusMinutes).toBeGreaterThanOrEqual(result.items[i + 1].totalFocusMinutes);
         }
     });
 

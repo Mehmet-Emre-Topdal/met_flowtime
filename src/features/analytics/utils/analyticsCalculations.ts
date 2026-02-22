@@ -34,16 +34,6 @@ const todayStr = (): string => {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
-const getDepthMultiplier = (durationMinutes: number): number => {
-    if (durationMinutes < 25) return 0.5;
-    if (durationMinutes <= 50) return 1;
-    return 1.25;
-};
-
-const calcSessionDepthScore = (s: FlowSession): number => {
-    const mins = getDurationMinutes(s);
-    return mins * getDepthMultiplier(mins);
-};
 
 const median = (nums: number[]): number => {
     if (nums.length === 0) return 0;
@@ -314,7 +304,7 @@ export function calcFlowStreak(sessions: FlowSession[]): FlowStreakResult {
     const dailyScores: Record<string, number> = {};
     sessions.forEach(s => {
         const dateKey = getDateString(s.startedAt);
-        dailyScores[dateKey] = (dailyScores[dateKey] || 0) + calcSessionDepthScore(s);
+        dailyScores[dateKey] = (dailyScores[dateKey] || 0) + getDurationMinutes(s);
     });
 
     // Personalized threshold: 50% of 30-day average
@@ -380,27 +370,27 @@ export function calcTaskFlowHarmony(sessions: FlowSession[], tasks: TaskDto[]): 
     }
 
     const taskMap = new Map(tasks.map(t => [t.id, t]));
-    const taskAggregates: Record<string, { title: string; totalDepth: number; count: number }> = {};
+    const taskAggregates: Record<string, { title: string; totalMinutes: number; count: number }> = {};
 
     taggedSessions.forEach(s => {
         if (!s.taskId) return;
         const task = taskMap.get(s.taskId);
         const title = task?.title || 'Unknown';
         if (!taskAggregates[s.taskId]) {
-            taskAggregates[s.taskId] = { title, totalDepth: 0, count: 0 };
+            taskAggregates[s.taskId] = { title, totalMinutes: 0, count: 0 };
         }
-        taskAggregates[s.taskId].totalDepth += calcSessionDepthScore(s);
+        taskAggregates[s.taskId].totalMinutes += getDurationMinutes(s);
         taskAggregates[s.taskId].count += 1;
     });
 
     const items = Object.values(taskAggregates).map(agg => ({
         taskTitle: agg.title,
         estimatedMinutes: null,
-        actualDepthMinutes: Math.round(agg.totalDepth),
+        totalFocusMinutes: Math.round(agg.totalMinutes),
         sessionCount: agg.count,
     }));
 
-    items.sort((a, b) => b.actualDepthMinutes - a.actualDepthMinutes);
+    items.sort((a, b) => b.totalFocusMinutes - a.totalFocusMinutes);
 
     return { items: items.slice(0, 10), hasEnoughData: true };
 }

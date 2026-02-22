@@ -91,16 +91,6 @@ function getDurationMinutes(s: ParsedSession): number {
     return s.durationSeconds / 60;
 }
 
-function getDepthMultiplier(durationMinutes: number): number {
-    if (durationMinutes < 25) return 0.5;
-    if (durationMinutes <= 50) return 1;
-    return 1.25;
-}
-
-function calcSessionDepthScore(s: ParsedSession): number {
-    const mins = getDurationMinutes(s);
-    return mins * getDepthMultiplier(mins);
-}
 
 function getDateString(d: Date): string {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -139,57 +129,6 @@ async function getTotalSessions(userId: string, period: string) {
     };
 }
 
-async function getDailyDepthScores(userId: string, period: string) {
-    const sessions = await fetchSessions(userId, period);
-    const dailyScores: Record<string, number> = {};
-    sessions.forEach(s => {
-        const dateKey = getDateString(s.startedAt);
-        dailyScores[dateKey] = (dailyScores[dateKey] || 0) + calcSessionDepthScore(s);
-    });
-
-    const entries = Object.entries(dailyScores)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([date, score]) => ({ date, depthScore: Math.round(score * 10) / 10 }));
-
-    const avgScore = entries.length > 0
-        ? Math.round((entries.reduce((sum, e) => sum + e.depthScore, 0) / entries.length) * 10) / 10
-        : 0;
-
-    return { dailyScores: entries.slice(-30), averageDailyScore: avgScore };
-}
-
-async function getWeeklyDepthScore(userId: string) {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setHours(0, 0, 0, 0);
-    monday.setDate(monday.getDate() - diffToMonday);
-
-    const sessions = await fetchSessions(userId, 'last_7_days');
-    const weekSessions = sessions.filter(s => s.startedAt >= monday);
-
-    const totalScore = weekSessions.reduce((sum, s) => sum + calcSessionDepthScore(s), 0);
-    const totalMinutes = weekSessions.reduce((sum, s) => sum + getDurationMinutes(s), 0);
-
-    return {
-        weeklyDepthScore: Math.round(totalScore * 10) / 10,
-        weeklyFocusMinutes: Math.round(totalMinutes),
-        sessionCount: weekSessions.length,
-    };
-}
-
-async function getMonthlyDepthScore(userId: string) {
-    const sessions = await fetchSessions(userId, 'last_30_days');
-    const totalScore = sessions.reduce((sum, s) => sum + calcSessionDepthScore(s), 0);
-    const totalMinutes = sessions.reduce((sum, s) => sum + getDurationMinutes(s), 0);
-
-    return {
-        monthlyDepthScore: Math.round(totalScore * 10) / 10,
-        monthlyFocusMinutes: Math.round(totalMinutes),
-        sessionCount: sessions.length,
-    };
-}
 
 async function getSessionDurationDistribution(userId: string, period: string) {
     const sessions = await fetchSessions(userId, period);
@@ -245,7 +184,7 @@ async function getCurrentStreak(userId: string) {
     const dailyScores: Record<string, number> = {};
     sessions.forEach(s => {
         const dateKey = getDateString(s.startedAt);
-        dailyScores[dateKey] = (dailyScores[dateKey] || 0) + calcSessionDepthScore(s);
+        dailyScores[dateKey] = (dailyScores[dateKey] || 0) + getDurationMinutes(s);
     });
 
     const recentDayScores = Object.values(dailyScores);
@@ -372,26 +311,6 @@ async function getEarnedFreedomBalance(userId: string) {
     };
 }
 
-async function getDepthScoreByWeekday(userId: string, period: string) {
-    const sessions = await fetchSessions(userId, period);
-    const weekdayScores: Record<string, { totalScore: number; count: number }> = {};
-
-    sessions.forEach(s => {
-        const day = getDayOfWeek(s.startedAt);
-        if (!weekdayScores[day]) weekdayScores[day] = { totalScore: 0, count: 0 };
-        weekdayScores[day].totalScore += calcSessionDepthScore(s);
-        weekdayScores[day].count++;
-    });
-
-    const result = Object.entries(weekdayScores).map(([day, data]) => ({
-        day,
-        averageDepthScore: Math.round((data.totalScore / data.count) * 10) / 10,
-        totalDepthScore: Math.round(data.totalScore * 10) / 10,
-        sessionCount: data.count,
-    }));
-
-    return result;
-}
 
 async function getSessionTimesByWeekday(userId: string, period: string) {
     const sessions = await fetchSessions(userId, period);
@@ -471,24 +390,24 @@ async function getTaskFlowHarmony(userId: string, period: string) {
         });
     }
 
-    const taskAggregates: Record<string, { title: string; totalDepth: number; count: number }> = {};
+    const taskAggregates: Record<string, { title: string; totalMinutes: number; count: number }> = {};
     taggedSessions.forEach(s => {
         if (!s.taskId) return;
         const title = taskTitles[s.taskId] || 'Unknown';
         if (!taskAggregates[s.taskId]) {
-            taskAggregates[s.taskId] = { title, totalDepth: 0, count: 0 };
+            taskAggregates[s.taskId] = { title, totalMinutes: 0, count: 0 };
         }
-        taskAggregates[s.taskId].totalDepth += calcSessionDepthScore(s);
+        taskAggregates[s.taskId].totalMinutes += getDurationMinutes(s);
         taskAggregates[s.taskId].count++;
     });
 
     const items = Object.values(taskAggregates)
         .map(agg => ({
             taskTitle: agg.title,
-            depthScore: Math.round(agg.totalDepth * 10) / 10,
+            totalFocusMinutes: Math.round(agg.totalMinutes),
             sessionCount: agg.count,
         }))
-        .sort((a, b) => b.depthScore - a.depthScore)
+        .sort((a, b) => b.totalFocusMinutes - a.totalFocusMinutes)
         .slice(0, 10);
 
     return { items, hasEnoughData: true };
@@ -500,16 +419,12 @@ type MetricFunction = (userId: string, period: string) => Promise<unknown>;
 
 const metricFunctions: Record<string, MetricFunction> = {
     total_sessions: getTotalSessions,
-    daily_depth_score: getDailyDepthScores,
-    weekly_depth_score: (userId) => getWeeklyDepthScore(userId),
-    monthly_depth_score: (userId) => getMonthlyDepthScore(userId),
     session_duration_distribution: getSessionDurationDistribution,
     peak_hours: getPeakHours,
     flow_streak: (userId) => getCurrentStreak(userId),
     resistance_point: getResistancePoint,
     focus_density_ratio: getFocusDensityRatio,
     earned_freedom_balance: (userId) => getEarnedFreedomBalance(userId),
-    depth_score_by_weekday: getDepthScoreByWeekday,
     session_times_by_weekday: getSessionTimesByWeekday,
     average_session_duration: getAverageSessionDuration,
     longest_session: getLongestSession,
@@ -529,5 +444,3 @@ export async function fetchMetrics(resolverOutput: ResolverOutput, userId: strin
     );
 }
 
-// Export getWeeklyDepthScore for the welcome message
-export { getWeeklyDepthScore };

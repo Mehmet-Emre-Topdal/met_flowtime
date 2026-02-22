@@ -191,16 +191,16 @@
         },
         "flowStreak": {
             "title": "Akış Serisi",
-            "tooltip": "Günlük derinlik skorunuz, 30 günlük ortalamanızın %50'sini aşarsa o gün 'dolu' sayılır. Ardışık dolu günler serinizi oluşturur.",
+            "tooltip": "Günlük odaklanma süreniz, 30 günlük ortalamanızın %50'sini aşarsa o gün 'dolu' sayılır. Ardışık dolu günler serinizi oluşturur.",
             "current": "Şu anki seri",
             "record": "Rekor",
             "days": "gün"
         },
         "taskHarmony": {
             "title": "Görev Akış Uyumu",
-            "tooltip": "Göreve etiketlenmiş seanslar gruplanır, her görev için toplam ağırlıklı derinlik skoru ve seans sayısı hesaplanır. En derin görevler üstte yer alır.",
+            "tooltip": "Göreve etiketlenmiş seanslar gruplanır, her görev için toplam odaklanma süresi ve seans sayısı hesaplanır. En çok odaklanılan görevler üstte yer alır.",
             "sessions": "seans",
-            "depthMin": "dk derin çalışma"
+            "focusMin": "dk odaklanma"
         },
         "warmup": {
             "title": "Bilişsel Isınma Süresi",
