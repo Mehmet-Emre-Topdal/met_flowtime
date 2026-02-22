@@ -661,6 +661,7 @@ export async function toolGetCompletedTasks(userId: string, startDate: string, e
     interface TaskDoc {
         title: string;
         totalFocusedTime: number;
+        completedAt: string | null;
         updatedAt: FirebaseFirestore.Timestamp | string;
     }
 
@@ -672,10 +673,12 @@ export async function toolGetCompletedTasks(userId: string, startDate: string, e
     const tasks = snapshot.docs
         .map(doc => {
             const data = doc.data() as TaskDoc;
-            const updatedAt = parseTimestamp(data.updatedAt);
-            return { title: data.title, totalFocusedMinutes: data.totalFocusedTime, updatedAt };
+            const completedAt = data.completedAt
+                ? new Date(data.completedAt)
+                : parseTimestamp(data.updatedAt);
+            return { title: data.title, totalFocusedMinutes: data.totalFocusedTime, completedAt };
         })
-        .filter(t => t.updatedAt >= start && t.updatedAt <= end)
+        .filter(t => t.completedAt >= start && t.completedAt <= end)
         .map(({ title, totalFocusedMinutes }) => ({ title, totalFocusedMinutes }));
 
     return { tasks, count: tasks.length };

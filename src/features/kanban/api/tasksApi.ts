@@ -124,6 +124,7 @@ export const tasksApi = baseApi.injectEndpoints({
                     const taskRef = doc(db, "tasks", taskId);
                     await updateDoc(taskRef, {
                         status,
+                        completedAt: status === "done" ? new Date().toISOString() : null,
                         updatedAt: serverTimestamp(),
                     });
                     return { data: { success: true } };
@@ -141,6 +142,7 @@ export const tasksApi = baseApi.injectEndpoints({
                         const task = draft.find(t => t.id === taskId);
                         if (task) {
                             task.status = status as TaskDto["status"];
+                            task.completedAt = status === "done" ? new Date().toISOString() : null;
                         }
                     })
                 );

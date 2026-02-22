@@ -13,8 +13,6 @@ ANALİZLER SÜRELERİN AYARLANABİLİRLİĞİ İLE UYUMLU OLMALI
 
 mock verileri kaldıracağız
 
-AI görev ile ilgili sorulara cevap veremiyor aslında AI'a kendi sorsusunu yazdırmamız lazım
-
 sohbet temizleme özelliği lazım
 
 ---------------

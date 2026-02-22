@@ -43,9 +43,10 @@ const ResistancePointCard: React.FC<Props> = ({ data }) => {
                                     background: '#2E2E2E',
                                     border: '1px solid #3D3D3D',
                                     borderRadius: 8,
-                                    color: '#F0F0F0',
                                     fontSize: 12,
                                 }}
+                                itemStyle={{ color: '#F0F0F0' }}
+                                labelStyle={{ color: '#F0F0F0' }}
                                 formatter={(value: number | undefined) => [`${value ?? 0} ${t('analytics.resistancePoint.min')}`, '']}
                             />
                             <ReferenceLine y={data.resistanceMinute} stroke="#E05555" strokeDasharray="4 4" strokeOpacity={0.6} />

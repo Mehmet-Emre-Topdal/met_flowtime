@@ -80,12 +80,13 @@ const WeeklyWorkTimeCard: React.FC<Props> = ({ sessions }) => {
                         />
                         <Tooltip
                             contentStyle={{
-                                background: 'var(--surface)',
-                                border: '1px solid var(--border)',
+                                background: '#2E2E2E',
+                                border: '1px solid #3D3D3D',
                                 borderRadius: 8,
-                                color: 'var(--foreground)',
                                 fontSize: 12,
                             }}
+                            itemStyle={{ color: '#F0F0F0' }}
+                            labelStyle={{ color: '#F0F0F0' }}
                             formatter={(value: number | undefined) => [formatMinutes(value ?? 0), t('analytics.weeklyWorkTime.workTime')]}
                             cursor={{ fill: 'var(--border)', opacity: 0.3 }}
                         />

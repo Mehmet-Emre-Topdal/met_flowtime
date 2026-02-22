@@ -13,6 +13,7 @@ export interface TaskDto {
     lastResetDate: string;
     createdAt: string;
     updatedAt: string;
+    completedAt: string | null;
 }
 
 export interface TaskCreateInput {

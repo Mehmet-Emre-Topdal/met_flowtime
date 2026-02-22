@@ -219,6 +219,7 @@ async function executeToolCall(name: string, args: Record<string, unknown>, user
 
 const SUMMARY_PROMPT = `Aşağıdaki konuşmayı 3-4 cümleyle özetle.
 Kullanıcının sorduğu önemli konuları ve verilen tavsiyeleri koru.
+Dakika, oturum sayısı, streak gibi sayısal verileri mutlaka koru.
 Sadece özeti yaz, başka hiçbir şey ekleme.`;
 
 function buildSystemPrompt(summary: string | null): string {
