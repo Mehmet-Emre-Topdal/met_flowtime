@@ -31,6 +31,7 @@ function makeSession(overrides: Partial<FlowSession> & { startedAt: string }): F
         durationSeconds,
         breakDurationSeconds: overrides.breakDurationSeconds ?? 300,
         taskId: overrides.taskId ?? null,
+        taskTitle: overrides.taskTitle ?? null,
         createdAt: overrides.createdAt ?? start.toISOString(),
     };
 }

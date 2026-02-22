@@ -33,7 +33,8 @@ export function generateMockSessions(userId: string): FlowSessionCreateInput[] {
                 endedAt: sessionEnd.toISOString(),
                 durationSeconds,
                 breakDurationSeconds,
-                taskId: null, // Simple mock for now
+                taskId: null,
+                taskTitle: null,
             });
         }
     }
