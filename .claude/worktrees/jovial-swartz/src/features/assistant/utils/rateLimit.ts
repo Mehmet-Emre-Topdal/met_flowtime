@@ -1,4 +1,4 @@
-const DAILY_LIMIT = 20;
+const DAILY_LIMIT = 1000;
 
 interface UsageEntry {
     count: number;

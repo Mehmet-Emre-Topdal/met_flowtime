@@ -39,6 +39,7 @@ interface SessionDoc {
     durationSeconds: number;
     breakDurationSeconds: number;
     taskId: string | null;
+    taskTitle: string | null;
     userId: string;
 }
 
@@ -48,6 +49,7 @@ interface ParsedSession {
     durationSeconds: number;
     breakDurationSeconds: number;
     taskId: string | null;
+    taskTitle: string | null;
 }
 
 function parseTimestamp(val: FirebaseFirestore.Timestamp | string): Date {
@@ -80,6 +82,7 @@ async function fetchSessions(userId: string, period: string): Promise<ParsedSess
             durationSeconds: data.durationSeconds,
             breakDurationSeconds: data.breakDurationSeconds || 0,
             taskId: data.taskId || null,
+            taskTitle: data.taskTitle || null,
         };
     });
 }
@@ -435,6 +438,7 @@ async function fetchSessionsByRange(userId: string, startDate: string, endDate: 
             durationSeconds: data.durationSeconds,
             breakDurationSeconds: data.breakDurationSeconds || 0,
             taskId: data.taskId || null,
+            taskTitle: data.taskTitle || null,
         };
     });
 }
@@ -462,17 +466,20 @@ export async function toolGetSessionsSummary(userId: string, startDate: string, 
     return { sessionCount: sessions.length, totalFocusMinutes, averageSessionMinutes: averageMinutes, distribution: buckets };
 }
 
-export async function toolGetTopTasks(userId: string, startDate: string, endDate: string, limit: number = 5) {
+export async function toolGetTopTasks(userId: string, startDate: string, endDate: string, limit: number = 3, order: 'asc' | 'desc' = 'desc') {
     const sessions = await fetchSessionsByRange(userId, startDate, endDate);
     const taggedSessions = sessions.filter(s => s.taskId);
 
     if (taggedSessions.length === 0) return { items: [], hasEnoughData: false };
 
-    const taskIds = [...new Set(taggedSessions.map(s => s.taskId!))];
     const taskTitles: Record<string, string> = {};
+    taggedSessions.forEach(s => {
+        if (s.taskId && s.taskTitle) taskTitles[s.taskId] = s.taskTitle;
+    });
 
-    for (let i = 0; i < taskIds.length; i += 10) {
-        const batch = taskIds.slice(i, i + 10);
+    const missingIds = [...new Set(taggedSessions.map(s => s.taskId!))].filter(id => !taskTitles[id]);
+    for (let i = 0; i < missingIds.length; i += 10) {
+        const batch = missingIds.slice(i, i + 10);
         const taskSnap = await adminDb.collection('tasks').where('__name__', 'in', batch).get();
         taskSnap.docs.forEach(doc => {
             taskTitles[doc.id] = (doc.data().title as string) || 'Unknown';
@@ -489,8 +496,15 @@ export async function toolGetTopTasks(userId: string, startDate: string, endDate
     });
 
     const items = Object.values(aggregates)
-        .map(a => ({ taskTitle: a.title, totalFocusMinutes: Math.round(a.totalMinutes), sessionCount: a.count }))
-        .sort((a, b) => b.totalFocusMinutes - a.totalFocusMinutes)
+        .map(a => ({
+            taskTitle: a.title,
+            totalFocusMinutes: Math.round(a.totalMinutes),
+            sessionCount: a.count,
+            averageSessionMinutes: Math.round((a.totalMinutes / a.count) * 10) / 10,
+        }))
+        .sort((a, b) => order === 'asc'
+            ? a.totalFocusMinutes - b.totalFocusMinutes
+            : b.totalFocusMinutes - a.totalFocusMinutes)
         .slice(0, limit);
 
     return { items, hasEnoughData: true };
@@ -585,6 +599,86 @@ export async function toolGetWarmupDuration(userId: string, startDate: string, e
 
 export async function toolGetStreak(userId: string) {
     return getCurrentStreak(userId);
+}
+
+export async function toolGetTaskFocusByName(userId: string, taskName: string, startDate: string, endDate: string) {
+    const sessions = await fetchSessionsByRange(userId, startDate, endDate);
+    const normalizedSearch = taskName.toLowerCase().trim();
+
+    const sessionsByTitle = sessions.filter(s =>
+        s.taskTitle && s.taskTitle.toLowerCase().includes(normalizedSearch)
+    );
+
+    const sessionsWithoutTitle = sessions.filter(s => s.taskId && !s.taskTitle);
+    let fallbackSessions: ParsedSession[] = [];
+
+    if (sessionsWithoutTitle.length > 0) {
+        const taskIds = [...new Set(sessionsWithoutTitle.map(s => s.taskId!))];
+        const matchingTaskIds = new Set<string>();
+
+        for (let i = 0; i < taskIds.length; i += 10) {
+            const batch = taskIds.slice(i, i + 10);
+            const snap = await adminDb.collection('tasks').where('__name__', 'in', batch).get();
+            snap.docs.forEach(doc => {
+                const title = (doc.data().title as string) || '';
+                if (title.toLowerCase().includes(normalizedSearch)) matchingTaskIds.add(doc.id);
+            });
+        }
+
+        fallbackSessions = sessionsWithoutTitle.filter(s => s.taskId && matchingTaskIds.has(s.taskId));
+    }
+
+    const matchingSessions = [...sessionsByTitle, ...fallbackSessions];
+    if (matchingSessions.length === 0) return { found: false, tasks: [], totalFocusMinutes: 0 };
+
+    const aggregates: Record<string, { totalMinutes: number; count: number }> = {};
+    matchingSessions.forEach(s => {
+        const title = s.taskTitle || taskName;
+        if (!aggregates[title]) aggregates[title] = { totalMinutes: 0, count: 0 };
+        aggregates[title].totalMinutes += getDurationMinutes(s);
+        aggregates[title].count++;
+    });
+
+    const tasks = Object.entries(aggregates).map(([title, data]) => ({
+        taskTitle: title,
+        totalFocusMinutes: Math.round(data.totalMinutes),
+        sessionCount: data.count,
+    }));
+
+    return {
+        found: true,
+        tasks,
+        totalFocusMinutes: Math.round(matchingSessions.reduce((sum, s) => sum + getDurationMinutes(s), 0)),
+    };
+}
+
+export async function toolGetCompletedTasks(userId: string, startDate: string, endDate: string) {
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
+    interface TaskDoc {
+        title: string;
+        totalFocusedTime: number;
+        updatedAt: FirebaseFirestore.Timestamp | string;
+    }
+
+    const snapshot = await adminDb.collection('tasks')
+        .where('userId', '==', userId)
+        .where('status', '==', 'done')
+        .get();
+
+    const tasks = snapshot.docs
+        .map(doc => {
+            const data = doc.data() as TaskDoc;
+            const updatedAt = parseTimestamp(data.updatedAt);
+            return { title: data.title, totalFocusedMinutes: data.totalFocusedTime, updatedAt };
+        })
+        .filter(t => t.updatedAt >= start && t.updatedAt <= end)
+        .map(({ title, totalFocusedMinutes }) => ({ title, totalFocusedMinutes }));
+
+    return { tasks, count: tasks.length };
 }
 
 export async function toolGetWeekdayStats(userId: string, startDate: string, endDate: string) {

@@ -76,6 +76,7 @@ const FlowtimeTimer = () => {
                 durationSeconds: focusSeconds,
                 breakDurationSeconds: breakSecs,
                 taskId: selectedTaskId || null,
+                taskTitle: activeTask?.title || null,
             }).unwrap();
         } catch (err) {
             console.error('Failed to save session:', err);

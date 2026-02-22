@@ -13,6 +13,8 @@ import {
     toolGetResistancePoint,
     toolGetLongestSession,
     toolGetWarmupDuration,
+    toolGetTaskFocusByName,
+    toolGetCompletedTasks,
 } from '@/features/assistant/utils/metricFunctions';
 import { ChatMessage, ChatResponse } from '@/types/assistant';
 
@@ -34,15 +36,16 @@ const ASSISTANT_TOOLS: Tool[] = [{
         },
         {
             name: 'get_top_tasks',
-            description: 'Belirli tarih aralığında en çok odaklanılan görevleri listeler.',
+            description: 'Belirli tarih aralığında görevleri odaklanma süresine göre sıralar. Her görev için totalFocusMinutes, sessionCount ve averageSessionMinutes döner. "En verimli görev" sorusunda averageSessionMinutes yüksek olanı seç. "En az odaklanılan" veya "ihmal edilen" görev sorularında order=asc kullan.',
             parameters: {
                 type: Type.OBJECT,
                 properties: {
                     startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
                     endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
-                    limit: { type: Type.NUMBER, description: 'Kaç görev dönsün. Varsayılan: 5' },
+                    limit: { type: Type.NUMBER, description: 'Kaç görev dönsün. Sorudaki sayıyı kullan: "en çok/en az odaklandığım görev" → 1, "en çok zaman harcadığım 5 görev" → 5, "7 görev listele" → 7, sayı belirtilmemişse → 3' },
+                    order: { type: Type.STRING, description: '"desc" = en çok odaklanılan, "asc" = en az odaklanılan' },
                 },
-                required: ['startDate', 'endDate'],
+                required: ['startDate', 'endDate', 'limit'],
             },
         },
         {
@@ -128,6 +131,31 @@ const ASSISTANT_TOOLS: Tool[] = [{
                 required: ['startDate', 'endDate'],
             },
         },
+        {
+            name: 'get_task_focus_by_name',
+            description: 'Belirli bir görevin adına göre o göreve harcanan odaklanma süresini döndürür. "X görevine ne kadar çalıştım?", "Dün X üzerinde ne kadar vakit geçirdim?" sorularında kullan. Kısmi ad eşleşmesi desteklenir.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    taskName: { type: Type.STRING, description: 'Aranacak görev adı veya bir kısmı' },
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['taskName', 'startDate', 'endDate'],
+            },
+        },
+        {
+            name: 'get_completed_tasks',
+            description: 'Belirli tarih aralığında tamamlanan (done statüsüne taşınan) görevleri listeler. "Bugün hangi görevleri bitirdim?", "Bu hafta tamamladığım görevler neler?" sorularında kullan.',
+            parameters: {
+                type: Type.OBJECT,
+                properties: {
+                    startDate: { type: Type.STRING, description: 'Başlangıç tarihi YYYY-MM-DD' },
+                    endDate: { type: Type.STRING, description: 'Bitiş tarihi YYYY-MM-DD' },
+                },
+                required: ['startDate', 'endDate'],
+            },
+        },
     ],
 }];
 
@@ -142,8 +170,8 @@ async function executeToolCall(name: string, args: Record<string, unknown>, user
             return toolGetSessionsSummary(userId, startDate, endDate);
         }
         case 'get_top_tasks': {
-            const { startDate, endDate, limit = 5 } = args as { startDate: string; endDate: string; limit?: number };
-            return toolGetTopTasks(userId, startDate, endDate, Number(limit));
+            const { startDate, endDate, limit, order = 'desc' } = args as { startDate: string; endDate: string; limit: number; order?: 'asc' | 'desc' };
+            return toolGetTopTasks(userId, startDate, endDate, Number(limit), order);
         }
         case 'get_hourly_distribution': {
             const { startDate, endDate } = args as { startDate: string; endDate: string };
@@ -173,6 +201,14 @@ async function executeToolCall(name: string, args: Record<string, unknown>, user
         case 'get_weekday_stats': {
             const { startDate, endDate } = args as { startDate: string; endDate: string };
             return toolGetWeekdayStats(userId, startDate, endDate);
+        }
+        case 'get_task_focus_by_name': {
+            const { taskName, startDate, endDate } = args as { taskName: string; startDate: string; endDate: string };
+            return toolGetTaskFocusByName(userId, taskName, startDate, endDate);
+        }
+        case 'get_completed_tasks': {
+            const { startDate, endDate } = args as { startDate: string; endDate: string };
+            return toolGetCompletedTasks(userId, startDate, endDate);
         }
         default:
             return { error: `Unknown tool: ${name}` };
@@ -204,7 +240,25 @@ Kişiliğin:
 - Türkçe yaz
 
 Bugünün tarihi: ${today}
-Tarih aralıklarını hesaplarken bu tarihi baz al.`;
+
+Tarih aralığı kuralları:
+- Kullanıcı tarih belirtmezse ve "en uzun", "en çok", "hiç", "tüm zamanlar", "genel" gibi ifadeler kullanırsa: startDate=2020-01-01, endDate=${today}
+- "Bu ay" → ayın 1. günü ile ${today}
+- "Bu hafta" → haftanın Pazartesi'si ile ${today}
+- "Geçen ay" → bir önceki ayın 1. günü ile son günü
+- "Son 7 gün" veya "bu hafta" → 7 gün öncesi ile ${today}
+- "Son 30 gün" → 30 gün öncesi ile ${today}
+- Bir kez belirlediğin tarih aralığını aynı soru için değiştirme; tutarlı kal
+
+Yapabileceklerin:
+- Görev bazlı analiz: hangi göreve ne kadar zaman harcandığı, en çok odaklanılan görevler (get_top_tasks)
+- En uzun/en kısa oturum, toplam süre, oturum dağılımı (get_longest_session, get_sessions_summary)
+- Saatlik ve günlük verimlilik desenleri (get_hourly_distribution, get_weekday_stats)
+- İki dönem karşılaştırması (compare_periods)
+- Streak ve alışkanlık takibi (get_streak)
+- "En verimli görev" sorusunda get_top_tasks kullan; averageSessionMinutes yüksek olan görevi "en verimli" olarak yorumla
+- Belirli bir göreve harcanan süre: "X görevine dün ne kadar çalıştım?" → get_task_focus_by_name (kısmi ad eşleşmesi çalışır)
+- Tamamlanan görevler: "Bugün hangi görevleri bitirdim?" → get_completed_tasks (updatedAt baz alınır)`;
 
     if (summary) {
         prompt += `\n\nÖnceki konuşma özeti:\n${summary}`;
