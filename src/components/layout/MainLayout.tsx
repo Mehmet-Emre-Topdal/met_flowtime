@@ -100,6 +100,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                             <i className="pi pi-chart-bar nav-link__icon" />
                             {t("analytics.title")}
                         </Link>
+                        <Link href="/how-to" className={navLinkClass("/how-to")}>
+                            <i className="pi pi-info-circle nav-link__icon" />
+                            {t("nav.howTo")}
+                        </Link>
                     </nav>
 
                     {/* User */}
