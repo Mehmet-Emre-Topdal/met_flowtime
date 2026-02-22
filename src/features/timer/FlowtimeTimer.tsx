@@ -8,6 +8,7 @@ import { updateConfig, setLoadedFromFirebase } from '@/features/timer/slices/tim
 import { useAppDispatch, useAppSelector } from '@/hooks/storeHooks';
 import { useTranslation } from 'react-i18next';
 import { useCreateSessionMutation } from '@/features/analytics/api/sessionsApi';
+import { UserConfig, NOTIFICATION_SOUND_URL } from '@/types/config';
 
 const FlowtimeTimer = () => {
     const { t } = useTranslation();
@@ -38,18 +39,11 @@ const FlowtimeTimer = () => {
     const breakEndAudio = useRef<HTMLAudioElement | null>(null);
     const sessionStartRef = useRef<Date | null>(null);
 
-    const SOUNDS = {
-        bell: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3',
-        digital: 'https://assets.mixkit.co/active_storage/sfx/1070/1070-preview.mp3',
-        birds: 'https://assets.mixkit.co/active_storage/sfx/139/139-preview.mp3'
-    };
-
     useEffect(() => {
-        const audioUrl = SOUNDS[config.soundId as keyof typeof SOUNDS] || SOUNDS.bell;
-        const audio = new Audio(audioUrl);
+        const audio = new Audio(NOTIFICATION_SOUND_URL);
         audio.preload = 'auto';
         breakEndAudio.current = audio;
-    }, [config.soundId]);
+    }, []);
 
     const playBell = () => {
         if (breakEndAudio.current) {

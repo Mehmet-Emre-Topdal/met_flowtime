@@ -6,8 +6,9 @@ export interface FlowtimeInterval {
 
 export interface UserConfig {
     intervals: FlowtimeInterval[];
-    soundId: string;
 }
+
+export const NOTIFICATION_SOUND_URL = 'https://assets.mixkit.co/active_storage/sfx/2218/2218-preview.mp3';
 
 export const DEFAULT_CONFIG: UserConfig = {
     intervals: [
@@ -15,6 +16,5 @@ export const DEFAULT_CONFIG: UserConfig = {
         { min: 25, max: 50, break: 10 },
         { min: 50, max: 90, break: 15 },
         { min: 90, max: 999, break: 20 }
-    ],
-    soundId: 'bell'
+    ]
 };

@@ -134,30 +134,6 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                     </div>
                 </div>
 
-                {/* Sound Section */}
-                <div className="flex flex-col gap-3">
-                    <header>
-                        <h4 className="text-sm font-medium text-[#F0F0F0] mb-1">{t("settings.sound")}</h4>
-                        <p className="text-xs text-[#757575]">{t("settings.soundDesc")}</p>
-                    </header>
-                    <div className="flex flex-wrap gap-2">
-                        {['bell', 'digital', 'birds'].map((soundId) => (
-                            <button
-                                key={soundId}
-                                onClick={() => setLocalConfig({ ...localConfig, soundId })}
-                                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border text-xs font-medium transition-all duration-200
-                                    ${localConfig.soundId === soundId
-                                        ? 'bg-[#4F8EF7]/10 border-[#4F8EF7]/30 text-[#4F8EF7]'
-                                        : 'bg-transparent border-[#3D3D3D] text-[#757575] hover:border-[#353535] hover:text-[#9A9A9A]'
-                                    }`}
-                            >
-                                <i className={`pi ${soundId === 'bell' ? 'pi-bell' : soundId === 'digital' ? 'pi-mobile' : 'pi-twitter'} text-sm`} />
-                                <span>{t(`settings.sounds.${soundId}`)}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
                 {/* Divider */}
                 <div className="h-px bg-[#3D3D3D]" />
 

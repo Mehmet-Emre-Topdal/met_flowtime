@@ -53,11 +53,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
     const userMenuItems: MenuItem[] = [
         {
-            label: t("nav.howTo"),
-            icon: "pi pi-info-circle",
-            command: () => router.push("/how-to")
-        },
-        {
             label: t("nav.settings"),
             icon: "pi pi-cog",
             command: () => setSettingsVisible(true)
@@ -104,10 +99,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
                         <Link href="/report" className={navLinkClass("/report")}>
                             <i className="pi pi-chart-bar nav-link__icon" />
                             {t("analytics.title")}
-                        </Link>
-                        <Link href="/how-to" className={navLinkClass("/how-to")}>
-                            <i className="pi pi-info-circle nav-link__icon" />
-                            {t("nav.howTo")}
                         </Link>
                     </nav>
 
