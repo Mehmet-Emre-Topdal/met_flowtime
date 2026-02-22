@@ -1,0 +1,49 @@
+Flowtime adlı bir odak/verimlilik uygulaması geliştiriyorum.
+Stack: Next.js + Firestore + Google Gemini (gemini-2.5-flash-lite) + Firebase Auth
+
+## Mevcut Mimari (Değiştirilecek)
+
+Şu an iki aşamalı bir pipeline var:
+
+1. Resolver AI: Kullanıcı mesajını okur, sabit metrik listesinden 
+   hangilerinin gerektiğini ve hangi zaman diliminin 
+   (today/last_7_days/last_30_days/last_90_days/all_time) 
+   kullanılacağını JSON döndürür.
+
+2. Ana AI: Resolver çıktısına göre Firestore'dan veri çekilir, 
+   hesaplanan metrikler AI'a verilir, yanıt üretilir.
+
+## Sorun
+
+Kullanıcılar sabit şemaya uymayan sorular soruyor:
+- "Son 20 günlük performansım?" → sabit zaman dilimleri yok
+- "Hangi göreve en çok zaman harcadım?" → metrik yok
+- "Bu ay geçen aydan iyi mi?" → karşılaştırma yok
+
+## Hedef Mimari (Yapılacak)
+
+Resolver'ı kaldır. Gemini'nin native Function Calling özelliğini 
+kullanarak AI'a aşağıdaki araçları ver, o ne istediğine kendisi karar versin:
+
+- get_sessions(startDate, endDate) → ham oturum listesi
+- get_top_tasks(limit, startDate, endDate) → görev bazlı süre sıralaması
+- get_hourly_distribution(startDate, endDate) → saatlik dağılım
+- compare_periods(period1Start, period1End, period2Start, period2End) → karşılaştırma
+- get_streak(endDate) → akış serisi
+
+## İlgili Dosyalar
+
+- src/lib/gemini.ts → Gemini API wrapper
+- src/pages/api/assistant/chat.ts → Ana chat endpoint
+- src/features/assistant/utils/metricFunctions.ts → 12 metrik fonksiyonu
+- src/types/assistant.ts → Type tanımları
+
+## İstenen
+
+1. Önce ilgili dosyaları oku ve mevcut kodu tam anla
+2. Gemini Function Calling kullanarak yeni mimariyi tasarla
+3. Mevcut metricFunctions.ts fonksiyonlarını mümkün olduğunca yeniden kullan
+4. Conversation history ve rate limiting sistemini koru
+5. TypeScript type'larını güncelle
+
+Başlamadan önce mevcut dosyaları oku ve bir plan sun.

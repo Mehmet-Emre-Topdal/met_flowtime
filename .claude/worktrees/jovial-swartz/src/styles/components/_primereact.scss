@@ -1,0 +1,164 @@
+/* PrimeReact Overrides — Carbon Indigo Dark */
+
+.p-menu {
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-lg) !important;
+
+    .p-menuitem-link {
+        padding: 0.6rem 1rem !important;
+        border-radius: 6px !important;
+        margin: 2px 4px !important;
+        transition: background var(--transition-fast) !important;
+
+        .p-menuitem-text {
+            color: var(--secondary) !important;
+            font-size: 13px !important;
+            font-family: var(--font-body) !important;
+        }
+
+        .p-menuitem-icon {
+            color: var(--muted) !important;
+            margin-right: 0.5rem !important;
+            font-size: 13px !important;
+        }
+
+        &:not(.p-disabled):hover {
+            background: var(--surface-hover) !important;
+
+            .p-menuitem-text {
+                color: var(--foreground) !important;
+            }
+
+            .p-menuitem-icon {
+                color: var(--accent) !important;
+            }
+        }
+    }
+}
+
+.custom-switcher.p-selectbutton {
+    background: var(--surface) !important;
+    padding: 3px !important;
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--border) !important;
+
+    .p-button {
+        background: transparent !important;
+        border: none !important;
+        color: var(--muted) !important;
+        transition: all var(--transition-fast) !important;
+        border-radius: 8px !important;
+        font-size: 12.5px !important;
+        font-family: var(--font-body) !important;
+
+        &.p-highlight {
+            background: var(--surface-elevated) !important;
+            color: var(--foreground) !important;
+            box-shadow: none !important;
+        }
+
+        &:not(.p-highlight):hover {
+            color: var(--secondary) !important;
+            background: transparent !important;
+        }
+    }
+}
+
+.auth-password-input {
+    width: 100%;
+    display: block;
+
+    .p-password,
+    .p-password-input {
+        width: 100%;
+    }
+
+    .p-input-icon-right,
+    .p-password>span {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .p-password-toggle-mask-icon,
+    .p-password .p-icon {
+        color: var(--muted) !important;
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+}
+
+.daily-checkbox .p-checkbox-box {
+    background: transparent !important;
+    border: 1.5px solid var(--border-strong) !important;
+    border-radius: 5px !important;
+    width: 17px !important;
+    height: 17px !important;
+    transition: all var(--transition-fast) !important;
+
+    &.p-highlight {
+        background: var(--accent) !important;
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 2px var(--accent-soft) !important;
+    }
+
+    .p-checkbox-icon {
+        color: white !important;
+        font-size: 9px !important;
+    }
+}
+
+.settings-input-compact .p-inputnumber-input {
+    padding: 0.25rem 0.5rem !important;
+    border: 1px solid transparent !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all var(--transition-fast);
+    background: var(--background) !important;
+    color: var(--foreground) !important;
+    font-family: var(--font-body) !important;
+}
+
+.settings-input-compact .p-inputnumber-input:focus {
+    border-color: var(--accent) !important;
+    background: var(--accent-soft) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--accent-soft) !important;
+}
+
+.p-inputtext:focus,
+.p-inputtextarea:focus {
+    box-shadow: 0 0 0 2px var(--accent-soft) !important;
+    border-color: var(--accent) !important;
+    outline: none !important;
+}
+
+.custom-toast .p-toast-message {
+    background: var(--surface-elevated) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius-md) !important;
+    color: var(--foreground) !important;
+    box-shadow: var(--shadow-lg) !important;
+    backdrop-filter: blur(16px) !important;
+}
+
+.custom-toast .p-toast-message-success .p-toast-message-icon {
+    color: var(--success) !important;
+}
+
+.custom-toast .p-toast-message-error .p-toast-message-icon {
+    color: var(--destructive) !important;
+}
+
+.p-knob-value {
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+/* ─── Knob SVG filter for glow on value arc ─────────────── */
+.p-knob svg {
+    filter: drop-shadow(0 0 6px rgba(124, 111, 247, 0.3));
+}

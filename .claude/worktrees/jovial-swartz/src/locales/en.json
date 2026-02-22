@@ -1,0 +1,242 @@
+{
+    "common": {
+        "appName": "Flowtime",
+        "loading": "Loading...",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "archive": "Archive",
+        "or": "or",
+        "empty": "Empty",
+        "chars": "chars",
+        "clear": "Clear"
+    },
+    "auth": {
+        "subtitle": "Focus tracking & task management",
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "createAccount": "Create Account",
+        "processing": "Processing...",
+        "continueWithGoogle": "Continue with Google",
+        "connectingGoogle": "Connecting...",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "nameLabel": "Name",
+        "namePlaceholder": "Your name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "passwordLabel": "Password",
+        "fillAllFields": "Please fill in all fields.",
+        "enterName": "Please enter your name.",
+        "passwordMinLength": "Password must be at least 6 characters.",
+        "googleFailed": "Google login failed.",
+        "authFailed": "Authentication failed.",
+        "logoutFailed": "Logout failed."
+    },
+    "nav": {
+        "settings": "Settings",
+        "logout": "Log out",
+        "howTo": "How to Use?"
+    },
+    "timer": {
+        "focusSession": "Focus Session",
+        "breakTime": "Break Time",
+        "workingOn": "Working on",
+        "flowActive": "Flow state active",
+        "readyToFocus": "Ready to focus",
+        "rechargingFocus": "Recharging focus",
+        "start": "Start",
+        "resume": "Resume",
+        "break": "Break",
+        "remaining": "remaining",
+        "elapsed": "elapsed"
+    },
+    "tasks": {
+        "tasks": "Tasks",
+        "allTasksSorted": "All your tasks, sorted by status",
+        "showingDailyOnly": "Showing daily tasks only",
+        "boardView": "Board View",
+        "hideDoneTasks": "Hide Done Tasks",
+        "dragToUpdate": "Drag tasks between columns to update status",
+        "newTask": "New Task",
+        "createTask": "Create Task",
+        "editTask": "Edit Task",
+        "saveChanges": "Save Changes",
+        "titleLabel": "Title",
+        "descriptionLabel": "Description",
+        "noTasks": "No tasks yet. Add one above to get started.",
+        "noDailyTasks": "No daily tasks found.",
+        "loadingTasks": "Loading tasks...",
+        "archiveConfirm": "will be deleted. This cannot be undone.",
+        "archiveHeader": "Delete Task",
+        "focusing": "Focusing",
+        "focused": "min",
+        "daily": "Daily",
+        "dailyToggle": "Make this a Daily Task",
+        "dailyTooltip": "This task will reset to active on your list every midnight.",
+        "toDo": "TO DO",
+        "inProgress": "IN PROGRESS",
+        "done": "DONE",
+        "toDoShort": "To Do",
+        "inProgressShort": "In Progress",
+        "doneShort": "Done",
+        "statusUpdateFailed": "Status update failed."
+    },
+    "settings": {
+        "title": "Settings",
+        "flowIntervals": "Flow Intervals",
+        "flowIntervalsDesc": "Configure focus duration ranges and their corresponding break times.",
+        "focusRange": "Focus Range",
+        "breakDuration": "Break Duration",
+        "addInterval": "Add Interval",
+        "removeInterval": "Remove interval",
+        "saveChanges": "Save Changes",
+        "language": "Language",
+        "languageDesc": "Change the application language.",
+        "sound": "Notification Sound",
+        "soundDesc": "Choose the sound to play when break ends.",
+        "sounds": {
+            "bell": "Bell",
+            "digital": "Digital",
+            "birds": "Birds"
+        }
+    },
+    "notes": {
+        "quickNotes": "Quick Notes",
+        "placeholder": "Write your thoughts here...",
+        "tooltip": "Jot down ideas during your focus session. Notes are stored in your browser, not tied to your account.",
+        "clearConfirm": "Clear all notes?"
+    },
+    "quickAdd": {
+        "placeholder": "Add a new task...",
+        "quickAdd": "Quick add",
+        "details": "Details",
+        "taskCreated": "Task Created",
+        "taskAddedSuccess": "Task added successfully.",
+        "taskCreatedSuccess": "Task created successfully.",
+        "createFailed": "Failed to create task.",
+        "authRequired": "Authentication required.",
+        "errorTitle": "Error"
+    },
+    "views": {
+        "list": "List",
+        "board": "Board",
+        "daily": "Daily"
+    },
+    "analytics": {
+        "title": "Analytics",
+        "subtitle": "Personal insights generated from your focus data",
+        "primary": "Primary Analytics",
+        "secondary": "Secondary Analytics",
+        "notEnoughData": "Not enough data yet — this analysis is still forming.",
+        "loadingSessions": "Loading sessions...",
+        "noSessions": "No sessions recorded yet. Use the timer to create sessions.",
+        "flowWaves": {
+            "title": "Daily Flow Waves",
+            "tooltip": "Sessions from the last 14 days are grouped by hour. Hours >30% above average are 'Peak', >30% below are 'Trough'.",
+            "peakHour": "Your peak hour",
+            "troughHour": "Your trough hour",
+            "peak": "Peak",
+            "normal": "Normal",
+            "trough": "Trough",
+            "minutes": "min"
+        },
+        "weeklyWorkTime": {
+            "title": "Weekly Work Time",
+            "tooltip": "Shows your total work time for each day of the current week (Monday–Sunday).",
+            "weekTotal": "Week Total",
+            "workTime": "Work Time",
+            "prevWeek": "Previous week",
+            "nextWeek": "Next week",
+            "min": "m",
+            "h": "h",
+            "days": {
+                "mon": "Mon",
+                "tue": "Tue",
+                "wed": "Wed",
+                "thu": "Thu",
+                "fri": "Fri",
+                "sat": "Sat",
+                "sun": "Sun"
+            }
+        },
+        "focusDensity": {
+            "title": "Focus Density",
+            "tooltip": "Today's total focus time divided by the time span from first to last session. ≥80% Sharp, ≥60% Good, ≥40% Scattered Start, <40% Scattered Mind.",
+            "sharp": "Sharp Focus",
+            "good": "Good Rhythm",
+            "scattered_start": "Scattered Start",
+            "scattered_mind": "Scattered Mind"
+        },
+        "resistancePoint": {
+            "title": "Resistance Point",
+            "tooltip": "Mode and median of all session durations are calculated. If they differ by >20%, median is used. This shows the minute you typically take a break.",
+            "usuallyAt": "You usually take a break at minute {{minute}}.",
+            "min": "min"
+        },
+        "earnedFreedom": {
+            "title": "Earned Freedom",
+            "tooltip": "For every 5 minutes of focus, you earn 1 minute of break. Used break time is subtracted to show your remaining balance.",
+            "balance": "{{minutes}} min break earned",
+            "weekSummary": "This week: earned {{earned}} min, used {{used}} min."
+        },
+        "flowWindow": {
+            "title": "Natural Flow Window",
+            "tooltip": "All sessions are bucketed into 5-min intervals. The best consecutive 2-3 buckets form the 'dominant window'. Median duration is also shown.",
+            "windowText": "Your focus window is usually {{start}}-{{end}} minutes.",
+            "medianText": "Median: {{median}} min",
+            "sessions": "sessions"
+        },
+        "flowStreak": {
+            "title": "Flow Streak",
+            "tooltip": "A day counts as 'filled' if your total focus time exceeds 50% of your 30-day average. Consecutive filled days make up your streak.",
+            "current": "Current streak",
+            "record": "Record",
+            "days": "days"
+        },
+        "taskHarmony": {
+            "title": "Task-Flow Harmony",
+            "tooltip": "Task-tagged sessions are grouped. Total focus time and session count are calculated per task. Most focused tasks appear first.",
+            "sessions": "sessions",
+            "focusMin": "min focus"
+        },
+        "warmup": {
+            "title": "Warm-up Phase",
+            "tooltip": "22% of the average duration of 20+ minute sessions is estimated as warm-up time. If coefficient of variation >0.6, data is considered unreliable.",
+            "avgText": "Your average warm-up time is {{minutes}} minutes.",
+            "improved": "Decreased by {{minutes}} min compared to last month.",
+            "worsened": "Increased by {{minutes}} min compared to last month."
+        }
+    },
+    "assistant": {
+        "title": "Focus Assistant",
+        "toggle": "Toggle assistant",
+        "online": "Online",
+        "thinking": "Thinking...",
+        "placeholder": "Ask something...",
+        "error": "An error occurred, please try again. 🔄",
+        "rateLimitReached": "You've reached today's assistant limit. Let's continue tomorrow. 🌙"
+    },
+    "howto": {
+        "title": "How to Use?",
+        "subtitle": "Achieve peak productivity with Flowtime's scientific and flexible approach",
+        "methodology": {
+            "title": "1. Flowtime Methodology",
+            "desc": "Flowtime breaks the rigid 25-minute boundaries of Pomodoro. The human mind doesn't work at the same capacity every moment. With this method, you decide exactly how long you focus. Stop when you feel tired; the app analyzes your session and instantly calculates the ideal break duration (usually via the 5:1 ratio). This ensures you work in your natural rhythm without burnout."
+        },
+        "timer": {
+            "title": "2. Smart Timer",
+            "desc": "The flow begins the moment you hit 'Start' on the Timer screen. Track your elapsed time and get into focus mode with the 'breathing' ring effect. When you hit 'Break', the system automatically calculates your earned break time based on your performance and starts the countdown. You'll be notified with your chosen sound (Bell, Birds, etc.) when it's time to get back."
+        },
+        "kanban": {
+            "title": "3. Task & Context Management",
+            "desc": "Successful analysis requires knowing what you're focusing on. Select a task from the Kanban board to link your Timer session to it. Use the 'Daily Task' feature for recurring routines (emails, planning, etc.) to have them reset every midnight. Your tasks are automatically synchronized between 'To Do', 'In Progress', and 'Done' columns."
+        },
+        "ai": {
+            "title": "4. Personal Productivity Analyst",
+            "desc": "The AI Assistant at the bottom right isn't just a chatbot; it's your performance analyst. It examines all your session data stored on Firebase. You can ask data-driven questions like 'What is my most productive day?', 'What's my average weekly focus time?' or 'Why wasn't I as productive today as yesterday?' and get personalized growth advice."
+        }
+    }
+}

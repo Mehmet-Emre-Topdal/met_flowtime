@@ -1,0 +1,242 @@
+{
+    "common": {
+        "appName": "Flowtime",
+        "loading": "Yükleniyor...",
+        "cancel": "İptal",
+        "save": "Kaydet",
+        "delete": "Sil",
+        "edit": "Düzenle",
+        "create": "Oluştur",
+        "archive": "Arşivle",
+        "or": "veya",
+        "empty": "Boş",
+        "chars": "karakter",
+        "clear": "Temizle"
+    },
+    "auth": {
+        "subtitle": "Odaklanma takibi & görev yönetimi",
+        "signIn": "Giriş Yap",
+        "signUp": "Kayıt Ol",
+        "createAccount": "Hesap Oluştur",
+        "processing": "İşleniyor...",
+        "continueWithGoogle": "Google ile devam et",
+        "connectingGoogle": "Bağlanıyor...",
+        "noAccount": "Hesabınız yok mu?",
+        "hasAccount": "Zaten hesabınız var mı?",
+        "nameLabel": "İsim",
+        "namePlaceholder": "Adınız",
+        "emailLabel": "E-posta",
+        "emailPlaceholder": "siz@example.com",
+        "passwordLabel": "Şifre",
+        "fillAllFields": "Lütfen tüm alanları doldurun.",
+        "enterName": "Lütfen adınızı girin.",
+        "passwordMinLength": "Şifre en az 6 karakter olmalıdır.",
+        "googleFailed": "Google girişi başarısız oldu.",
+        "authFailed": "Kimlik doğrulama başarısız oldu.",
+        "logoutFailed": "Çıkış başarısız oldu."
+    },
+    "nav": {
+        "settings": "Ayarlar",
+        "logout": "Çıkış Yap",
+        "howTo": "Nasıl Kullanılır?"
+    },
+    "timer": {
+        "focusSession": "Odaklanma Oturumu",
+        "breakTime": "Mola Zamanı",
+        "workingOn": "Üzerinde çalışılan",
+        "flowActive": "Akış modu aktif",
+        "readyToFocus": "Odaklanmaya hazır",
+        "rechargingFocus": "Enerji toplanıyor",
+        "start": "Başla",
+        "resume": "Devam",
+        "break": "Mola",
+        "remaining": "kalan",
+        "elapsed": "geçen"
+    },
+    "tasks": {
+        "tasks": "Görevler",
+        "allTasksSorted": "Tüm görevleriniz, duruma göre sıralı",
+        "showingDailyOnly": "Sadece günlük görevler gösteriliyor",
+        "boardView": "Pano Görünümü",
+        "hideDoneTasks": "Tamamlananları Gizle",
+        "dragToUpdate": "Durumu güncellemek için görevleri sürükleyin",
+        "newTask": "Yeni Görev",
+        "createTask": "Görev Oluştur",
+        "editTask": "Görevi Düzenle",
+        "saveChanges": "Değişiklikleri Kaydet",
+        "titleLabel": "Başlık",
+        "descriptionLabel": "Açıklama",
+        "noTasks": "Henüz görev yok. Başlamak için yukarıdan bir tane ekleyin.",
+        "noDailyTasks": "Günlük görev bulunamadı.",
+        "loadingTasks": "Görevler yükleniyor...",
+        "archiveConfirm": "silinecek. Bu işlem geri alınamaz.",
+        "archiveHeader": "Görevi Sil",
+        "focusing": "Odaklanıyorsunuz",
+        "focused": "dk",
+        "daily": "Günlük",
+        "dailyToggle": "Bunu Günlük Görev Yap",
+        "dailyTooltip": "Bu görev her gece yarısı listenizde tekrar aktif olur.",
+        "toDo": "YAPILACAK",
+        "inProgress": "DEVAM EDİYOR",
+        "done": "TAMAMLANDI",
+        "toDoShort": "Yapılacak",
+        "inProgressShort": "Devam Ediyor",
+        "doneShort": "Tamamlandı",
+        "statusUpdateFailed": "Durum güncellemesi başarısız oldu."
+    },
+    "settings": {
+        "title": "Ayarlar",
+        "flowIntervals": "Akış Aralıkları",
+        "flowIntervalsDesc": "Odaklanma süresi aralıklarını ve karşılık gelen mola sürelerini yapılandırın.",
+        "focusRange": "Odaklanma Aralığı",
+        "breakDuration": "Mola Süresi",
+        "addInterval": "Aralık Ekle",
+        "removeInterval": "Aralığı kaldır",
+        "saveChanges": "Değişiklikleri Kaydet",
+        "language": "Dil",
+        "languageDesc": "Uygulama dilini değiştirin.",
+        "sound": "Bildirim Sesi",
+        "soundDesc": "Mola bittiğinde çalacak sesi seçin.",
+        "sounds": {
+            "bell": "Zil",
+            "digital": "Dijital",
+            "birds": "Kuşlar"
+        }
+    },
+    "notes": {
+        "quickNotes": "Hızlı Notlar",
+        "placeholder": "Düşüncelerinizi buraya yazın...",
+        "tooltip": "Odaklanma oturumunuz sırasında notlar alın. Notlar tarayıcınızda saklanır, hesabınıza bağlı değildir.",
+        "clearConfirm": "Tüm notlar silinsin mi?"
+    },
+    "quickAdd": {
+        "placeholder": "Yeni bir görev ekle...",
+        "quickAdd": "Hızlı ekle",
+        "details": "Detaylar",
+        "taskCreated": "Görev Oluşturuldu",
+        "taskAddedSuccess": "Görev başarıyla eklendi.",
+        "taskCreatedSuccess": "Görev başarıyla oluşturuldu.",
+        "createFailed": "Görev oluşturulamadı.",
+        "authRequired": "Kimlik doğrulaması gerekiyor.",
+        "errorTitle": "Hata"
+    },
+    "views": {
+        "list": "Liste",
+        "board": "Pano",
+        "daily": "Günlük"
+    },
+    "analytics": {
+        "title": "Analizler",
+        "subtitle": "Odaklanma verilerinizden üretilen kişisel içgörüler",
+        "primary": "Birincil Analizler",
+        "secondary": "İkincil Analizler",
+        "notEnoughData": "Yeterli veri yok — analiz şekillenmeye devam ediyor.",
+        "loadingSessions": "Seanslar yükleniyor...",
+        "noSessions": "Henüz seans kaydı yok. Timer'ı kullanarak seans oluşturun.",
+        "flowWaves": {
+            "title": "Günlük Akış Dalgaları",
+            "tooltip": "Son 14 gündeki seanslarınız saat dilimlerine göre gruplandırılır. Ortalamanın %30 üstü 'Zirve', %30 altı 'Vadi' olarak işaretlenir.",
+            "peakHour": "Zirve saatiniz",
+            "troughHour": "Vadi saatiniz",
+            "peak": "Zirve",
+            "normal": "Normal",
+            "trough": "Vadi",
+            "minutes": "dk"
+        },
+        "weeklyWorkTime": {
+            "title": "Haftalık Çalışma Süresi",
+            "tooltip": "Bu haftanın her günü için toplam çalışma sürenizi gösterir (Pazartesi–Pazar).",
+            "weekTotal": "Haftalık Toplam",
+            "workTime": "Çalışma Süresi",
+            "prevWeek": "Önceki hafta",
+            "nextWeek": "Sonraki hafta",
+            "min": "dk",
+            "h": "sa",
+            "days": {
+                "mon": "Pzt",
+                "tue": "Sal",
+                "wed": "Çar",
+                "thu": "Per",
+                "fri": "Cum",
+                "sat": "Cmt",
+                "sun": "Paz"
+            }
+        },
+        "focusDensity": {
+            "title": "Odak Yoğunluk Oranı",
+            "tooltip": "Bugünkü toplam odaklanma süreniz, ilk seans başlangıcı ile son seans bitişi arasındaki zaman aralığına oranlanır. ≥80% Keskin, ≥60% İyi, ≥40% Dağınık Başlangıç, <40% Dağınık Zihin.",
+            "sharp": "Keskin Odak",
+            "good": "İyi Ritim",
+            "scattered_start": "Dağınık Başlangıç",
+            "scattered_mind": "Dağınık Zihin"
+        },
+        "resistancePoint": {
+            "title": "Zihinsel Dayanıklılık Eşiği",
+            "tooltip": "Tüm seanslarınızın sürelerinin mod ve medyanı hesaplanır. Fark >%20 ise medyan, değilse mod kullanılır. Bu, genellikle molaya çıktığınız dakikayı gösterir.",
+            "usuallyAt": "Genellikle {{minute}}. dakikada molaya çıkıyorsun.",
+            "min": "dk"
+        },
+        "earnedFreedom": {
+            "title": "Kazanılmış Özgür Zaman",
+            "tooltip": "Her 5 dakikalık odaklanma karşılığında 1 dakika mola hakkı kazanırsınız. Kullanılan mola süreleri düşülür ve bakiye gösterilir.",
+            "balance": "{{minutes}} dk mola hakkın birikti",
+            "weekSummary": "Bu hafta {{earned}} dk kazandın, {{used}} dk kullandın."
+        },
+        "flowWindow": {
+            "title": "Odak Kapasitesi Eğrisi",
+            "tooltip": "Tüm seanslarınız 5 dakikalık aralıklara dağıtılır. En yoğun ardışık 2-3 aralık 'baskın pencere' olarak belirlenir. Medyan değeri de gösterilir.",
+            "windowText": "Odak pencereniz genellikle {{start}}-{{end}} dakika.",
+            "medianText": "Medyan: {{median}} dk",
+            "sessions": "seans"
+        },
+        "flowStreak": {
+            "title": "Akış Serisi",
+            "tooltip": "Günlük odaklanma süreniz, 30 günlük ortalamanızın %50'sini aşarsa o gün 'dolu' sayılır. Ardışık dolu günler serinizi oluşturur.",
+            "current": "Şu anki seri",
+            "record": "Rekor",
+            "days": "gün"
+        },
+        "taskHarmony": {
+            "title": "Görev Akış Uyumu",
+            "tooltip": "Göreve etiketlenmiş seanslar gruplanır, her görev için toplam odaklanma süresi ve seans sayısı hesaplanır. En çok odaklanılan görevler üstte yer alır.",
+            "sessions": "seans",
+            "focusMin": "dk odaklanma"
+        },
+        "warmup": {
+            "title": "Bilişsel Isınma Süresi",
+            "tooltip": "20+ dakikalık seansların ortalama süresinin %22'si ısınma süresi olarak hesaplanır. Varyasyon katsayısı >0.6 ise veri güvenilir sayılmaz.",
+            "avgText": "Akışa geçiş süreniz ortalama {{minutes}} dakika.",
+            "improved": "Geçen aya göre {{minutes}} dk azaldı.",
+            "worsened": "Geçen aya göre {{minutes}} dk arttı."
+        }
+    },
+    "assistant": {
+        "title": "Odak Asistanı",
+        "toggle": "Asistanı aç/kapat",
+        "online": "Çevrimiçi",
+        "thinking": "Düşünüyor...",
+        "placeholder": "Bir şey sor...",
+        "error": "Bir hata oluştu, lütfen tekrar dene. 🔄",
+        "rateLimitReached": "Bugünkü asistan limitine ulaştın, yarın devam edebiliriz. 🌙"
+    },
+    "howto": {
+        "title": "Nasıl Kullanılır?",
+        "subtitle": "Flowtime ile verimliliğinizi bilimsel ve esnek bir yöntemle zirveye taşıyın",
+        "methodology": {
+            "title": "1. Flowtime Metodolojisi",
+            "desc": "Flowtime, Pomodoro'nun katı 25 dakikalık sınırlarını yıkar. İnsan zihni her an aynı kapasitede çalışmaz. Bu yöntemle, odaklanma sürenize tamamen siz karar verirsiniz. Yorulduğunuzda durursunuz, uygulama ise odaklandığınız süreyi analiz ederek size en uygun mola süresini (genellikle 5:1 kuralı ile) anında hesaplar. Bu sayede 'burnout' olmadan, doğal ritminizde çalışırsınız."
+        },
+        "timer": {
+            "title": "2. Akıllı Zamanlayıcı",
+            "desc": "Timer ekranındaki 'Başla' butonuna bastığınız anda akış başlar. Ekranda geçen süreyi takip edebilir, kadrandaki 'nefes alma' efektiyle odak moduna girebilirsiniz. Mola butonuna bastığınızda, sistem o ana kadar kazandığınız mola hakkınızı otomatik hesaplar ve geri sayımı başlatır. Mola bittiğinde ise seçtiğiniz (Zil, Kuş Sesi vb.) bildirim ile uyarılırsınız."
+        },
+        "kanban": {
+            "title": "3. Görev ve Bağlam Yönetimi",
+            "desc": "Başarılı bir analiz için neye odaklandığınızı bilmek gerekir. Kanban panosundan bir görev seçerek Timer'ı o görev için çalıştırın. 'Günlük Görev' özelliğiyle her gün tekrarlanan rutinlerinizi (mail okuma, planlama vb.) tek tuşla listenize alabilirsiniz. Görevleriniz otomatik olarak 'Yapılacak', 'Devam Ediyor' ve 'Tamamlandı' sütunları arasında senkronize edilir."
+        },
+        "ai": {
+            "title": "4. Kişisel Verimlilik Analisti",
+            "desc": "Sağ alttaki Yapay Zeka Asistanı sadece bir sohbet botu değildir; o sizin performans analistinizdir. Firebase üzerinde biriken tüm seans verilerinizi inceler. Ona 'En verimli olduğum gün hangisi?', 'Haftalık ortalama odaklanma sürem ne?' veya 'Bugün neden dün kadar verimli değildim?' gibi doğrudan verilerinize dayalı sorular sorabilir, kendinize özel tavsiyeler alabilirsiniz."
+        }
+    }
+}
