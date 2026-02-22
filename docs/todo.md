@@ -3,8 +3,6 @@ silme durumunda analitik bölümünde ne değişeceği düşünülmeli
 
 validasyonlar eklenmeli
 
-mutasyonlarda unwrap kullanılmalı
-
 şifre güncelleme eklenmeli
 
 mobildeki hover işlemleri test edilmeli
@@ -22,6 +20,8 @@ mock verileri kaldıracağız
 dept çok saçma ya 
 
 AI görev ile ilgili sorulara cevap veremiyor aslında AI'a kendi sorsusunu yazdırmamız lazım
+
+sohbet temizleme özelliği lazım
 
 ---------------
 OPTİMİSTİK UI KODUNU OKUMALIYIM

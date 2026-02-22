@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { adminAuth } from '@/lib/firebase-admin';
 import { callGemini, callGeminiWithHistory } from '@/lib/gemini';
-import { fetchMetrics, getWeeklyDepthScore } from '@/features/assistant/utils/metricFunctions';
+import { fetchMetrics } from '@/features/assistant/utils/metricFunctions';
 import { checkRateLimit, incrementUsage } from '@/features/assistant/utils/rateLimit';
 import { ChatMessage, ChatResponse, ResolverOutput } from '@/types/assistant';
 
@@ -96,35 +96,17 @@ function parseResolverOutput(text: string): ResolverOutput {
 // ─── Welcome Message Handler ────────────────────────────────
 
 async function handleWelcome(userId: string): Promise<ChatResponse> {
-    console.log('[Chat API] handleWelcome for user:', userId);
-    try {
-        const weeklyData = await getWeeklyDepthScore(userId);
-        console.log('[Chat API] Weekly data:', JSON.stringify(weeklyData));
-        const welcomeMessage = weeklyData.sessionCount > 0
-            ? `Merhaba! 👋 Bu hafta ${weeklyData.sessionCount} seans yapmışsın ve haftalık derinlik skorun ${weeklyData.weeklyDepthScore}. Odaklanma verilerini birlikte keşfedelim mi?`
-            : `Merhaba! 👋 Flowtime verilerini birlikte incelemeye hazırım. Ne merak ediyorsun?`;
+    const welcomeMessage = `Merhaba! 👋 Ben Flowtime yapay zeka asistanıyım. Beni odaklanma verilerini analiz etmek, verimliliğini artırmak ve akış halini derinleştirmek için kullanabilirsin. Ne merak ediyorsun?`;
 
-        return {
-            reply: welcomeMessage,
-            updatedHistory: [{
-                role: 'assistant',
-                content: welcomeMessage,
-                timestamp: new Date().toISOString(),
-            }],
-            updatedSummary: null,
-        };
-    } catch (error: any) {
-        console.error('[Chat API] handleWelcome error:', error?.message || error);
-        return {
-            reply: 'Merhaba! 👋 Odaklanma verilerini birlikte incelemeye hazırım. Ne merak ediyorsun?',
-            updatedHistory: [{
-                role: 'assistant',
-                content: 'Merhaba! 👋 Odaklanma verilerini birlikte incelemeye hazırım. Ne merak ediyorsun?',
-                timestamp: new Date().toISOString(),
-            }],
-            updatedSummary: null,
-        };
-    }
+    return {
+        reply: welcomeMessage,
+        updatedHistory: [{
+            role: 'assistant',
+            content: welcomeMessage,
+            timestamp: new Date().toISOString(),
+        }],
+        updatedSummary: null,
+    };
 }
 
 // ─── Main Handler ───────────────────────────────────────────
