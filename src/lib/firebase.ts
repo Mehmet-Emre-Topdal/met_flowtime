@@ -11,14 +11,6 @@ const firebaseConfig = {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-// Next.js static evaluation check
-console.log("Firebase Connectivity Check:");
-if (!firebaseConfig.apiKey) console.error("-> API_KEY: MISSING");
-else console.log("-> API_KEY: OK");
-
-if (!firebaseConfig.projectId) console.error("-> PROJECT_ID: MISSING");
-else console.log("-> PROJECT_ID: OK");
-
 function getSafeApp(): FirebaseApp {
     try {
         if (getApps().length > 0) {

@@ -1,19 +1,18 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlowSession } from '@/types/session';
-import { calcWeeklyWorkTime } from '@/features/analytics/utils/analyticsCalculations';
+import { WeeklyWorkTimeResult } from '@/types/analytics';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import AnalyticsCard from './AnalyticsCard';
 
 interface Props {
-    sessions: FlowSession[];
+    data: WeeklyWorkTimeResult;
+    weekOffset: number;
+    onPrev: () => void;
+    onNext: () => void;
 }
 
-const WeeklyWorkTimeCard: React.FC<Props> = ({ sessions }) => {
+const WeeklyWorkTimeCard: React.FC<Props> = ({ data, weekOffset, onPrev, onNext }) => {
     const { t } = useTranslation();
-    const [weekOffset, setWeekOffset] = useState(0);
-
-    const data = useMemo(() => calcWeeklyWorkTime(sessions, weekOffset), [sessions, weekOffset]);
 
     const chartData = data.days.map(d => ({
         day: t(`analytics.weeklyWorkTime.days.${d.dayLabel}`),
@@ -45,7 +44,7 @@ const WeeklyWorkTimeCard: React.FC<Props> = ({ sessions }) => {
                 <div className="analytics-weekly-work__nav">
                     <button
                         className="analytics-weekly-work__nav-btn"
-                        onClick={() => setWeekOffset(prev => prev - 1)}
+                        onClick={onPrev}
                         title={t('analytics.weeklyWorkTime.prevWeek')}
                     >
                         <i className="pi pi-chevron-left" />
@@ -55,7 +54,7 @@ const WeeklyWorkTimeCard: React.FC<Props> = ({ sessions }) => {
                     </span>
                     <button
                         className="analytics-weekly-work__nav-btn"
-                        onClick={() => setWeekOffset(prev => prev + 1)}
+                        onClick={onNext}
                         disabled={weekOffset >= 0}
                         title={t('analytics.weeklyWorkTime.nextWeek')}
                     >

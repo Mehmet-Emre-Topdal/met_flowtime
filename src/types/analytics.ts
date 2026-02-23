@@ -44,16 +44,6 @@ export interface ResistancePointResult {
     hasEnoughData: boolean;
 }
 
-// --- 5. Earned Freedom ---
-export interface EarnedFreedomResult {
-    earnedMinutes: number;      // bugün kazanılan mola
-    usedMinutes: number;        // bugün kullanılan mola
-    balanceMinutes: number;     // kalan bakiye
-    weekEarned: number;
-    weekUsed: number;
-    hasEnoughData: boolean;
-}
-
 // --- 6. Natural Flow Window ---
 export interface FlowWindowBucket {
     rangeStart: number;  // dakika
@@ -102,4 +92,20 @@ export interface WarmupPhaseResult {
     prevMonthWarmup: number | null;
     changeMinutes: number | null;
     hasEnoughData: boolean;
+}
+
+// --- Combined API response ---
+export interface AnalyticsResult {
+    dailyFlowWaves: DailyFlowWavesResult;
+    weeklyWorkTime: WeeklyWorkTimeResult;
+    focusDensity: FocusDensityResult;
+    resistancePoint: ResistancePointResult;
+    naturalFlowWindow: NaturalFlowWindowResult;
+    flowStreak: FlowStreakResult;
+    taskFlowHarmony: TaskFlowHarmonyResult;
+    warmupPhase: WarmupPhaseResult;
+    summary: {
+        totalSessions: number;
+        allTimeMinutes: number;
+    };
 }

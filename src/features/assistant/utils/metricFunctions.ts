@@ -295,24 +295,6 @@ async function getFocusDensityRatio(userId: string, period: string) {
     return { percentage, label };
 }
 
-async function getEarnedFreedomBalance(userId: string) {
-    const sessions = await fetchSessions(userId, 'today');
-    const earnedMinutes = sessions.reduce((sum, s) => sum + getDurationMinutes(s) / 5, 0);
-    const usedMinutes = sessions.reduce((sum, s) => sum + s.breakDurationSeconds / 60, 0);
-
-    const weekSessions = await fetchSessions(userId, 'last_7_days');
-    const weekEarned = weekSessions.reduce((sum, s) => sum + getDurationMinutes(s) / 5, 0);
-    const weekUsed = weekSessions.reduce((sum, s) => sum + s.breakDurationSeconds / 60, 0);
-
-    return {
-        todayEarnedMinutes: Math.round(earnedMinutes),
-        todayUsedMinutes: Math.round(usedMinutes),
-        todayBalance: Math.round(earnedMinutes - usedMinutes),
-        weekEarnedMinutes: Math.round(weekEarned),
-        weekUsedMinutes: Math.round(weekUsed),
-    };
-}
-
 
 async function getSessionTimesByWeekday(userId: string, period: string) {
     const sessions = await fetchSessions(userId, period);

@@ -6,33 +6,52 @@ import { ChatMessage } from '@/types/assistant';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 
-// ─── localStorage helpers ─────────────────────────────────────
+// ─── API helpers ──────────────────────────────────────────────
 
-const STORAGE_KEY = (userId: string) => `flowtime_chat_${userId}`;
-
-interface PersistedChat {
-    messages: ChatMessage[];
-    summary: string | null;
-}
-
-function loadChat(userId: string): PersistedChat {
+const getAuthToken = async (): Promise<string | null> => {
     try {
-        const raw = localStorage.getItem(STORAGE_KEY(userId));
-        if (!raw) return { messages: [], summary: null };
-        return JSON.parse(raw) as PersistedChat;
+        return await auth.currentUser?.getIdToken() ?? null;
+    } catch {
+        return null;
+    }
+};
+
+const loadChatHistory = async (): Promise<{ messages: ChatMessage[]; summary: string | null }> => {
+    const token = await getAuthToken();
+    if (!token) return { messages: [], summary: null };
+    try {
+        const res = await fetch('/api/chat-history', {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return { messages: [], summary: null };
+        return await res.json();
     } catch {
         return { messages: [], summary: null };
     }
-}
+};
 
-function saveChat(userId: string, messages: ChatMessage[], summary: string | null) {
+const saveChatHistory = async (messages: ChatMessage[], summary: string | null) => {
+    const token = await getAuthToken();
+    if (!token) return;
     try {
-        const data: PersistedChat = { messages, summary };
-        localStorage.setItem(STORAGE_KEY(userId), JSON.stringify(data));
-    } catch {
-        // localStorage quota exceeded — silently ignore
-    }
-}
+        await fetch('/api/chat-history', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ messages, summary }),
+        });
+    } catch {}
+};
+
+const deleteChatHistory = async () => {
+    const token = await getAuthToken();
+    if (!token) return;
+    try {
+        await fetch('/api/chat-history', {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    } catch {}
+};
 
 // ─── Component ───────────────────────────────────────────────
 
@@ -48,15 +67,15 @@ const AssistantChat: React.FC = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Load persisted chat on mount / when user changes
     useEffect(() => {
         if (!user?.uid) return;
-        const persisted = loadChat(user.uid);
-        if (persisted.messages.length > 0) {
-            setMessages(persisted.messages);
-            setConversationSummary(persisted.summary);
-            setHasWelcomed(true); // don't fire welcome again if history exists
-        }
+        loadChatHistory().then(persisted => {
+            if (persisted.messages.length > 0) {
+                setMessages(persisted.messages);
+                setConversationSummary(persisted.summary);
+                setHasWelcomed(true);
+            }
+        });
     }, [user?.uid]);
 
     const scrollToBottom = useCallback(() => {
@@ -72,16 +91,6 @@ const AssistantChat: React.FC = () => {
             inputRef.current.focus();
         }
     }, [isOpen]);
-
-    const getAuthToken = async (): Promise<string | null> => {
-        try {
-            const currentUser = auth.currentUser;
-            if (!currentUser) return null;
-            return await currentUser.getIdToken();
-        } catch {
-            return null;
-        }
-    };
 
     const sendMessage = async (message?: string) => {
         const token = await getAuthToken();
@@ -112,7 +121,7 @@ const AssistantChat: React.FC = () => {
                 };
                 setMessages(prev => {
                     const updated = [...prev, limitMsg];
-                    saveChat(user.uid!, updated, conversationSummary);
+                    saveChatHistory(updated, conversationSummary);
                     return updated;
                 });
                 return;
@@ -123,7 +132,7 @@ const AssistantChat: React.FC = () => {
             const data = await res.json();
             setMessages(data.updatedHistory);
             setConversationSummary(data.updatedSummary);
-            saveChat(user.uid, data.updatedHistory, data.updatedSummary);
+            saveChatHistory(data.updatedHistory, data.updatedSummary);
         } catch {
             const errMsg: ChatMessage = {
                 role: 'assistant',
@@ -153,16 +162,19 @@ const AssistantChat: React.FC = () => {
             content: trimmed,
             timestamp: new Date().toISOString(),
         };
-        setMessages(prev => {
-            const updated = [...prev, userMessage];
-            if (user?.uid) saveChat(user.uid, updated, conversationSummary);
-            return updated;
-        });
+        setMessages(prev => [...prev, userMessage]);
         setInputValue('');
         setIsLoading(true);
 
         await sendMessage(trimmed);
         setIsLoading(false);
+    };
+
+    const handleClear = async () => {
+        await deleteChatHistory();
+        setMessages([]);
+        setConversationSummary(null);
+        setHasWelcomed(false);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -179,7 +191,6 @@ const AssistantChat: React.FC = () => {
 
     return (
         <>
-            {/* FAB — hidden when panel is open (panel header has its own close btn) */}
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
@@ -197,7 +208,6 @@ const AssistantChat: React.FC = () => {
                 )}
             </AnimatePresence>
 
-            {/* Chat Panel */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -207,7 +217,6 @@ const AssistantChat: React.FC = () => {
                         exit={{ x: '100%', opacity: 0 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
                     >
-                        {/* Header */}
                         <div className="assistant-panel__header">
                             <div className="assistant-panel__header-info">
                                 <div className="assistant-panel__avatar">
@@ -220,16 +229,26 @@ const AssistantChat: React.FC = () => {
                                     </span>
                                 </div>
                             </div>
-                            <button
-                                className="assistant-panel__close"
-                                onClick={() => setIsOpen(false)}
-                                aria-label="Close"
-                            >
-                                <i className="pi pi-chevron-right" />
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                {messages.length > 0 && (
+                                    <button
+                                        className="assistant-panel__clear"
+                                        onClick={handleClear}
+                                        aria-label="Clear chat"
+                                    >
+                                        <i className="pi pi-trash" />
+                                    </button>
+                                )}
+                                <button
+                                    className="assistant-panel__close"
+                                    onClick={() => setIsOpen(false)}
+                                    aria-label="Close"
+                                >
+                                    <i className="pi pi-chevron-right" />
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Messages */}
                         <div className="assistant-panel__messages">
                             {messages.map((msg, idx) => (
                                 <div
@@ -274,7 +293,6 @@ const AssistantChat: React.FC = () => {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input */}
                         <div className="assistant-panel__input-area">
                             <input
                                 ref={inputRef}

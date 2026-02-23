@@ -47,11 +47,13 @@
         "flowActive": "Akış modu aktif",
         "readyToFocus": "Odaklanmaya hazır",
         "rechargingFocus": "Enerji toplanıyor",
+        "paused": "Duraklatıldı",
         "start": "Başla",
         "resume": "Devam",
         "break": "Mola",
         "remaining": "kalan",
-        "elapsed": "geçen"
+        "elapsed": "geçen",
+        "newSession": "Yeni Oturum"
     },
     "tasks": {
         "tasks": "Görevler",

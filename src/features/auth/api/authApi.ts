@@ -12,101 +12,85 @@ import { UserDto } from "@/types/auth";
 export const authApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
 
-        /* ─── Google ile Giriş ─── */
         loginWithGoogle: builder.mutation<UserDto, void>({
             queryFn: async () => {
                 try {
                     const result = await signInWithPopup(auth, googleProvider);
                     const user = result.user;
-                    const userDto: UserDto = {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
+                    return {
+                        data: {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: user.displayName,
+                            photoURL: user.photoURL,
+                        },
                     };
-                    return { data: userDto };
-                } catch (error: any) {
-                    return { error: { status: "CUSTOM_ERROR", error: error.message } };
+                } catch (error) {
+                    return { error: { status: "CUSTOM_ERROR", error: String(error) } };
                 }
             },
         }),
 
-        /* ─── Email/Şifre ile Giriş ─── */
         loginWithEmail: builder.mutation<UserDto, { email: string; password: string }>({
             queryFn: async ({ email, password }) => {
                 try {
                     const result = await signInWithEmailAndPassword(auth, email, password);
                     const user = result.user;
-                    const userDto: UserDto = {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: user.displayName,
-                        photoURL: user.photoURL,
+                    return {
+                        data: {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: user.displayName,
+                            photoURL: user.photoURL,
+                        },
                     };
-                    return { data: userDto };
-                } catch (error: any) {
-                    let message = "Login failed.";
-                    switch (error.code) {
-                        case "auth/user-not-found":
-                            message = "No account found with this email.";
-                            break;
-                        case "auth/wrong-password":
-                        case "auth/invalid-credential":
-                            message = "Invalid email or password.";
-                            break;
-                        case "auth/too-many-requests":
-                            message = "Too many attempts. Please try again later.";
-                            break;
-                        case "auth/invalid-email":
-                            message = "Invalid email address.";
-                            break;
-                    }
-                    return { error: { status: "CUSTOM_ERROR", error: message } };
+                } catch (error) {
+                    const code = (error as { code?: string }).code;
+                    const messages: Record<string, string> = {
+                        "auth/user-not-found": "No account found with this email.",
+                        "auth/wrong-password": "Invalid email or password.",
+                        "auth/invalid-credential": "Invalid email or password.",
+                        "auth/too-many-requests": "Too many attempts. Please try again later.",
+                        "auth/invalid-email": "Invalid email address.",
+                    };
+                    return { error: { status: "CUSTOM_ERROR", error: messages[code ?? ""] ?? "Login failed." } };
                 }
             },
         }),
 
-        /* ─── Email/Şifre ile Kayıt ─── */
         registerWithEmail: builder.mutation<UserDto, { email: string; password: string; displayName: string }>({
             queryFn: async ({ email, password, displayName }) => {
                 try {
                     const result = await createUserWithEmailAndPassword(auth, email, password);
-                    // Kullanıcı adını güncelle
                     await updateProfile(result.user, { displayName });
                     const user = result.user;
-                    const userDto: UserDto = {
-                        uid: user.uid,
-                        email: user.email,
-                        displayName: displayName,
-                        photoURL: user.photoURL,
+                    return {
+                        data: {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName,
+                            photoURL: user.photoURL,
+                        },
                     };
-                    return { data: userDto };
-                } catch (error: any) {
-                    let message = "Registration failed.";
-                    switch (error.code) {
-                        case "auth/email-already-in-use":
-                            message = "This email is already registered.";
-                            break;
-                        case "auth/weak-password":
-                            message = "Password must be at least 6 characters.";
-                            break;
-                        case "auth/invalid-email":
-                            message = "Invalid email address.";
-                            break;
-                    }
-                    return { error: { status: "CUSTOM_ERROR", error: message } };
+                } catch (error) {
+                    const code = (error as { code?: string }).code;
+                    const messages: Record<string, string> = {
+                        "auth/email-already-in-use": "This email is already registered.",
+                        "auth/weak-password": "Password must be at least 6 characters.",
+                        "auth/invalid-email": "Invalid email address.",
+                    };
+                    return { error: { status: "CUSTOM_ERROR", error: messages[code ?? ""] ?? "Registration failed." } };
                 }
             },
         }),
 
-        /* ─── Çıkış ─── */
         logout: builder.mutation<void, void>({
             queryFn: async () => {
                 try {
                     await signOut(auth);
                     return { data: undefined };
-                } catch (error: any) {
-                    return { error: { status: "CUSTOM_ERROR", error: error.message } };
+                } catch (error) {
+                    return { error: { status: "CUSTOM_ERROR", error: String(error) } };
                 }
             },
         }),

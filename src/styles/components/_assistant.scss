@@ -89,6 +89,26 @@
     font-weight: 500;
 }
 
+.assistant-panel__clear {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+    }
+}
+
 .assistant-panel__close {
     width: 32px;
     height: 32px;

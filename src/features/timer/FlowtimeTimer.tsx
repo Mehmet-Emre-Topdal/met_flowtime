@@ -57,7 +57,6 @@ const FlowtimeTimer = () => {
             sessionStartRef.current = new Date();
         }
         setIsActive(true);
-        setIsBreak(false);
     };
 
     const pauseTimer = () => {
@@ -92,6 +91,15 @@ const FlowtimeTimer = () => {
         setBreakSeconds(0);
         setIsBreak(false);
         sessionStartRef.current = null;
+    };
+
+    const newSession = () => {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        sessionStartRef.current = new Date();
+        setSeconds(0);
+        setBreakSeconds(0);
+        setIsBreak(false);
+        setIsActive(true);
     };
 
     const takeBreak = async () => {
@@ -161,10 +169,12 @@ const FlowtimeTimer = () => {
 
                 <p className="timer-header__status">
                     {isBreak
-                        ? t("timer.rechargingFocus")
+                        ? (isActive ? t("timer.rechargingFocus") : t("timer.paused"))
                         : isActive
                             ? t("timer.flowActive")
-                            : t("timer.readyToFocus")}
+                            : seconds > 0
+                                ? t("timer.paused")
+                                : t("timer.readyToFocus")}
                 </p>
             </header>
 
@@ -197,7 +207,14 @@ const FlowtimeTimer = () => {
 
             {/* Controls */}
             <div className="timer-controls">
-                {!isActive ? (
+                {!isActive && isBreak ? (
+                    <Button
+                        icon="pi pi-play"
+                        label={t("timer.newSession")}
+                        onClick={newSession}
+                        className="timer-btn timer-btn--primary"
+                    />
+                ) : !isActive ? (
                     <Button
                         icon="pi pi-play"
                         label={seconds > 0 ? t("timer.resume") : t("timer.start")}
@@ -211,12 +228,19 @@ const FlowtimeTimer = () => {
                             onClick={pauseTimer}
                             className="timer-btn timer-btn--icon"
                         />
-                        {!isBreak && (
+                        {!isBreak ? (
                             <Button
                                 icon="pi pi-coffee"
                                 label={t("timer.break")}
                                 onClick={takeBreak}
                                 className="timer-btn timer-btn--break"
+                            />
+                        ) : (
+                            <Button
+                                icon="pi pi-play"
+                                label={t("timer.newSession")}
+                                onClick={newSession}
+                                className="timer-btn timer-btn--primary"
                             />
                         )}
                     </>

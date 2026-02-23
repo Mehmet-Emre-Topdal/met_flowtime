@@ -47,11 +47,13 @@
         "flowActive": "Flow state active",
         "readyToFocus": "Ready to focus",
         "rechargingFocus": "Recharging focus",
+        "paused": "Paused",
         "start": "Start",
         "resume": "Resume",
         "break": "Break",
         "remaining": "remaining",
-        "elapsed": "elapsed"
+        "elapsed": "elapsed",
+        "newSession": "New Session"
     },
     "tasks": {
         "tasks": "Tasks",

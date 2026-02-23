@@ -6,7 +6,6 @@ import {
     FocusDensityResult,
     FocusDensityLabel,
     ResistancePointResult,
-    EarnedFreedomResult,
     NaturalFlowWindowResult,
     FlowWindowBucket,
     FlowStreakResult,
@@ -220,31 +219,6 @@ export function calcResistancePoint(sessions: FlowSession[]): ResistancePointRes
         }));
 
     return { resistanceMinute, last7DaysSessions: recentSessions, hasEnoughData: true };
-}
-
-// ─── 5. Earned Freedom ──────────────────────────────────────
-
-export function calcEarnedFreedom(sessions: FlowSession[]): EarnedFreedomResult {
-    const today = todayStr();
-    const todaySessions = sessions.filter(s => getDateString(s.startedAt) === today);
-
-    const earnedMinutes = todaySessions.reduce((sum, s) => sum + getDurationMinutes(s) / 5, 0);
-    const usedMinutes = todaySessions.reduce((sum, s) => sum + s.breakDurationSeconds / 60, 0);
-
-    // Week totals
-    const weekStart = daysAgo(7);
-    const weekSessions = sessions.filter(s => new Date(s.startedAt) >= weekStart);
-    const weekEarned = weekSessions.reduce((sum, s) => sum + getDurationMinutes(s) / 5, 0);
-    const weekUsed = weekSessions.reduce((sum, s) => sum + s.breakDurationSeconds / 60, 0);
-
-    return {
-        earnedMinutes: Math.round(earnedMinutes),
-        usedMinutes: Math.round(usedMinutes),
-        balanceMinutes: Math.round(earnedMinutes - usedMinutes),
-        weekEarned: Math.round(weekEarned),
-        weekUsed: Math.round(weekUsed),
-        hasEnoughData: todaySessions.length > 0,
-    };
 }
 
 // ─── 6. Natural Flow Window ─────────────────────────────────
