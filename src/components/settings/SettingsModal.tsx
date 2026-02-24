@@ -167,6 +167,7 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
                                         inputClassName="bg-transparent border-none text-[#F0F0F0] w-full text-center text-sm"
                                         suffix=" m"
                                         min={interval.min + 0.1}
+                                        max={localConfig.intervals[index + 1].max - 0.1}
                                         step={0.1}
                                         minFractionDigits={1}
                                     />

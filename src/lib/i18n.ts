@@ -5,12 +5,19 @@ import en from "@/locales/en.json";
 
 const STORAGE_KEY = "flowtime_lang";
 
+const SUPPORTED_LANGS = ["tr", "en"];
+
+const getDeviceLanguage = (): string => {
+    const browserLang = navigator.language?.split("-")[0] ?? "en";
+    return SUPPORTED_LANGS.includes(browserLang) ? browserLang : "en";
+};
+
 const getSavedLanguage = (): string => {
-    if (typeof window === "undefined") return "tr";
+    if (typeof window === "undefined") return "en";
     try {
-        return localStorage.getItem(STORAGE_KEY) || "tr";
+        return localStorage.getItem(STORAGE_KEY) || getDeviceLanguage();
     } catch {
-        return "tr";
+        return "en";
     }
 };
 
@@ -20,7 +27,7 @@ i18n.use(initReactI18next).init({
         en: { translation: en },
     },
     lng: getSavedLanguage(),
-    fallbackLng: "tr",
+    fallbackLng: "en",
     interpolation: {
         escapeValue: false,
     },
