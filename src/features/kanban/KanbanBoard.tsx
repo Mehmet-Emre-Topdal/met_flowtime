@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
-import {
-    useGetTasksQuery,
-    useUpdateTaskStatusMutation,
-    useCreateTaskMutation,
-    useUpdateTaskMutation,
-    useArchiveTaskMutation,
-    tasksApi,
-} from './api/tasksApi';
-import { useAppSelector, useAppDispatch } from '@/hooks/storeHooks';
-import { setSelectedTaskId } from './slices/taskSlice';
+import { tasksApi } from './api/tasksApi';
 import { Button } from 'primereact/button';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { ConfirmDialog } from 'primereact/confirmdialog';
 import { TaskDto, TaskStatus } from '@/types/task';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -37,6 +28,8 @@ import SortableTaskCard from './components/SortableTaskCard';
 import DroppableColumn from './components/DroppableColumn';
 import CreateTaskDialog from './components/CreateTaskDialog';
 import EditTaskDialog from './components/EditTaskDialog';
+import { useTaskCRUD } from './hooks/useTaskCRUD';
+import { setSelectedTaskId } from './slices/taskSlice';
 
 interface KanbanBoardProps {
     filterDaily: boolean;
@@ -44,25 +37,24 @@ interface KanbanBoardProps {
 
 const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
     const { t } = useTranslation();
-    const dispatch = useAppDispatch();
-    const { user } = useAppSelector((state) => state.auth);
-    const { selectedTaskId } = useAppSelector((state) => state.task);
-    const { data: tasks = [], isLoading } = useGetTasksQuery(user?.uid || '', {
-        skip: !user?.uid,
-    });
+    const {
+        user,
+        tasks,
+        isLoading,
+        selectedTaskId,
+        dispatch,
+        updateTask,
+        showCreateDialog, setShowCreateDialog,
+        newTask, setNewTask,
+        showEditDialog, setShowEditDialog,
+        editingTask, setEditingTask,
+        handleCreateTask,
+        handleEditTask,
+        handleSaveEdit,
+        handleArchiveTask,
+    } = useTaskCRUD();
 
-    const [updateTaskStatus] = useUpdateTaskStatusMutation();
-    const [createTask] = useCreateTaskMutation();
-    const [updateTask] = useUpdateTaskMutation();
-    const [archiveTask] = useArchiveTaskMutation();
-
-    const [showCreateDialog, setShowCreateDialog] = useState(false);
-    const [newTask, setNewTask] = useState({ title: '', description: '', status: 'todo' as TaskStatus, isDaily: false });
     const [hideCompleted, setHideCompleted] = useState(false);
-
-    const [showEditDialog, setShowEditDialog] = useState(false);
-    const [editingTask, setEditingTask] = useState<{ id: string; title: string; description: string; isDaily: boolean } | null>(null);
-
     const [activeId, setActiveId] = useState<string | null>(null);
 
     const sensors = useSensors(
@@ -75,58 +67,6 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
         if (hideCompleted && t.status === 'done') return false;
         return true;
     });
-
-    const handleCreateTask = async () => {
-        if (!user?.uid || !newTask.title) return;
-        try {
-            await createTask({ userId: user.uid, task: newTask, order: tasks.length }).unwrap();
-            setShowCreateDialog(false);
-            setNewTask({ title: '', description: '', status: 'todo', isDaily: false });
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const handleEditTask = (task: TaskDto) => {
-        setEditingTask({ id: task.id, title: task.title, description: task.description, isDaily: task.isDaily });
-        setShowEditDialog(true);
-    };
-
-    const handleSaveEdit = async () => {
-        if (!editingTask || !editingTask.title.trim()) return;
-        try {
-            await updateTask({
-                taskId: editingTask.id,
-                updates: { title: editingTask.title, description: editingTask.description, isDaily: editingTask.isDaily },
-            }).unwrap();
-            setShowEditDialog(false);
-            setEditingTask(null);
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const handleArchiveTask = (task: TaskDto) => {
-        confirmDialog({
-            message: `"${task.title}" ${t("tasks.archiveConfirm")}`,
-            header: t("tasks.archiveHeader"),
-            icon: 'pi pi-exclamation-triangle',
-            acceptClassName: 'bg-red-500 text-white border-red-500 px-4 py-2 rounded-lg ml-2',
-            rejectClassName: 'border border-[#3D3D3D] text-[#9A9A9A] px-4 py-2 rounded-lg',
-            acceptLabel: t("common.delete"),
-            rejectLabel: t("common.cancel"),
-            accept: async () => {
-                try {
-                    await archiveTask({ taskId: task.id }).unwrap();
-                    if (selectedTaskId === task.id) {
-                        dispatch(setSelectedTaskId(null));
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
-            },
-        });
-    };
 
     const handleDragStart = (event: DragStartEvent) => {
         setActiveId(event.active.id as string);

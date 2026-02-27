@@ -1,84 +1,46 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useAppSelector } from '@/hooks/storeHooks';
 import { useTranslation } from 'react-i18next';
-import { auth } from '@/lib/firebase';
 import { ChatMessage } from '@/types/assistant';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import {
+    useGetChatHistoryQuery,
+    useSaveChatHistoryMutation,
+    useDeleteChatHistoryMutation,
+    useSendChatMessageMutation,
+} from '../api/assistantApi';
 
-// ─── API helpers ──────────────────────────────────────────────
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-const getAuthToken = async (): Promise<string | null> => {
-    try {
-        return await auth.currentUser?.getIdToken() ?? null;
-    } catch {
-        return null;
-    }
-};
-
-const loadChatHistory = async (): Promise<{ messages: ChatMessage[]; summary: string | null }> => {
-    const token = await getAuthToken();
-    if (!token) return { messages: [], summary: null };
-    try {
-        const res = await fetch(`${BACKEND_URL}/api/chat-history`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) return { messages: [], summary: null };
-        return await res.json();
-    } catch {
-        return { messages: [], summary: null };
-    }
-};
-
-const saveChatHistory = async (messages: ChatMessage[], summary: string | null) => {
-    const token = await getAuthToken();
-    if (!token) return;
-    try {
-        await fetch(`${BACKEND_URL}/api/chat-history`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ messages, summary }),
-        });
-    } catch {}
-};
-
-const deleteChatHistory = async () => {
-    const token = await getAuthToken();
-    if (!token) return;
-    try {
-        await fetch(`${BACKEND_URL}/api/chat-history`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-        });
-    } catch {}
-};
-
-// ─── Component ───────────────────────────────────────────────
+interface RtkError {
+    status?: number;
+    data?: { reply?: string };
+}
 
 const AssistantChat: React.FC = () => {
     const { t } = useTranslation();
     const { user } = useAppSelector(state => state.auth);
+
     const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const [conversationSummary, setConversationSummary] = useState<string | null>(null);
+    // null = no local changes yet, fall back to persisted history
+    const [sessionMessages, setSessionMessages] = useState<ChatMessage[] | null>(null);
+    const [sessionSummary, setSessionSummary] = useState<string | null | undefined>(undefined);
     const [inputValue, setInputValue] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
     const [hasWelcomed, setHasWelcomed] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        if (!user?.uid) return;
-        loadChatHistory().then(persisted => {
-            if (persisted.messages.length > 0) {
-                setMessages(persisted.messages);
-                setConversationSummary(persisted.summary);
-                setHasWelcomed(true);
-            }
-        });
-    }, [user?.uid]);
+    const { data: chatHistory, isFetching: historyFetching } = useGetChatHistoryQuery(
+        undefined,
+        { skip: !user?.uid }
+    );
+    const [triggerSave] = useSaveChatHistoryMutation();
+    const [triggerDelete] = useDeleteChatHistoryMutation();
+    const [triggerSend, { isLoading: isSending }] = useSendChatMessageMutation();
+
+    // Prefer local session state; fall back to persisted history — no useEffect sync needed
+    const messages: ChatMessage[] = sessionMessages ?? chatHistory?.messages ?? [];
+    const conversationSummary: string | null =
+        sessionSummary !== undefined ? sessionSummary : (chatHistory?.summary ?? null);
 
     const scrollToBottom = useCallback(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -95,87 +57,69 @@ const AssistantChat: React.FC = () => {
     }, [isOpen]);
 
     const sendMessage = async (message?: string) => {
-        const token = await getAuthToken();
-        if (!token || !user?.uid) return;
-
-        const body: Record<string, unknown> = {
-            conversationHistory: messages,
-            conversationSummary,
-        };
-        if (message) body.message = message;
+        if (!user?.uid) return;
 
         try {
-            const res = await fetch(`${BACKEND_URL}/api/assistant/chat`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify(body),
-            });
+            const data = await triggerSend({
+                conversationHistory: messages,
+                conversationSummary,
+                ...(message ? { message } : {}),
+            }).unwrap();
 
-            if (res.status === 429) {
-                const data = await res.json();
+            setSessionMessages(data.updatedHistory);
+            setSessionSummary(data.updatedSummary);
+            triggerSave({ messages: data.updatedHistory, summary: data.updatedSummary });
+        } catch (error) {
+            const rtkError = error as RtkError;
+            if (rtkError?.status === 429) {
                 const limitMsg: ChatMessage = {
                     role: 'assistant',
-                    content: data.reply || t('assistant.rateLimitReached'),
+                    content: rtkError.data?.reply || t('assistant.rateLimitReached'),
                     timestamp: new Date().toISOString(),
                 };
-                setMessages(prev => {
-                    const updated = [...prev, limitMsg];
-                    saveChatHistory(updated, conversationSummary);
+                setSessionMessages(prev => {
+                    const updated = [...(prev ?? messages), limitMsg];
+                    triggerSave({ messages: updated, summary: conversationSummary });
                     return updated;
                 });
-                return;
+            } else {
+                const errMsg: ChatMessage = {
+                    role: 'assistant',
+                    content: t('assistant.error'),
+                    timestamp: new Date().toISOString(),
+                };
+                setSessionMessages(prev => [...(prev ?? messages), errMsg]);
             }
-
-            if (!res.ok) throw new Error('API error');
-
-            const data = await res.json();
-            setMessages(data.updatedHistory);
-            setConversationSummary(data.updatedSummary);
-            saveChatHistory(data.updatedHistory, data.updatedSummary);
-        } catch {
-            const errMsg: ChatMessage = {
-                role: 'assistant',
-                content: t('assistant.error'),
-                timestamp: new Date().toISOString(),
-            };
-            setMessages(prev => [...prev, errMsg]);
         }
     };
 
     const handleOpen = async () => {
         setIsOpen(true);
-        if (!hasWelcomed && messages.length === 0) {
-            setIsLoading(true);
+        const hasMessages = (chatHistory?.messages?.length ?? 0) > 0 || hasWelcomed;
+        if (!hasMessages && !historyFetching) {
             setHasWelcomed(true);
             await sendMessage();
-            setIsLoading(false);
         }
     };
 
     const handleSend = async () => {
         const trimmed = inputValue.trim();
-        if (!trimmed || isLoading) return;
+        if (!trimmed || isSending) return;
 
         const userMessage: ChatMessage = {
             role: 'user',
             content: trimmed,
             timestamp: new Date().toISOString(),
         };
-        setMessages(prev => [...prev, userMessage]);
+        setSessionMessages([...messages, userMessage]);
         setInputValue('');
-        setIsLoading(true);
-
         await sendMessage(trimmed);
-        setIsLoading(false);
     };
 
     const handleClear = async () => {
-        await deleteChatHistory();
-        setMessages([]);
-        setConversationSummary(null);
+        await triggerDelete().unwrap();
+        setSessionMessages([]);
+        setSessionSummary(null);
         setHasWelcomed(false);
     };
 
@@ -227,11 +171,11 @@ const AssistantChat: React.FC = () => {
                                 <div>
                                     <h3 className="assistant-panel__title">{t('assistant.title')}</h3>
                                     <span className="assistant-panel__status">
-                                        {isLoading ? t('assistant.thinking') : t('assistant.online')}
+                                        {isSending ? t('assistant.thinking') : t('assistant.online')}
                                     </span>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div className="flex items-center gap-2">
                                 {messages.length > 0 && (
                                     <button
                                         className="assistant-panel__clear"
@@ -277,7 +221,7 @@ const AssistantChat: React.FC = () => {
                                 </div>
                             ))}
 
-                            {isLoading && (
+                            {isSending && (
                                 <div className="assistant-message assistant-message--assistant">
                                     <div className="assistant-message__avatar">
                                         <i className="pi pi-sparkles" />
@@ -304,12 +248,12 @@ const AssistantChat: React.FC = () => {
                                 onChange={e => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 placeholder={t('assistant.placeholder')}
-                                disabled={isLoading}
+                                disabled={isSending}
                             />
                             <button
                                 className="assistant-panel__send"
                                 onClick={handleSend}
-                                disabled={!inputValue.trim() || isLoading}
+                                disabled={!inputValue.trim() || isSending}
                                 aria-label="Send"
                             >
                                 <i className="pi pi-send" />

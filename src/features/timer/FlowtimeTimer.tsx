@@ -48,7 +48,7 @@ const FlowtimeTimer = () => {
     const playBell = () => {
         if (breakEndAudio.current) {
             breakEndAudio.current.currentTime = 0;
-            breakEndAudio.current.play().catch(err => console.error("Audio play failed:", err));
+            //breakEndAudio.current.play().catch(err => console.error("Audio play failed:", err));
         }
     };
 
