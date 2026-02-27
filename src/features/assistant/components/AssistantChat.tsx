@@ -8,6 +8,8 @@ import ReactMarkdown from 'react-markdown';
 
 // ─── API helpers ──────────────────────────────────────────────
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 const getAuthToken = async (): Promise<string | null> => {
     try {
         return await auth.currentUser?.getIdToken() ?? null;
@@ -20,7 +22,7 @@ const loadChatHistory = async (): Promise<{ messages: ChatMessage[]; summary: st
     const token = await getAuthToken();
     if (!token) return { messages: [], summary: null };
     try {
-        const res = await fetch('/api/chat-history', {
+        const res = await fetch(`${BACKEND_URL}/api/chat-history`, {
             headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) return { messages: [], summary: null };
@@ -34,7 +36,7 @@ const saveChatHistory = async (messages: ChatMessage[], summary: string | null) 
     const token = await getAuthToken();
     if (!token) return;
     try {
-        await fetch('/api/chat-history', {
+        await fetch(`${BACKEND_URL}/api/chat-history`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify({ messages, summary }),
@@ -46,7 +48,7 @@ const deleteChatHistory = async () => {
     const token = await getAuthToken();
     if (!token) return;
     try {
-        await fetch('/api/chat-history', {
+        await fetch(`${BACKEND_URL}/api/chat-history`, {
             method: 'DELETE',
             headers: { Authorization: `Bearer ${token}` },
         });
@@ -103,7 +105,7 @@ const AssistantChat: React.FC = () => {
         if (message) body.message = message;
 
         try {
-            const res = await fetch('/api/assistant/chat', {
+            const res = await fetch(`${BACKEND_URL}/api/assistant/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

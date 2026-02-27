@@ -4,7 +4,7 @@ import { auth } from '@/lib/firebase';
 export const baseApi = createApi({
     reducerPath: 'baseApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: '/api',
+        baseUrl: `${process.env.NEXT_PUBLIC_BACKEND_URL}/api`,
         prepareHeaders: async (headers) => {
             const token = await auth.currentUser?.getIdToken();
             if (token) {

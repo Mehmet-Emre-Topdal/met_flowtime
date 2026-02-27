@@ -10,15 +10,11 @@ import {
 import { useAppSelector, useAppDispatch } from '@/hooks/storeHooks';
 import { setSelectedTaskId } from './slices/taskSlice';
 import { Button } from 'primereact/button';
-import { Dialog } from 'primereact/dialog';
-import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
-import { Checkbox } from 'primereact/checkbox';
-import { Tooltip } from 'primereact/tooltip';
 import { TaskDto, TaskStatus } from '@/types/task';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { Checkbox } from 'primereact/checkbox';
 import {
     DndContext,
     KeyboardSensor,
@@ -28,130 +24,19 @@ import {
     DragOverlay,
     DragEndEvent,
     DragStartEvent,
-    useDroppable,
     rectIntersection,
 } from '@dnd-kit/core';
 import {
     SortableContext,
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
-    useSortable,
     arrayMove,
 } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { restrictToWindowEdges, snapCenterToCursor } from '@dnd-kit/modifiers';
-
-const SortableTaskCard = ({
-    task,
-    isSelected,
-    onClick,
-    onEdit,
-    onArchive,
-}: {
-    task: TaskDto;
-    isSelected: boolean;
-    onClick: () => void;
-    onEdit: () => void;
-    onArchive: () => void;
-}) => {
-    const { t } = useTranslation();
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-        useSortable({ id: task.id });
-
-    const style: React.CSSProperties = {
-        transform: CSS.Translate.toString(transform),
-        transition: isDragging ? 'none' : transition ?? undefined,
-        opacity: isDragging ? 0.2 : 1,
-    };
-
-    return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners} className="touch-none">
-            <div
-                className={`relative p-3.5 rounded-lg cursor-grab active:cursor-grabbing border bg-[#2E2E2E] group transition-colors overflow-hidden
-                    ${isSelected ? 'border-[#4F8EF7]' : 'border-[#3D3D3D] hover:border-[#353535]'}`}
-                onClick={onClick}
-            >
-                <div className="absolute top-2 right-2 flex gap-1.5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-20">
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
-                        className="w-8 h-8 sm:w-7 sm:h-7 lg:w-6 lg:h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-[#353535] text-[#9A9A9A] hover:text-[#F0F0F0] transition-colors"
-                        title={t("common.edit")}
-                    >
-                        <i className="pi pi-pencil text-xs lg:text-[10px]" />
-                    </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onArchive(); }}
-                        className="w-8 h-8 sm:w-7 sm:h-7 lg:w-6 lg:h-6 flex items-center justify-center rounded bg-[#3D3D3D] hover:bg-red-500/20 text-[#9A9A9A] hover:text-red-400 transition-colors"
-                        title={t("common.delete")}
-                    >
-                        <i className="pi pi-trash text-xs lg:text-[10px]" />
-                    </button>
-                </div>
-
-                <div className="flex items-center gap-2 mb-1 overflow-hidden">
-                    <h5 className="text-[#F0F0F0] text-sm leading-tight select-none pr-16 font-medium truncate">
-                        {task.title}
-                    </h5>
-                    {task.isDaily && (
-                        <span className="text-[9px] text-[#34C774] border border-[#4F8EF7]/30 bg-[#4F8EF7]/5 rounded px-1.5 py-0.5 font-semibold uppercase tracking-wider shrink-0">
-                            {t("tasks.daily")}
-                        </span>
-                    )}
-                </div>
-                {task.description && (
-                    <p className="text-xs text-[#757575]/70 mt-1 leading-relaxed select-none overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                        {task.description}
-                    </p>
-                )}
-                <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-1.5 text-[10px] text-[#757575]">
-                        <i className="pi pi-clock text-[9px]" />
-                        <span>{task.totalFocusedTime} {t("tasks.focused")}</span>
-                    </div>
-                    {isSelected && (
-                        <div className="flex items-center gap-1 ml-2 bg-[#4F8EF7]/10 px-1.5 py-0.5 rounded">
-                            <span className="text-[9px] text-[#4F8EF7] font-medium">{t("tasks.focusing")}</span>
-                            <i className="pi pi-bolt text-[#4F8EF7] text-[9px] animate-pulse"></i>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-const DroppableColumn = ({
-    status,
-    label,
-    count,
-    children,
-}: {
-    status: string;
-    label: string;
-    count: number;
-    children: React.ReactNode;
-}) => {
-    const { isOver, setNodeRef } = useDroppable({ id: status });
-
-    return (
-        <div
-            ref={setNodeRef}
-            className={`flex flex-col gap-3 p-4 rounded-xl border min-h-[400px] transition-colors duration-200
-                ${isOver
-                    ? 'bg-[#4F8EF7]/5 border-[#4F8EF7]/30'
-                    : 'bg-[#242424] border-[#3D3D3D]'
-                }`}
-        >
-            <div className="flex items-center justify-between pb-3 mb-1">
-                <h4 className="text-sm font-medium text-[#9A9A9A] uppercase tracking-wider">{label}</h4>
-                <span className="text-[10px] bg-[#3D3D3D] text-[#757575] px-2 py-0.5 rounded-md font-medium">
-                    {count}
-                </span>
-            </div>
-            <div className="flex flex-col gap-2.5 flex-1">{children}</div>
-        </div>
-    );
-};
+import SortableTaskCard from './components/SortableTaskCard';
+import DroppableColumn from './components/DroppableColumn';
+import CreateTaskDialog from './components/CreateTaskDialog';
+import EditTaskDialog from './components/EditTaskDialog';
 
 interface KanbanBoardProps {
     filterDaily: boolean;
@@ -485,128 +370,21 @@ const KanbanBoard = ({ filterDaily }: KanbanBoardProps) => {
                 </DragOverlay>
             </DndContext>
 
-            <Dialog
-                header={t("tasks.newTask")}
+            <CreateTaskDialog
                 visible={showCreateDialog}
                 onHide={() => setShowCreateDialog(false)}
-                className="w-full max-w-lg bg-[#2E2E2E] border border-[#3D3D3D]"
-                pt={{
-                    header: { className: 'bg-[#2E2E2E] text-[#F0F0F0] border-b border-[#3D3D3D] p-5' },
-                    content: { className: 'p-5 bg-[#2E2E2E]' },
-                    footer: { className: 'p-5 bg-[#2E2E2E] border-t border-[#3D3D3D]' },
-                }}
-            >
-                <div className="flex flex-col gap-5 mt-2">
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#757575] font-medium">{t("tasks.titleLabel")}</label>
-                        <InputText
-                            value={newTask.title}
-                            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                            onKeyDown={(e) => e.key === 'Enter' && handleCreateTask()}
-                            className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
-                        />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                        <label className="text-xs text-[#757575] font-medium">{t("tasks.descriptionLabel")}</label>
-                        <InputTextarea
-                            value={newTask.description}
-                            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                            rows={3}
-                            className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
-                        />
-                    </div>
-                    <div className="flex items-center gap-3 p-3 rounded-lg border border-[#3D3D3D] bg-[#242424]">
-                        <Checkbox
-                            inputId="kanban-daily-toggle"
-                            checked={newTask.isDaily}
-                            onChange={(e) => setNewTask({ ...newTask, isDaily: e.checked ?? false })}
-                            className="daily-checkbox"
-                        />
-                        <label htmlFor="kanban-daily-toggle" className="text-xs text-[#9A9A9A] font-medium cursor-pointer select-none">
-                            {t("tasks.dailyToggle")}
-                        </label>
-                        <i
-                            className="pi pi-question-circle text-[#353535] hover:text-[#757575] text-xs cursor-help transition-colors ml-auto"
-                            id="kanban-daily-tooltip-icon"
-                        />
-                        <Tooltip
-                            target="#kanban-daily-tooltip-icon"
-                            position="top"
-                            pt={{ text: { className: 'bg-[#2E2E2E] text-[#F0F0F0] text-[11px] border border-[#3D3D3D] p-3 rounded-lg' } }}
-                        >
-                            {t("tasks.dailyTooltip")}
-                        </Tooltip>
-                    </div>
-                    <Button
-                        label={t("tasks.createTask")}
-                        onClick={handleCreateTask}
-                        className="bg-[#4F8EF7] border-none text-white py-2.5 rounded-lg hover:bg-[#3D77E0] font-medium"
-                    />
-                </div>
-            </Dialog>
+                newTask={newTask}
+                setNewTask={setNewTask}
+                onCreateTask={handleCreateTask}
+            />
 
-            <Dialog
-                header={t("tasks.editTask")}
+            <EditTaskDialog
                 visible={showEditDialog}
                 onHide={() => { setShowEditDialog(false); setEditingTask(null); }}
-                className="w-full max-w-lg bg-[#2E2E2E] border border-[#3D3D3D]"
-                pt={{
-                    header: { className: 'bg-[#2E2E2E] text-[#F0F0F0] border-b border-[#3D3D3D] p-5' },
-                    content: { className: 'p-5 bg-[#2E2E2E]' },
-                    footer: { className: 'p-5 bg-[#2E2E2E] border-t border-[#3D3D3D]' },
-                }}
-            >
-                {editingTask && (
-                    <div className="flex flex-col gap-5 mt-2">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#757575] font-medium">{t("tasks.titleLabel")}</label>
-                            <InputText
-                                value={editingTask.title}
-                                onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
-                                onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
-                                className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-xs text-[#757575] font-medium">{t("tasks.descriptionLabel")}</label>
-                            <InputTextarea
-                                value={editingTask.description}
-                                onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
-                                rows={3}
-                                className="bg-[#242424] border-[#3D3D3D] text-[#F0F0F0] focus:border-[#34C774]"
-                            />
-                        </div>
-                        <div className="flex items-center gap-3 p-3 rounded-lg border border-[#3D3D3D] bg-[#242424]">
-                            <Checkbox
-                                inputId="kanban-edit-daily-toggle"
-                                checked={editingTask.isDaily}
-                                onChange={(e) => setEditingTask({ ...editingTask, isDaily: e.checked ?? false })}
-                                className="daily-checkbox"
-                            />
-                            <label htmlFor="kanban-edit-daily-toggle" className="text-xs text-[#9A9A9A] font-medium cursor-pointer select-none">
-                                {t("tasks.dailyToggle")}
-                            </label>
-                            <i
-                                className="pi pi-question-circle text-[#353535] hover:text-[#757575] text-xs cursor-help transition-colors ml-auto"
-                                id="kanban-edit-daily-tooltip-icon"
-                            />
-                            <Tooltip
-                                target="#kanban-edit-daily-tooltip-icon"
-                                position="top"
-                                pt={{ text: { className: 'bg-[#2E2E2E] text-[#F0F0F0] text-[11px] border border-[#3D3D3D] p-3 rounded-lg' } }}
-                            >
-                                {t("tasks.dailyTooltip")}
-                            </Tooltip>
-                        </div>
-                        <Button
-                            label={t("tasks.saveChanges")}
-                            icon="pi pi-check"
-                            onClick={handleSaveEdit}
-                            className="bg-[#4F8EF7] border-none text-white py-2.5 rounded-lg hover:bg-[#3D77E0] font-medium"
-                        />
-                    </div>
-                )}
-            </Dialog>
+                editingTask={editingTask}
+                setEditingTask={setEditingTask}
+                onSaveEdit={handleSaveEdit}
+            />
         </div >
     );
 };
