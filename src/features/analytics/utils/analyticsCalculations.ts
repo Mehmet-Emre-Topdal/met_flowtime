@@ -15,10 +15,12 @@ import {
     FlowZoneLabel,
 } from '@/types/analytics';
 import { median, mode } from '@/utils/statisticsHelpers';
+import { getDateString, todayStr } from '@/utils/dateHelpers';
 
 // ─── Helpers ────────────────────────────────────────────────
 
-const getDateString = (iso: string): string => iso.slice(0, 10);
+const WARMUP_RATIO = 0.22;
+
 const getHour = (iso: string): number => new Date(iso).getHours();
 const getDurationMinutes = (s: FlowSession): number => s.durationSeconds / 60;
 
@@ -27,11 +29,6 @@ const daysAgo = (days: number): Date => {
     d.setHours(0, 0, 0, 0);
     d.setDate(d.getDate() - days);
     return d;
-};
-
-const todayStr = (): string => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
 // ─── 1. Daily Flow Waves ────────────────────────────────────
@@ -97,7 +94,7 @@ export function calcWeeklyWorkTime(sessions: FlowSession[], weekOffset: number =
     const days = dayLabels.map((label, i) => {
         const d = new Date(monday);
         d.setDate(d.getDate() + i);
-        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const dateStr = getDateString(d);
         const daySessions = sessions.filter(s => getDateString(s.startedAt) === dateStr);
         const totalMinutes = Math.round(daySessions.reduce((sum, s) => sum + getDurationMinutes(s), 0));
         return { dayLabel: label, date: dateStr, totalMinutes };
@@ -278,7 +275,7 @@ export function calcFlowStreak(sessions: FlowSession[]): FlowStreakResult {
     const last30Days = [];
     for (let i = 29; i >= 0; i--) {
         const d = daysAgo(i);
-        const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const dateStr = getDateString(d);
         const score = dailyScores[dateStr] || 0;
         last30Days.push({ date: dateStr, filled: score >= threshold && threshold > 0 });
     }
@@ -301,7 +298,7 @@ export function calcFlowStreak(sessions: FlowSession[]): FlowStreakResult {
         const last = new Date(allDates[allDates.length - 1]);
         const iter = new Date(first);
         while (iter <= last) {
-            const ds = `${iter.getFullYear()}-${String(iter.getMonth() + 1).padStart(2, '0')}-${String(iter.getDate()).padStart(2, '0')}`;
+            const ds = getDateString(iter);
             const score = dailyScores[ds] || 0;
             if (score >= threshold && threshold > 0) {
                 tempStreak++;
@@ -371,7 +368,7 @@ export function calcWarmupPhase(sessions: FlowSession[]): WarmupPhaseResult {
         return { avgWarmupMinutes: 0, prevMonthWarmup: null, changeMinutes: null, hasEnoughData: false };
     }
 
-    const avgWarmupMinutes = Math.round(avg * 0.22 * 10) / 10;
+    const avgWarmupMinutes = Math.round(avg * WARMUP_RATIO * 10) / 10;
 
     // Previous month comparison
     const now = new Date();

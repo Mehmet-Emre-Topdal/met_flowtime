@@ -6,6 +6,7 @@ import { updateConfig } from '@/features/timer/slices/timerSlice';
 import { useUpdateUserConfigMutation } from '@/features/timer/api/timerApi';
 import { UserConfig } from '@/types/config';
 import { useTranslation } from 'react-i18next';
+import { dialogPt } from '@/utils/dialogStyles';
 import LanguageSettings from './LanguageSettings';
 import FlowIntervalsSettings from './FlowIntervalsSettings';
 
@@ -44,11 +45,7 @@ const SettingsModal = ({ visible, onHide }: SettingsModalProps) => {
             visible={visible}
             onHide={onHide}
             className="w-full max-w-2xl bg-[#2E2E2E] border border-[#3D3D3D]"
-            pt={{
-                header: { className: 'bg-[#2E2E2E] text-[#F0F0F0] border-b border-[#3D3D3D] p-5' },
-                content: { className: 'p-5 bg-[#2E2E2E]' },
-                footer: { className: 'p-5 bg-[#2E2E2E] border-t border-[#3D3D3D]' }
-            }}
+            pt={dialogPt}
             footer={
                 <div className="flex justify-end gap-3">
                     <Button label={t("common.cancel")} onClick={onHide} className="p-button-text text-[#757575] hover:text-[#9A9A9A]" />

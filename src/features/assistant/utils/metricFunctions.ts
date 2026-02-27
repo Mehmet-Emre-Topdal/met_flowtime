@@ -1,4 +1,6 @@
 import { adminDb } from '@/lib/firebase-admin';
+
+const WARMUP_RATIO = 0.22;
 import { median, mode } from '@/utils/statisticsHelpers';
 import {
     ParsedSession,
@@ -200,7 +202,7 @@ export async function toolGetWarmupDuration(userId: string, startDate: string, e
 
     const avg = successfulSessions.reduce((sum, s) => sum + getDurationMinutes(s), 0) / successfulSessions.length;
     return {
-        avgWarmupMinutes: Math.round(avg * 0.22 * 10) / 10,
+        avgWarmupMinutes: Math.round(avg * WARMUP_RATIO * 10) / 10,
         hasEnoughData: true,
         sessionsAnalyzed: successfulSessions.length,
     };

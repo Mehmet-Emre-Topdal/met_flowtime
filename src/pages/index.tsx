@@ -3,7 +3,6 @@ import MainLayout from "@/components/layout/MainLayout";
 import FlowtimeTimer from "@/features/timer/FlowtimeTimer";
 import KanbanBoard from "@/features/kanban/KanbanBoard";
 import TaskListView from "@/features/kanban/TaskListView";
-import TaskQuickAdd from "@/features/kanban/TaskQuickAdd";
 import { SelectButton } from "primereact/selectbutton";
 import { useAppSelector } from "@/hooks/storeHooks";
 import StickyNotes from "@/components/notes/StickyNotes";

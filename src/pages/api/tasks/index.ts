@@ -3,20 +3,11 @@ import { adminDb } from '@/lib/firebase-admin';
 import { verifyToken } from '@/lib/api-auth';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import type { TaskDto, TaskCreateInput } from '@/types/task';
+import { parseFirestoreTimestamp } from '@/lib/firestoreHelpers';
+import { todayStr } from '@/utils/dateHelpers';
 
-const toISO = (val: Timestamp | string | undefined): string => {
-    if (!val) return '';
-    if (typeof val === 'string') return val;
-    return val.toDate().toISOString();
-};
-
-const getTodayDateString = (): string => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-};
+const toISO = (val: Timestamp | string | undefined): string =>
+    val ? parseFirestoreTimestamp(val).toISOString() : '';
 
 async function handleGet(userId: string, res: NextApiResponse) {
     const snapshot = await adminDb
@@ -56,7 +47,7 @@ async function handlePost(userId: string, req: NextApiRequest, res: NextApiRespo
         return res.status(400).json({ error: 'title is required' });
     }
 
-    const today = getTodayDateString();
+    const today = todayStr();
 
     const docRef = await adminDb.collection('tasks').add({
         ...task,

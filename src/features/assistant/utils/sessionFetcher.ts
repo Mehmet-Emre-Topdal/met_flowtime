@@ -1,4 +1,6 @@
 import { adminDb } from '@/lib/firebase-admin';
+import { parseFirestoreTimestamp } from '@/lib/firestoreHelpers';
+export { getDateString, getDayOfWeek } from '@/utils/dateHelpers';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -27,27 +29,13 @@ export function getDurationMinutes(s: ParsedSession): number {
     return s.durationSeconds / 60;
 }
 
-export function getDateString(d: Date): string {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-export function getDayOfWeek(d: Date): string {
-    const days = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-    return days[d.getDay()];
-}
-
 // ─── Firestore Queries ───────────────────────────────────────
-
-function parseTimestamp(val: FirebaseFirestore.Timestamp | string): Date {
-    if (typeof val === 'string') return new Date(val);
-    return val.toDate();
-}
 
 function mapDocToSession(doc: FirebaseFirestore.QueryDocumentSnapshot): ParsedSession {
     const data = doc.data() as SessionDoc;
     return {
-        startedAt: parseTimestamp(data.startedAt),
-        endedAt: parseTimestamp(data.endedAt),
+        startedAt: parseFirestoreTimestamp(data.startedAt),
+        endedAt: parseFirestoreTimestamp(data.endedAt),
         durationSeconds: data.durationSeconds,
         breakDurationSeconds: data.breakDurationSeconds || 0,
         taskId: data.taskId || null,
